@@ -21,24 +21,8 @@ const password = ref("");
 
           <v-card-text>
             <div class="flex flex-col items-center mt-4 gap-6">
-              <v-text-field
-                hide-details
-                density="compact"
-                color="primary"
-                class="bg-background-tertiary w-[28rem]"
-                label="Username*"
-                v-model="username"
-                variant="outlined"
-              ></v-text-field>
-              <v-text-field
-                hide-details
-                density="compact"
-                color="primary"
-                class="bg-background-tertiary w-[28rem]"
-                label="Password*"
-                v-model="password"
-                variant="outlined"
-              ></v-text-field>
+              <v-text-field hide-details density="compact" color="primary" class="bg-background-tertiary w-[28rem]" label="Username*" v-model="username" variant="outlined"></v-text-field>
+              <v-text-field hide-details density="compact" color="primary" class="bg-background-tertiary w-[28rem]" label="Password*" v-model="password" variant="outlined"></v-text-field>
             </div>
           </v-card-text>
           <v-card-actions>
@@ -50,20 +34,17 @@ const password = ref("");
                 @click="
                   async () => {
                     const res = await login(username, password);
-                    if (res) navigateTo('/', { redirectCode: 302 });
+                    if (res) navigateTo('/', {redirectCode: 302});
                   }
                 "
-                >Login</v-btn
               >
+                Login
+              </v-btn>
             </div>
           </v-card-actions>
         </span>
         <span class="lg:w-1/3 hidden lg:flex items-center justify-center">
-          <v-icon
-            class="text-secondary"
-            icon="mdi-door-closed"
-            size="200"
-          ></v-icon>
+          <v-icon class="text-secondary" icon="mdi-door-closed" size="200"></v-icon>
         </span>
       </div>
     </v-card>

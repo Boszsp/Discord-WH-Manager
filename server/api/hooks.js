@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import {PrismaClient} from "@prisma/client";
 import AES from "crypto-js/aes";
 import UTF8 from "crypto-js/enc-utf8";
 
@@ -9,7 +9,7 @@ async function getHooks(prisma, session) {
       name: true,
       link: true,
     },
-    where: { ownerId: session.data.s_id },
+    where: {ownerId: session.data.s_id},
   });
   hooks.map((i) => {
     if (i.link) {
@@ -17,7 +17,7 @@ async function getHooks(prisma, session) {
     }
     return i;
   });
-  return { status: 200, hooks };
+  return {status: 200, hooks};
 }
 
 async function createHooks(prisma, data, session) {
@@ -27,21 +27,21 @@ async function createHooks(prisma, data, session) {
     }
     return i;
   });
-  const result = await prisma.hookLink.createMany({ data });
-  return { status: 200, result };
+  const result = await prisma.hookLink.createMany({data});
+  return {status: 200, result};
 }
 
 async function updateHook(prisma, id, data, session) {
   if (data.link) {
     data.link = AES.encrypt(data.link, session.data.s_pubkey).toString();
   }
-  const result = await prisma.hookLink.update({ where: { id }, data });
-  return { status: 200, result };
+  const result = await prisma.hookLink.update({where: {id}, data});
+  return {status: 200, result};
 }
 
 async function deleteHook(prisma, id) {
-  const result = await prisma.hookLink.delete({ where: { id } });
-  return { status: 200, result };
+  const result = await prisma.hookLink.delete({where: {id}});
+  return {status: 200, result};
 }
 
 export default defineEventHandler(async (event) => {
@@ -50,10 +50,10 @@ export default defineEventHandler(async (event) => {
   const session = await useSession(event, {
     password: runtimeConfig.backendPassword,
   });
-  const body = await readBody(event).catch(() => ({ data: [] }));
+  const body = await readBody(event).catch(() => ({data: []}));
   if (!session?.data?.s_id) {
     setResponseStatus(event, 401, "Unauthorized");
-    return { status: 401, mss: "unauthorized" };
+    return {status: 401, mss: "unauthorized"};
   }
 
   if (event.method == "GET") {
@@ -67,7 +67,7 @@ export default defineEventHandler(async (event) => {
           return i;
         })
         .filter((i) => i.name.length > 0 && i.link.length > 0),
-      session,
+      session
     );
   } else if (event.method == "PATCH") {
     return await updateHook(prisma, body.id, body.data, session);

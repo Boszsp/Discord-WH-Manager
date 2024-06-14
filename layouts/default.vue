@@ -40,8 +40,9 @@ const navs = [
             }
           "
           size="small"
-          >{{ i.title }}</v-btn
         >
+          {{ i.title }}
+        </v-btn>
       </div>
     </v-app-bar-title>
     <template v-slot:append>
@@ -62,7 +63,7 @@ const navs = [
           @click="
             async () => {
               await logout();
-              await navigateTo('/', { redirectCode: 302 });
+              await navigateTo('/', {redirectCode: 302});
               refresh();
             }
           "
