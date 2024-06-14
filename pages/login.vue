@@ -1,4 +1,6 @@
 <script setup>
+const img = useImage();
+
 definePageMeta({
   layout: "blank",
 });
@@ -6,7 +8,7 @@ const username = ref("");
 const password = ref("");
 </script>
 <template>
-  <div class="w-screen h-screen flex items-center justify-center">
+  <div class="w-screen h-screen flex items-center justify-center" :style="{backgroundImage: 'url(' + img('/login-bg.png', {format: 'webp'}) + ')'}">
     <v-card elevation="4" class="bg-background w-[48rem] flex">
       <div class="flex">
         <span class="lg:w-2/3 w-full">
@@ -43,8 +45,8 @@ const password = ref("");
             </div>
           </v-card-actions>
         </span>
-        <span class="lg:w-1/3 hidden lg:flex items-center justify-center">
-          <v-icon class="text-secondary" icon="mdi-door-closed" size="200"></v-icon>
+        <span class="lg:w-1/3 hidden lg:flex items-center justify-center p-2 pr-8">
+          <NuxtImg format="webp" class="rounded" size="1rem" src="/door.png" />
         </span>
       </div>
     </v-card>
