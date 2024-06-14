@@ -7,7 +7,7 @@ export default defineEventHandler(async (event) => {
   });
   if (!session.data.s_id) {
     setResponseStatus(event, 401, "Unauthorized");
-    return { status: 401, mss: "unauthorized" };
+    return {status: 401, mss: "unauthorized"};
   }
   /*const user = await prisma.user.findUnique({
     select: { id: true, username: true },
@@ -15,6 +15,6 @@ export default defineEventHandler(async (event) => {
   });*/
   return {
     status: 200,
-    user: { id: session.data.s_id, username: session.data.s_username },
+    user: {id: session.data.s_id, username: session.data.s_username},
   };
 });

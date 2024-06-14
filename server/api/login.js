@@ -1,14 +1,12 @@
-import { PrismaClient } from "@prisma/client";
+import {PrismaClient} from "@prisma/client";
 import SHA256 from "crypto-js/sha256";
 
 function generateRandomString(length = 16) {
-  const characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   const charactersLength = characters.length;
   let result = "";
   for (let i = 0; i < length; i++) {
-    const randomIndex =
-      crypto.getRandomValues(new Uint32Array(1))[0] % charactersLength;
+    const randomIndex = crypto.getRandomValues(new Uint32Array(1))[0] % charactersLength;
     result += characters.charAt(randomIndex);
   }
   return result;
@@ -16,8 +14,8 @@ function generateRandomString(length = 16) {
 
 export default defineEventHandler(async (event) => {
   const prisma = new PrismaClient();
-  const { username, password } = getQuery(event);
-  const body = await readBody(event).catch(() => ({ data: [] }));
+  const {username, password} = getQuery(event);
+  const body = await readBody(event).catch(() => ({data: []}));
 
   const runtimeConfig = useRuntimeConfig();
   const session = await useSession(event, {
@@ -28,10 +26,9 @@ export default defineEventHandler(async (event) => {
     return "already login";
   }
 
-  if (!((username && password) || (body.username && body.password)))
-    return { staus: 500, mss: "server error" };
+  if (!((username && password) || (body.username && body.password))) return {staus: 500, mss: "server error"};
   const user = await prisma.user.findUnique({
-    where: { username: username ?? body.username },
+    where: {username: username ?? body.username},
   });
   if (user && user.password === SHA256(password ?? body.password).toString()) {
     let publicKey = user.publicKey;
@@ -53,9 +50,9 @@ export default defineEventHandler(async (event) => {
       s_username: user.username,
       s_pubkey: publicKey,
     });
-    return { status: 200, mss: "login success" };
-  } else if (user) return { status: 406, mss: "password miss match" };
+    return {status: 200, mss: "login success"};
+  } else if (user) return {status: 406, mss: "password miss match"};
 
   setResponseStatus(event, 404, "Not Found");
-  return { status: 404, mss: "not found user" };
+  return {status: 404, mss: "not found user"};
 });

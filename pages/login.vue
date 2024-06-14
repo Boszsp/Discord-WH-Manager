@@ -1,4 +1,6 @@
 <script setup>
+const img = useImage();
+
 definePageMeta({
   layout: "blank",
 });
@@ -6,7 +8,7 @@ const username = ref("");
 const password = ref("");
 </script>
 <template>
-  <div class="w-screen h-screen flex items-center justify-center">
+  <div class="w-screen h-screen flex items-center justify-center" :style="{backgroundImage: 'url(' + img('/login-bg.png', {format: 'webp'}) + ')'}">
     <v-card elevation="4" class="bg-background w-[48rem] flex">
       <div class="flex">
         <span class="lg:w-2/3 w-full">
@@ -21,24 +23,8 @@ const password = ref("");
 
           <v-card-text>
             <div class="flex flex-col items-center mt-4 gap-6">
-              <v-text-field
-                hide-details
-                density="compact"
-                color="primary"
-                class="bg-background-tertiary w-[28rem]"
-                label="Username*"
-                v-model="username"
-                variant="outlined"
-              ></v-text-field>
-              <v-text-field
-                hide-details
-                density="compact"
-                color="primary"
-                class="bg-background-tertiary w-[28rem]"
-                label="Password*"
-                v-model="password"
-                variant="outlined"
-              ></v-text-field>
+              <v-text-field hide-details density="compact" color="primary" class="bg-background-tertiary w-[28rem]" label="Username*" v-model="username" variant="outlined"></v-text-field>
+              <v-text-field hide-details density="compact" color="primary" class="bg-background-tertiary w-[28rem]" label="Password*" v-model="password" variant="outlined"></v-text-field>
             </div>
           </v-card-text>
           <v-card-actions>
@@ -50,20 +36,17 @@ const password = ref("");
                 @click="
                   async () => {
                     const res = await login(username, password);
-                    if (res) navigateTo('/', { redirectCode: 302 });
+                    if (res) navigateTo('/', {redirectCode: 302});
                   }
                 "
-                >Login</v-btn
               >
+                Login
+              </v-btn>
             </div>
           </v-card-actions>
         </span>
-        <span class="lg:w-1/3 hidden lg:flex items-center justify-center">
-          <v-icon
-            class="text-secondary"
-            icon="mdi-door-closed"
-            size="200"
-          ></v-icon>
+        <span class="lg:w-1/3 hidden lg:flex items-center justify-center p-2 pr-8">
+          <NuxtImg format="webp" class="rounded" size="1rem" src="/door.png" />
         </span>
       </div>
     </v-card>
