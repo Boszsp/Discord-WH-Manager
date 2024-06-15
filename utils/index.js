@@ -1,6 +1,8 @@
 import {toast} from "vue-sonner";
 export async function createHooks(hooks) {
   if (!(hooks && hooks[0].link && hooks[0].name)) {
+    toast.error("Create Error");
+
     return false;
   }
   const res = await $fetch("/api/hooks", {
@@ -8,28 +10,37 @@ export async function createHooks(hooks) {
     body: {data: hooks.concat()},
     retry: 0,
   });
+  toast.success("Create Success");
+
   return res;
 }
 
 export async function deleteHook(id) {
   if (!id) {
+    toast.error("Delete Error");
+
     return false;
   }
   const res = await $fetch("/api/hooks", {
     method: "DELETE",
     body: {id},
   });
+  toast.success("Delete Success");
+
   return res;
 }
 
 export async function editHook(id, data) {
   if (!id) {
+    toast.error("Edit Error");
+
     return false;
   }
   const res = await $fetch("/api/hooks", {
     method: "PATCH",
     body: {id, data},
   });
+  toast.success("Edit Success");
   return data;
 }
 
@@ -67,52 +78,117 @@ export async function logout() {
 }
 
 export function colorCodeToInteger(colorCode) {
-    // Ensure the color code starts with a '#' and is followed by 6 hexadecimal characters
-    if (typeof colorCode === 'string' && colorCode.startsWith('#') && colorCode.length === 7) {
-      // Parse the hexadecimal part of the string to an integer
-      return parseInt(colorCode.slice(1), 16);
-    }
-    // Return null or throw an error if the input is invalid
-    return null; // or throw new Error('Invalid color code');
+  // Ensure the color code starts with a '#' and is followed by 6 hexadecimal characters
+  if (typeof colorCode === "string" && colorCode.startsWith("#") && colorCode.length === 7) {
+    // Parse the hexadecimal part of the string to an integer
+    return parseInt(colorCode.slice(1), 16);
   }
+  // Return null or throw an error if the input is invalid
+  return null; // or throw new Error('Invalid color code');
+}
 
 export function cleanUpBlank(obj) {
-    for (let k in obj) {
-        if(k == "content")continue
-        if(k=="color")obj[k]=colorCodeToInteger(obj[k])
-      if (!obj[k] || obj[k]?.length < 1) {
+  for (let k in obj) {
+    if (k == "content") continue;
+
+    if (k == "color") obj[k] = colorCodeToInteger(obj[k]);
+    if (!obj[k] || obj[k]?.length < 1) {
+      delete obj[k];
+    } else if (typeof obj[k] == "object" && !obj[k]?.map) {
+      cleanUpBlank(obj[k]);
+      if (Object.keys(obj[k]).length < 1) {
         delete obj[k];
-      } else if (typeof obj[k] == "object" && !obj[k]?.map) {
-        cleanUpBlank(obj[k]);
-        if(Object.keys(obj[k]).length < 1  ){
-            delete obj[k];
-        }
-      } else if (typeof obj[k] == "object") {
-        obj[k].map((i) => cleanUpBlank(i));
-        obj[k] = obj[k].filter((i)=>!(Object.keys(i).length < 1 || (Object.keys(i).length == 1 && Object.keys(i) == "color")))
-        if(obj[k].length < 1)delete obj[k];
       }
+    } else if (typeof obj[k] == "object") {
+      obj[k].map((i) => cleanUpBlank(i));
+      obj[k] = obj[k].filter((i) => !(Object.keys(i).length < 1 || (Object.keys(i).length == 1 && Object.keys(i) == "color")));
+      if (obj[k].length < 1) delete obj[k];
     }
-    return obj;
   }
+  return obj;
+}
 
+export function formatFileSize(sizeInBytes) {
+  if (sizeInBytes < 1024) {
+    return `${sizeInBytes} bytes`;
+  } else if (sizeInBytes < 1024 * 1024) {
+    return `${(sizeInBytes / 1024).toFixed(2)} KB`;
+  } else if (sizeInBytes < 1024 * 1024 * 1024) {
+    return `${(sizeInBytes / (1024 * 1024)).toFixed(2)} MB`;
+  } else {
+    return `${(sizeInBytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
+  }
+}
 
-
-export async function sendToProxyD(url, json) {
-  
+export async function sendToProxyD(url, json, files) {
   const njson = JSON.parse(JSON.stringify(json));
   //njson?.embeds?.map((i) => cleanUpBlank(i));
-  cleanUpBlank(njson)
-  //console.log(JSON.stringify(njson))
-  const data = await $fetch("/api/proxy",{
-        method:"POST",
-        body: {
-            url,
-            json:Object.assign({}, njson)
-        }
+  cleanUpBlank(njson);
+  const filesForm = new FormData();
+  filesForm.append("url", url);
+  let count = 0;
+  for (const file of files) {
+    filesForm.append("files", file, file.name);
+    count++;
+  }
+  let data = null;
+  if (njson.content) {
+    data = await $fetch("/api/proxy", {
+      method: "POST",
+      body: {
+        url,
+        json: Object.assign({}, njson),
+      },
     })
-    if(data && data.status%100 == 2){
-        toast.success('Sending Success')
-    }
+      .then(async () => {
+        if (files)
+          await $fetch("/api/proxy", {
+            method: "POST",
+            body: filesForm,
+          });
+      })
+      .catch(() => {
+        toast.error("Sending Fail");
+      });
+  } else if (files) {
+    data = await $fetch("/api/proxy", {
+      method: "POST",
+      body: filesForm,
+    }).catch(() => {
+      toast.error("Sending Fail");
+    });
+  }
+
+  console.log(data);
+  if (data && data.status % 100 == 2) {
+    toast.success("Sending Success");
+  }
   return data;
+}
+
+export async function getFileFromClipboard() {
+  try {
+    // Request clipboard access
+    const clipboardItems = await navigator.clipboard.read();
+
+    for (const item of clipboardItems) {
+      // Check if the clipboard item has any file types
+      if (item.types.includes("image/png") || item.types.includes("image/jpeg") || item.types.includes("image/gif") || item.types.includes("application/pdf")) {
+        // Get the file from the clipboard item
+        const blob = await item.getType(item.types[1]);
+
+        // Create a File object from the Blob
+        const file = new File([blob], blob?.name ?? "clipboard-file." + blob.type.split("/")[1], {type: blob.type});
+
+        // Return the file
+        return file;
+      }
+    }
+
+    // No file found in the clipboard
+    return null;
+  } catch (error) {
+    console.error("Failed to read clipboard contents: ", error);
+    return null;
+  }
 }
