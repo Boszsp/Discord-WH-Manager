@@ -13,6 +13,10 @@ const navs = [
     title: "Hooks",
     path: "/hooks",
   },
+  {
+    title: "Prefix",
+    path: "/prefix",
+  },
 ];
 </script>
 

@@ -6,7 +6,7 @@ async function getJaPrefixs(prisma, session) {
 }
 
 async function createJaPrefixs(prisma, data) {
-  const result = await prisma.jaPrefix.createMany({data});
+  const result = await prisma.jaPrefix.createMany({data: data});
   return {status: 200, result};
 }
 
