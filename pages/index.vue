@@ -2,11 +2,13 @@
 const {data: hooks} = useFetch("/api/hooks");
 
 const hook_url = ref("");
+const files = ref(null);
 const hookJson = ref({
-  username: "Captain Hook",
+  username: "",
   avatar_url: "",
   content: "ไลน์ เอาท์ดอร์มาร์เก็ตติ้งแยมโรล ราสเบอร์รีไลท์ภูมิทัศน์",
   embeds: [],
+  files: [],
 });
 
 function submitHandler() {
@@ -14,9 +16,9 @@ function submitHandler() {
     return i.name + "-" + i.id == hook_url.value;
   });
   if (url && url[0] && url[0].link) {
-    sendToProxyD(url[0].link, hookJson.value);
+    sendToProxyD(url[0].link, hookJson.value, files.value);
   } else if (hook_url && hook_url.value) {
-    sendToProxyD(hook_url.value,hookJson.value);
+    sendToProxyD(hook_url.value, hookJson.value, files.value);
   }
 }
 
@@ -27,7 +29,7 @@ function addEmbed() {
     author: {
       name: "",
       url: "",
-      icon_url:"",
+      icon_url: "",
     },
     title: "",
     description: "",
@@ -37,7 +39,7 @@ function addEmbed() {
     footer: {
       text: "",
       icon_url: "",
-      timestamp:"",
+      timestamp: "",
     },
     thumbnail: {
       url: "",
@@ -49,7 +51,7 @@ function addEmbed() {
 <template>
   <div class="p-6">
     <v-row no-gutters class="h-full">
-      <v-col cols="12" md="6">
+      <v-col order="2" cols="12" md="6">
         <div class="flex flex-col gap-6 md:pr-4">
           <div class="flex gap-2 items-center">
             <v-combobox variant="outlined" color="primary" v-model="hook_url" hide-details density="compact" label="Hook" class="bg-component-background" :items="hooks ? hooks.hooks.map((i) => i.name + '-' + i.id) : []"></v-combobox>
@@ -69,7 +71,7 @@ function addEmbed() {
             </v-expansion-panel>
           </v-expansion-panels>
 
-          <v-file-input label="File input" color="primary" density="compact" variant="outlined" hide-details></v-file-input>
+          <v-file-input chips v-model="files" multiple label="File input" color="primary" density="compact" variant="outlined" hide-details></v-file-input>
 
           <v-divider></v-divider>
 
@@ -102,13 +104,16 @@ function addEmbed() {
         </div>
       </v-col>
       <v-spacer />
-      <v-col cols="12" md="6">
-        <div class="lg:pl-4">
+      <v-col order="1" order-md="2" cols="12" md="6">
+        <div class="max-lg:mb-8 lg:pl-4">
           <v-sheet border class="bg-transparent p-4" rounded>
             <Preview :avatarURL="hookJson?.avatar_url?.length > 6 ? hookJson?.avatar_url : null" :username="hookJson?.username" :content="hookJson?.content">
               <div class="flex flex-col gap-2">
                 <div class="w-fit" v-for="embed in hookJson.embeds">
                   <Embed :data="embed" />
+                </div>
+                <div v-for="file in files">
+                  <File :data="file" />
                 </div>
               </div>
             </Preview>

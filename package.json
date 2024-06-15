@@ -8,7 +8,7 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "format": "prettier --write app.vue server/* pages/* components/* layouts/*"
+    "format": "prettier --write app.vue error.vue utils/* server/* pages/* components/* layouts/*"
   },
   "devDependencies": {
     "@nuxt/image": "^1.7.0",
