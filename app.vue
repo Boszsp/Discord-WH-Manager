@@ -4,9 +4,11 @@ import {Toaster} from "vue-sonner";
 <template>
   <NuxtLoadingIndicator color="#5864f2" />
   <v-app>
-    <Toaster position="top-right" richColors theme="dark" />
-    <NuxtLayout>
-      <NuxtPage />
-    </NuxtLayout>
+    <v-theme-provider class="h-full" theme="dark" with-background>
+      <Toaster position="top-right" richColors theme="dark" />
+      <NuxtLayout>
+        <NuxtPage />
+      </NuxtLayout>
+    </v-theme-provider>
   </v-app>
 </template>
