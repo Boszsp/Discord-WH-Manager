@@ -1,6 +1,6 @@
 <script setup>
 const emit = defineEmits(["refresh"]);
-const props = defineProps({title: String, headers: Object, data: Object});
+const props = defineProps({title: String, headers: Object, data: Object, isLoading: Boolean});
 const search = ref("");
 </script>
 
@@ -26,6 +26,6 @@ const search = ref("");
       </span>
     </div>
     <v-divider></v-divider>
-    <v-data-table :headers="headers" class="bg-component-background" :items="data" :search="search" :loading="pending"></v-data-table>
+    <v-data-table :headers="headers" class="bg-component-background" :items="data" :search="search" :loading="isLoading"></v-data-table>
   </v-sheet>
 </template>
