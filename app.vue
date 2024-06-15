@@ -1,5 +1,8 @@
 <script setup>
 import {Toaster} from "vue-sonner";
+useSeoMeta({
+  title: "Discord WH Manager",
+});
 </script>
 <template>
   <NuxtLoadingIndicator color="#5864f2" />

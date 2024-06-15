@@ -1,4 +1,8 @@
 <script setup>
+const config = useRuntimeConfig();
+const url = useRequestURL();
+const router = useRouter();
+
 const {data: hooks} = useFetch("/api/hooks");
 
 const hook_url = ref("");
@@ -8,7 +12,21 @@ const hookJson = ref({
   avatar_url: "",
   content: "ไลน์ เอาท์ดอร์มาร์เก็ตติ้งแยมโรล ราสเบอร์รีไลท์ภูมิทัศน์",
   embeds: [],
+  thread_name: "",
 });
+if (config.public.paramDataMode) {
+  onBeforeMount(() => {
+    if (url.searchParams.get("d")) {
+      try {
+        decodeURIComponent(window.atob(url.searchParams.get("d")));
+        Object.assign(hookJson.value, JSON.parse(decodeURIComponent(window.atob(url.searchParams.get("d")))));
+      } catch {}
+    }
+  });
+  watch(hookJson.value, (n) => {
+    router.push({query: {d: window.btoa(encodeURIComponent(JSON.stringify(n)))}});
+  });
+}
 
 function submitHandler() {
   const url = hooks?.value?.hooks?.filter((i) => {
@@ -62,17 +80,22 @@ function addEmbed() {
 
           <v-textarea color="primary" density="compact" :label="'Content (' + hookJson?.content?.length + '/2000)'" maxlength="2000" variant="outlined" hide-details class="bg-component-background" v-model="hookJson.content"></v-textarea>
 
-          <v-expansion-panels color="background" variant="accordion">
+          <v-expansion-panels color="background" variant="accordion" multiple>
             <v-expansion-panel title="Profile">
               <v-expansion-panel-text class="bg-background">
                 <v-text-field :label="'Username (' + hookJson?.username?.length + '/80)'" maxlength="80" color="primary" density="compact" variant="outlined" hide-details class="bg-component-background mb-6" v-model="hookJson.username"></v-text-field>
                 <v-text-field label="Avatar URL" color="primary" density="compact" variant="outlined" hide-details class="bg-component-background" v-model="hookJson.avatar_url"></v-text-field>
               </v-expansion-panel-text>
             </v-expansion-panel>
+            <v-expansion-panel title="Thread">
+              <v-expansion-panel-text class="bg-background">
+                <v-text-field :label="'Thread Name (' + hookJson?.thread_name?.length + '/100)'" maxlength="80" color="primary" density="compact" variant="outlined" hide-details class="bg-component-background mb-6" v-model="hookJson.thread_name"></v-text-field>
+              </v-expansion-panel-text>
+            </v-expansion-panel>
           </v-expansion-panels>
 
           <div class="flex gap-2 items-center">
-            <v-file-input @update:modelValue="(nf) => (files = files.concat(nf))" chips :model-value="files" multiple label="File input" color="primary" density="compact" variant="outlined" hide-details></v-file-input>
+            <v-file-input @click:clear="() => (files = [])" @update:modelValue="(nf) => (files = files.concat(nf))" chips :model-value="files" multiple label="File input" color="primary" density="compact" variant="outlined" hide-details></v-file-input>
             <v-btn
               variant="flat"
               @click="
@@ -110,12 +133,12 @@ function addEmbed() {
               />
             </div>
             <div :class="hookJson?.embeds?.length > 0 ? 'mt-6' : ''">
-              <v-btn @click="addEmbed" color="primary" variant="flat">Add Embed</v-btn>
+              <v-btn :disabled="hookJson?.embeds?.length > 9" @click="addEmbed" color="primary" variant="flat">Add Embed</v-btn>
             </div>
           </div>
 
           <v-divider></v-divider>
-          <v-textarea disabled rows="3" label="JSON Preview" auto-grow variant="outlined" bg-color="background-tertiary" flat readonly :model-value="JSON.stringify(hookJson, undefined, 4)"></v-textarea>
+          <v-textarea rows="3" label="JSON Preview" auto-grow variant="outlined" bg-color="background-tertiary" flat readonly :model-value="JSON.stringify(hookJson, undefined, 4)"></v-textarea>
         </div>
       </v-col>
       <v-spacer></v-spacer>

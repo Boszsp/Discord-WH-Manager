@@ -7,7 +7,7 @@ const props = defineProps({
 </script>
 <template>
   <v-expansion-panels color="background">
-    <v-expansion-panel :title="'Embed' + props.id" class="border-l-4" :style="{borderColor: model.color}">
+    <v-expansion-panel :title="'Embed' + (props.id + 1)" class="border-l-4" :style="{borderColor: model.color}">
       <v-expansion-panel-text class="bg-background">
         <v-expansion-panels variant="accordion" multiple color="background" class="border-l-4 border-background-secondary">
           <EmbedEditorAuthor v-model="model" />
