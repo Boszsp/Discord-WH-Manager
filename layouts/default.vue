@@ -17,6 +17,10 @@ const navs = [
     title: "Prefix",
     path: "/prefix",
   },
+  {
+    title: "Tool",
+    path: "/tool",
+  },
 ];
 </script>
 
