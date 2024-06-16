@@ -1,4 +1,5 @@
 <script setup>
+import sanitizeHtml from "sanitize-html";
 const img = useImage();
 
 const props = defineProps({
@@ -6,6 +7,8 @@ const props = defineProps({
   avatarURL: String,
   content: String,
 });
+
+const clean_content = computed(() => sanitizeHtml(props.content));
 </script>
 <template>
   <div class="flex gap-2">
@@ -21,7 +24,7 @@ const props = defineProps({
         <sub>{{ new Date().toLocaleString("th") }}</sub>
       </div>
       <div>
-        <div class="" v-html="props.content"></div>
+        <div class="" v-html="clean_content"></div>
         <slot />
       </div>
     </span>

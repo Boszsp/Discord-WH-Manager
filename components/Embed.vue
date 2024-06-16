@@ -29,8 +29,8 @@ const props = defineProps({
         </div>
       </span>
       <span class="p-4 pl-2 w-2/12">
-      <NuxtImg class="rounded " :src="props?.data?.thumbnail?.url" />
-    </span>
+        <NuxtImg class="rounded" :src="props?.data?.thumbnail?.url" />
+      </span>
     </div>
   </v-sheet>
 </template>
