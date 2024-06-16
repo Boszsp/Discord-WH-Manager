@@ -6,8 +6,8 @@ const props = defineProps({
 </script>
 <template>
   <v-sheet rounded class="bg-background-secondary rounded overflow-hidden">
-    <div class="border-l-4 px-2 border-primary" :style="{'border-color': data?.color}">
-      <div class="p-2 flex flex-col">
+    <div class="border-l-4 px-2 border-primary flex overflow-hidden" :style="{'border-color': data?.color}">
+      <span class="p-2 flex flex-col w-10/12">
         <a class="author flex items-center gap-2" :href="props?.data?.author?.url">
           <v-avatar v-if="props?.data?.author?.icon_url" :image="img(props?.data?.author?.icon_url, {format: 'webp'})" size="24"></v-avatar>
           <p class="font-bold text-xs">{{ data?.author?.name }}</p>
@@ -27,7 +27,10 @@ const props = defineProps({
             <p class="text-sm">{{ props?.data?.footer?.timestamp }}</p>
           </div>
         </div>
-      </div>
+      </span>
+      <span class="p-4 pl-2 w-2/12">
+      <NuxtImg class="rounded " :src="props?.data?.thumbnail?.url" />
+    </span>
     </div>
   </v-sheet>
 </template>
