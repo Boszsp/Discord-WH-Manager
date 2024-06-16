@@ -30,7 +30,6 @@ async function addHandler() {
   name.value = "";
   link.value = "";
 
-  console.log(data2);
   refresh();
 }
 </script>

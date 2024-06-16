@@ -1,4 +1,9 @@
 import {toast} from "vue-sonner";
+import TurndownService from "turndown"
+
+export const turndownService = new TurndownService({headingStyle:"atx"})
+
+
 export async function createHooks(hooks) {
   if (!(hooks && hooks[0].link && hooks[0].name)) {
     toast.error("Create Error");
@@ -122,6 +127,7 @@ export function formatFileSize(sizeInBytes) {
 
 export async function sendToProxyD(url, json, files) {
   const njson = JSON.parse(JSON.stringify(json));
+  njson.content = turndownService.turndown(njson?.content)
   //njson?.embeds?.map((i) => cleanUpBlank(i));
   cleanUpBlank(njson);
   const filesForm = new FormData();
@@ -140,12 +146,15 @@ export async function sendToProxyD(url, json, files) {
         json: Object.assign({}, njson),
       },
     })
-      .then(async () => {
-        if (files)
+      .then(async (r) => {
+        if (files && files?.length > 0){
           await $fetch("/api/proxy", {
             method: "POST",
             body: filesForm,
           });
+        }
+
+          return r
       })
       .catch(() => {
         toast.error("Sending Fail");
@@ -159,8 +168,8 @@ export async function sendToProxyD(url, json, files) {
     });
   }
 
-  console.log(data);
-  if (data && data.status % 100 == 2) {
+  console.log(data)
+  if (data && data.status / 100 == 2) {
     toast.success("Sending Success");
   }
   return data;
