@@ -8,6 +8,7 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
+    "check": "prettier --check app.vue error.vue utils/**/* server/**/* pages/**/* components/**/* layouts/**/*",
     "format": "prettier --write app.vue error.vue utils/* server/* pages/* components/* layouts/*",
     "db:studio": "prisma studio",
     "db:generate": "prisma generate",
@@ -15,6 +16,7 @@
     "db:push": "prisma db push"
   },
   "devDependencies": {
+    "@nuxt/eslint": "^0.3.13",
     "@nuxt/image": "^1.7.0",
     "@nuxtjs/tailwindcss": "^6.12.0",
     "@tailwindcss/typography": "^0.5.13",
