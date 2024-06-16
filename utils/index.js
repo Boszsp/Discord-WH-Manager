@@ -1,8 +1,6 @@
 import {toast} from "vue-sonner";
 import TurndownService from "turndown";
 
-
-
 export const turndownService = new TurndownService({headingStyle: "atx"});
 
 export function getHooks() {
@@ -83,13 +81,11 @@ export async function login(username, password) {
       password,
     },
     baseURL: configg.public.apiBase,
-  }).catch(
-    ()=>{
-      toast.error("Authentication Fail");
-      isAuth.value = false;
-    }
-  );
-  if (data && data.status/100 == 2) {
+  }).catch(() => {
+    toast.error("Authentication Fail");
+    isAuth.value = false;
+  });
+  if (data && data.status / 100 == 2) {
     toast.success("Authentication Success");
     isAuth.value = true;
   }

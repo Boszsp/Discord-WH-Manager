@@ -11,7 +11,7 @@ const password = ref("");
   <div class="w-screen h-screen flex items-center justify-center" :style="{backgroundImage: 'url(' + img('/bg-1.png', {format: 'webp', blur: 4}) + ')'}">
     <v-card elevation="4" class="bg-background w-[48rem] h-[26rem] m-2 lg:m-0">
       <div class="flex h-full items-center max-lg:justify-center">
-        <span class="lg:w-3/5  h-fit p-8 w-[28rem]">
+        <span class="lg:w-3/5 h-fit p-8 w-[28rem]">
           <v-card-item>
             <v-card-title>
               <p class="font-bold text-2xl text-center mt-6 mb-2">เข้าสู่ระบบ</p>

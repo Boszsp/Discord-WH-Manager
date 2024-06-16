@@ -26,9 +26,10 @@ export default defineEventHandler(async (event) => {
     return "already login";
   }
 
-  if (!((username && password) || (body.username && body.password))){ 
+  if (!((username && password) || (body.username && body.password))) {
     setResponseStatus(event, 500, "Internal Server Error");
-    return {staus: 500, mss: "server error"};}
+    return {staus: 500, mss: "server error"};
+  }
   const user = await prisma.user.findUnique({
     where: {username: username ?? body.username},
   });
@@ -53,9 +54,9 @@ export default defineEventHandler(async (event) => {
       s_pubkey: publicKey,
     });
     return {status: 200, mss: "login success"};
-  } else if (user){
+  } else if (user) {
     setResponseStatus(event, 406);
-   return {status: 406, mss: "password miss match"};
+    return {status: 406, mss: "password miss match"};
   }
 
   setResponseStatus(event, 404, "Not Found");
