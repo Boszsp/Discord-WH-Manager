@@ -10,7 +10,7 @@ const files = ref([]);
 const hookJson = ref({
   username: "",
   avatar_url: "",
-  content: "<p>ไลน์ เอาท์ดอร์มาร์เก็ตติ้งแยมโรล ราสเบอร์รีไลท์ภูมิทัศน์</p>",
+  content: "<p>Discord is great for playing games and chilling with friends, or even building a worldwide community. Customize your own space to talk, play, and hang out.</p>",
   embeds: [],
   thread_name: "",
 });
@@ -116,7 +116,7 @@ function addEmbed() {
           <div class="embed-editors">
             <div class="mt-2" v-for="(_, i) in hookJson?.embeds">
               <EmbedEditor
-                @syncClone="
+                @clone-sync="
                   (obj) => {
                     hookJson.embeds.push(obj);
                   }
@@ -133,6 +133,22 @@ function addEmbed() {
                 "
                 :id="i"
                 v-model="hookJson.embeds[i]"
+                @move:up="
+                  (id) => {
+                    if (id > 0) {
+                      let hold = hookJson.embeds.splice(id, 1);
+                      let hold2 = hookJson.embeds.splice(id - 1);
+                      hookJson.embeds = [...hookJson.embeds, ...hold, ...hold2];
+                    }
+                  }
+                "
+                @move:down="
+                  (id) => {
+                    let hold = hookJson.embeds.splice(id, 1);
+                    let hold2 = hookJson.embeds.splice(id + 1);
+                    hookJson.embeds = [...hookJson.embeds, ...hold, ...hold2];
+                  }
+                "
               />
             </div>
             <div :class="hookJson?.embeds?.length > 0 ? 'mt-6' : ''">

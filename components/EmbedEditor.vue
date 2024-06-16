@@ -1,6 +1,6 @@
 <script setup>
 const model = defineModel();
-const emit = defineEmits(["delete", "clone", "syncClone"]);
+const emit = defineEmits(["delete", "clone", "cloneSync", "move:up", "move:down"]);
 const props = defineProps({
   id: Number,
 });
@@ -47,16 +47,41 @@ const props = defineProps({
         <v-btn
           @click="
             () => {
-              emit('syncClone', model);
+              emit('cloneSync', model);
             }
           "
           size="small"
           class="mt-4 mr-2"
           variant="outlined"
           color="warning"
-          var
         >
           Sync Clone
+        </v-btn>
+        <v-btn
+          @click="
+            () => {
+              emit('move:up', props.id, model);
+            }
+          "
+          size="small"
+          class="mt-4 mr-2 opacity-75"
+          variant="outlined"
+          color=""
+        >
+          UP
+        </v-btn>
+        <v-btn
+          @click="
+            () => {
+              emit('move:down', props.id, model);
+            }
+          "
+          size="small"
+          class="mt-4 mr-2 opacity-75"
+          variant="outlined"
+          color=""
+        >
+          DOWN
         </v-btn>
       </v-expansion-panel-text>
     </v-expansion-panel>
