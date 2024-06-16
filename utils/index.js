@@ -1,5 +1,25 @@
 import {toast} from "vue-sonner";
+import TurndownService from "turndown";
+
+
+
+export const turndownService = new TurndownService({headingStyle: "atx"});
+
+export function getHooks() {
+  const configg = useRuntimeConfig();
+  return useFetch("/api/hooks", {
+    baseURL: configg.public.apiBase,
+  });
+}
+export function getPrefixs() {
+  const configg = useRuntimeConfig();
+  return useFetch("/api/japrefix", {
+    baseURL: configg.public.apiBase,
+  });
+}
+
 export async function createHooks(hooks) {
+  const configg = useRuntimeConfig();
   if (!(hooks && hooks[0].link && hooks[0].name)) {
     toast.error("Create Error");
 
@@ -8,7 +28,7 @@ export async function createHooks(hooks) {
   const res = await $fetch("/api/hooks", {
     method: "POST",
     body: {data: hooks.concat()},
-    retry: 0,
+    baseURL: configg.public.apiBase,
   });
   toast.success("Create Success");
 
@@ -16,6 +36,7 @@ export async function createHooks(hooks) {
 }
 
 export async function deleteHook(id) {
+  const configg = useRuntimeConfig();
   if (!id) {
     toast.error("Delete Error");
 
@@ -24,6 +45,7 @@ export async function deleteHook(id) {
   const res = await $fetch("/api/hooks", {
     method: "DELETE",
     body: {id},
+    baseURL: configg.public.apiBase,
   });
   toast.success("Delete Success");
 
@@ -31,6 +53,7 @@ export async function deleteHook(id) {
 }
 
 export async function editHook(id, data) {
+  const configg = useRuntimeConfig();
   if (!id) {
     toast.error("Edit Error");
 
@@ -39,13 +62,16 @@ export async function editHook(id, data) {
   const res = await $fetch("/api/hooks", {
     method: "PATCH",
     body: {id, data},
+    baseURL: configg.public.apiBase,
   });
   toast.success("Edit Success");
   return data;
 }
 
 export async function login(username, password) {
+  const configg = useRuntimeConfig();
   if (!username || !password) {
+    toast.warning("Username & Password cannot blank");
     return false;
   }
   const isAuth = useAuth();
@@ -56,8 +82,14 @@ export async function login(username, password) {
       username,
       password,
     },
-  });
-  if (data && data.status == 200) {
+    baseURL: configg.public.apiBase,
+  }).catch(
+    ()=>{
+      toast.error("Authentication Fail");
+      isAuth.value = false;
+    }
+  );
+  if (data && data.status/100 == 2) {
     toast.success("Authentication Success");
     isAuth.value = true;
   }
@@ -65,10 +97,12 @@ export async function login(username, password) {
 }
 
 export async function logout() {
+  const configg = useRuntimeConfig();
   const isAuth = useAuth();
   const data = await $fetch("/api/logout", {
     server: false,
     method: "POST",
+    baseURL: configg.public.apiBase,
   });
   if (data && data.status == 200) {
     toast.success("Logout Success");
@@ -121,7 +155,9 @@ export function formatFileSize(sizeInBytes) {
 }
 
 export async function sendToProxyD(url, json, files) {
+  const configg = useRuntimeConfig();
   const njson = JSON.parse(JSON.stringify(json));
+  njson.content = turndownService.turndown(njson?.content);
   //njson?.embeds?.map((i) => cleanUpBlank(i));
   cleanUpBlank(njson);
   const filesForm = new FormData();
@@ -134,24 +170,30 @@ export async function sendToProxyD(url, json, files) {
   let data = null;
   if (njson.content) {
     data = await $fetch("/api/proxy", {
+      baseURL: configg.public.apiBase,
       method: "POST",
       body: {
         url,
         json: Object.assign({}, njson),
       },
     })
-      .then(async () => {
-        if (files)
+      .then(async (r) => {
+        if (files && files?.length > 0) {
           await $fetch("/api/proxy", {
+            baseURL: configg.public.apiBase,
             method: "POST",
             body: filesForm,
           });
+        }
+
+        return r;
       })
       .catch(() => {
         toast.error("Sending Fail");
       });
   } else if (files) {
     data = await $fetch("/api/proxy", {
+      baseURL: configg.public.apiBase,
       method: "POST",
       body: filesForm,
     }).catch(() => {
@@ -160,7 +202,7 @@ export async function sendToProxyD(url, json, files) {
   }
 
   console.log(data);
-  if (data && data.status % 100 == 2) {
+  if (data && data.status / 100 == 2) {
     toast.success("Sending Success");
   }
   return data;

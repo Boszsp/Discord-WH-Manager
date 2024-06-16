@@ -3,14 +3,14 @@ const config = useRuntimeConfig();
 const url = useRequestURL();
 const router = useRouter();
 
-const {data: hooks} = useFetch("/api/hooks");
+const {data: hooks} = await getHooks();
 
 const hook_url = ref("");
 const files = ref([]);
 const hookJson = ref({
   username: "",
   avatar_url: "",
-  content: "ไลน์ เอาท์ดอร์มาร์เก็ตติ้งแยมโรล ราสเบอร์รีไลท์ภูมิทัศน์",
+  content: "<p>ไลน์ เอาท์ดอร์มาร์เก็ตติ้งแยมโรล ราสเบอร์รีไลท์ภูมิทัศน์</p>",
   embeds: [],
   thread_name: "",
 });
@@ -78,7 +78,10 @@ function addEmbed() {
 
           <v-divider></v-divider>
 
+          <!--
           <v-textarea color="primary" density="compact" :label="'Content (' + hookJson?.content?.length + '/2000)'" maxlength="2000" variant="outlined" hide-details class="bg-component-background" v-model="hookJson.content"></v-textarea>
+          -->
+          <Editor :title="'Content (' + turndownService.turndown(hookJson?.content)?.length + '/2000)'" v-model="hookJson.content"></Editor>
 
           <v-expansion-panels color="background" variant="accordion" multiple>
             <v-expansion-panel title="Profile">
@@ -138,7 +141,7 @@ function addEmbed() {
           </div>
 
           <v-divider></v-divider>
-          <v-textarea rows="3" label="JSON Preview" auto-grow variant="outlined" bg-color="background-tertiary" flat readonly :model-value="JSON.stringify(hookJson, undefined, 4)"></v-textarea>
+          <v-textarea rows="3" label="VALUE PREVIEW" auto-grow variant="outlined" bg-color="background-tertiary" flat readonly :model-value="JSON.stringify(hookJson, undefined, 4)"></v-textarea>
         </div>
       </v-col>
       <v-spacer></v-spacer>

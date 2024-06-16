@@ -21,7 +21,7 @@ const props = defineProps({
         <sub>{{ new Date().toLocaleString("th") }}</sub>
       </div>
       <div>
-        <p>{{ props.content }}</p>
+        <div class="" v-html="props.content"></div>
         <slot />
       </div>
     </span>

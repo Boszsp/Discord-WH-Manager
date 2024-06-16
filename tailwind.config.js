@@ -14,6 +14,8 @@ export default {
       info:"#05a8fc"
     }
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/typography'),
+  ],
 }
 

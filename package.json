@@ -9,15 +9,15 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "format": "prettier --write app.vue error.vue utils/* server/* pages/* components/* layouts/*",
-    "db:studio":"prisma studio",
-    "db:generate":"prisma generate",
-    "db:pull":"prisma db pull",
-    "db:push":"prisma db push"
-
+    "db:studio": "prisma studio",
+    "db:generate": "prisma generate",
+    "db:pull": "prisma db pull",
+    "db:push": "prisma db push"
   },
   "devDependencies": {
     "@nuxt/image": "^1.7.0",
     "@nuxtjs/tailwindcss": "^6.12.0",
+    "@tailwindcss/typography": "^0.5.13",
     "nuxt": "^3.12.1",
     "prettier": "3.3.2",
     "prisma": "^5.15.0",
@@ -29,7 +29,9 @@
   "dependencies": {
     "@mdi/font": "^7.4.47",
     "@prisma/client": "5.15.0",
+    "@vueup/vue-quill": "^1.2.0",
     "crypto-js": "^4.2.0",
+    "turndown": "^7.2.0",
     "vue-sonner": "^1.1.2"
   }
 }

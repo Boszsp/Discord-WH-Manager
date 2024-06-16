@@ -1,5 +1,8 @@
+<script setup>
+const config = useRuntimeConfig();
+</script>
 <template>
   <div class="m-6">
-    <FetchTool />
+    <FetchTool  />
   </div>
 </template>

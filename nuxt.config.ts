@@ -25,7 +25,8 @@ export default defineNuxtConfig({
     backendPassword: "xxxxxx-xxxx-xxxx-xxxx-xxxxxy",
     public: {
       bypassList: ["/"],
-      paramDataMode:false
+      paramDataMode:false,
+      apiBase:undefined
     },
   },
   build: {
