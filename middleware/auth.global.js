@@ -9,7 +9,7 @@ export default defineNuxtRouteMiddleware(async (to,from) => {
     // or only skip middleware on initial client load
     //const nuxtApp = useNuxtApp()
     //if (import.meta.client && nuxtApp.isHydrating && nuxtApp.payload.serverRendered) return
-    const {data,error} = await useFetch("/api/session",{server:false})
+    const {data,error} = await useFetch("/api/session",{server:false,baseURL:runtimeConfig.public.apiBase})
   
     if(error.value && to.path == "/login")return
     else if(data.value && to.path == "/login")return navigateTo({path:"/"})

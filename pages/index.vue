@@ -3,7 +3,7 @@ const config = useRuntimeConfig();
 const url = useRequestURL();
 const router = useRouter();
 
-const {data: hooks} = useFetch("/api/hooks");
+const {data: hooks} = await getHooks();
 
 const hook_url = ref("");
 const files = ref([]);
@@ -81,7 +81,7 @@ function addEmbed() {
           <!--
           <v-textarea color="primary" density="compact" :label="'Content (' + hookJson?.content?.length + '/2000)'" maxlength="2000" variant="outlined" hide-details class="bg-component-background" v-model="hookJson.content"></v-textarea>
           -->
-         <Editor :title="'Content (' + turndownService.turndown(hookJson?.content)?.length + '/2000)'" v-model="hookJson.content"></Editor>
+          <Editor :title="'Content (' + turndownService.turndown(hookJson?.content)?.length + '/2000)'" v-model="hookJson.content"></Editor>
 
           <v-expansion-panels color="background" variant="accordion" multiple>
             <v-expansion-panel title="Profile">

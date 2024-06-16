@@ -5,7 +5,7 @@ const headers = [
   {title: "Link", key: "link"},
   {title: "Action", key: "action"},
 ];
-const {data, pending, refresh} = await useFetch("/api/hooks");
+const {data, pending, refresh} = await getHooks("/api/hooks");
 function wrapupData() {
   data.value.hooks.map((i) => {
     i.action = false;

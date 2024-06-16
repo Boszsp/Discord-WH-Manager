@@ -8,11 +8,11 @@ const props = defineProps({title: String});
 
 <template>
   <ClientOnly>
-    <div >
-        <p class="text-sm opacity-70">{{ props?.title }}</p>
-        <div class="bg-component-background">
-      <QuillEditor rows="5" v-model:content="val" contentType="html" theme="snow" />
-    </div>
+    <div>
+      <p class="text-sm opacity-70">{{ props?.title }}</p>
+      <div class="bg-component-background">
+        <QuillEditor rows="5" v-model:content="val" contentType="html" theme="snow" />
+      </div>
     </div>
   </ClientOnly>
 </template>

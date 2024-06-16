@@ -8,7 +8,7 @@ useSeoMeta({
   <NuxtLoadingIndicator color="#5864f2" />
   <v-app>
     <v-theme-provider class="h-full" theme="dark" with-background>
-      <Toaster position="top-right" richColors theme="dark" />
+      <Toaster closeButton position="top-right" richColors theme="dark" />
       <NuxtLayout>
         <NuxtPage />
       </NuxtLayout>

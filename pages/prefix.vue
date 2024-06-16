@@ -1,5 +1,5 @@
 <script setup>
-const {data, refresh, pending} = await useFetch("/api/japrefix");
+const {data, refresh, pending} = await getPrefixs();
 const headers = [
   {title: "CODE", key: "code"},
   {title: "PREFIX", key: "prefix"},
