@@ -168,8 +168,12 @@ function addEmbed() {
             <v-sheet class="bg-transparent lg:p-4 lg:w-6/12">
               <Preview :avatarURL="hookJson?.avatar_url?.length > 6 ? hookJson?.avatar_url : null" :username="hookJson?.username" :content="hookJson?.content">
                 <div class="flex flex-col gap-2">
-                  <div class="w-fit" v-for="embed in hookJson.embeds">
-                    <Embed :data="embed" />
+                  <div class="w-fit" v-for="embed,i in hookJson.embeds">
+                    <Embed :data="embed" @delete="
+                  () => {
+                    hookJson.embeds.splice(i, 1);
+                  }
+                " />
                   </div>
                   <div v-for="(file, i) in files">
                     <File

@@ -26,7 +26,6 @@ const props = defineProps({
           class="mt-4 mr-2"
           variant="outlined"
           color="danger"
-          var
         >
           Delete
         </v-btn>
@@ -40,7 +39,6 @@ const props = defineProps({
           class="mt-4 mr-2"
           variant="outlined"
           color="primary"
-          var
         >
           Clone
         </v-btn>

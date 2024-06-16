@@ -3,11 +3,14 @@ const img = useImage();
 const props = defineProps({
   data: Object,
 });
+const emit = defineEmits(["delete"]);
+
 </script>
 <template>
+  <div class="flex">
   <v-sheet rounded class="bg-background-secondary rounded overflow-hidden">
     <div class="border-l-4 px-2 border-primary flex overflow-hidden" :style="{'border-color': data?.color}">
-      <span class="p-2 flex flex-col w-10/12">
+      <span :class="'p-2 flex flex-col ' + ( props?.data?.thumbnail?.url ? 'w-10/12' : 'w-full')">
         <a class="author flex items-center gap-2" :href="props?.data?.author?.url">
           <v-avatar v-if="props?.data?.author?.icon_url" :image="img(props?.data?.author?.icon_url, {format: 'webp'})" size="24"></v-avatar>
           <p class="font-bold text-xs">{{ data?.author?.name }}</p>
@@ -28,9 +31,14 @@ const props = defineProps({
           </div>
         </div>
       </span>
-      <span class="p-4 pl-2 w-2/12">
+      <span class="'p-4 pl-2 w-2/12" v-if="props?.data?.thumbnail?.url">
         <NuxtImg class="rounded" :src="props?.data?.thumbnail?.url" />
       </span>
     </div>
   </v-sheet>
+  <span>
+    <v-btn  @click="(e) => emit('delete', e)" size="x-small" variant="text" icon="mdi-close" color="" class="p-2"></v-btn>
+
+  </span>
+</div>
 </template>
