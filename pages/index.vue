@@ -10,7 +10,7 @@ const files = ref([]);
 const hookJson = ref({
   username: "",
   avatar_url: "",
-  content: "<p>ไลน์ เอาท์ดอร์มาร์เก็ตติ้งแยมโรล ราสเบอร์รีไลท์ภูมิทัศน์</p>",
+  content: "<p>Discord is great for playing games and chilling with friends, or even building a worldwide community. Customize your own space to talk, play, and hang out.</p>",
   embeds: [],
   thread_name: "",
 });
