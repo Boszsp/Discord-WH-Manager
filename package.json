@@ -31,6 +31,7 @@
     "@prisma/client": "5.15.0",
     "@vueup/vue-quill": "^1.2.0",
     "crypto-js": "^4.2.0",
+    "sanitize-html": "^2.13.0",
     "turndown": "^7.2.0",
     "vue-sonner": "^1.1.2"
   }
