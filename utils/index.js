@@ -122,6 +122,7 @@ export function cleanUpBlank(obj) {
     if (k == "content") continue;
 
     if (k == "color") obj[k] = colorCodeToInteger(obj[k]);
+    if( typeof obj[k] == "boolean" && (obj?.name?.length>0 || obj?.value?.length>0 ))continue;
     if (!obj[k] || obj[k]?.length < 1) {
       delete obj[k];
     } else if (typeof obj[k] == "object" && !obj[k]?.map) {

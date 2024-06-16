@@ -9,10 +9,22 @@ const props = defineProps({
   <v-expansion-panels color="background">
     <v-expansion-panel :title="'Embed' + (props.id + 1)" class="border-l-4" :style="{borderColor: model.color}">
       <v-expansion-panel-text class="bg-background">
-        <v-expansion-panels variant="accordion" multiple color="background" class="border-l-4 border-background-secondary">
+        <v-expansion-panels elevation="0" variant="accordion" multiple color="background">
           <EmbedEditorAuthor v-model="model" />
           <EmbedEditorBody v-model="model" />
           <EmbedEditorImage v-model="model" />
+          <v-expansion-panel title="Fileds">
+            <v-expansion-panel-text class="bg-background">
+              <v-expansion-panels v-for="(_, i) in model.fields" elevation="0" color="background">
+                
+                  <EmbedEditorField v-model="model.fields[i]" :id="i" />
+              
+          
+              </v-expansion-panels>
+              <v-btn @click="()=>model.fields.push({name:'',value:'',inline:false})" size="small" >Add Field</v-btn>
+
+            </v-expansion-panel-text>
+          </v-expansion-panel>
           <EmbedEditorFooter v-model="model" />
         </v-expansion-panels>
 
