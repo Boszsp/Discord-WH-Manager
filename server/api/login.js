@@ -34,7 +34,7 @@ export default defineEventHandler(async (event) => {
       where: {username: username ?? body.username},
     })
     .then(async (d) => {
-      if (body?.username && body?.password) return;
+      if (!body?.username && !body?.password) return;
       if (!d && runtimeConfig.username == body.username && runtimeConfig.password == body.password) {
         return await prisma.user.create({
           data: {username: runtimeConfig.username, password: SHA256(runtimeConfig.password).toString(), publicKey: generateRandomString(), privateKey: ""},
