@@ -25,14 +25,23 @@ export default defineEventHandler(async (event) => {
   if (session.data.s_id && session.data.s_password) {
     return "already login";
   }
-
   if (!((username && password) || (body.username && body.password))) {
     setResponseStatus(event, 500, "Internal Server Error");
     return {staus: 500, mss: "server error"};
   }
-  const user = await prisma.user.findUnique({
-    where: {username: username ?? body.username},
-  });
+  const user = await prisma.user
+    .findUnique({
+      where: {username: username ?? body.username},
+    })
+    .then(async (d) => {
+      if (!body?.username && !body?.password) return;
+      if (!d && runtimeConfig.username == body.username && runtimeConfig.password == body.password) {
+        return await prisma.user.create({
+          data: {username: runtimeConfig.username, password: SHA256(runtimeConfig.password).toString(), publicKey: generateRandomString(), privateKey: ""},
+        });
+      }
+      return d;
+    });
   if (user && user.password === SHA256(password ?? body.password).toString()) {
     let publicKey = user.publicKey;
     if (user && !user.publicKey) {
