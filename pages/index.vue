@@ -98,7 +98,7 @@ function move(id, values, type) {
         <div class="flex flex-col gap-6 md:pr-4">
           <div class="flex gap-2 items-center">
             <v-combobox variant="outlined" color="primary" v-model="hook_url" hide-details density="compact" label="Hook" class="bg-component-background" :items="hooks ? hooks.hooks.map((i) => i.name + '-' + i.id) : []"></v-combobox>
-            <v-btn @click="submitHandler" variant="flat" color="primary">Send</v-btn>
+            <v-btn prepend-icon="mdi-send" click="submitHandler" variant="flat" color="primary">Send</v-btn>
           </div>
 
           <v-divider></v-divider>
@@ -126,6 +126,7 @@ function move(id, values, type) {
             <v-file-input @click:clear="() => (files = [])" @update:modelValue="(nf) => (files = files.concat(nf))" chips :model-value="files" multiple label="File input" color="primary" density="compact" variant="outlined" hide-details></v-file-input>
             <v-btn
               variant="flat"
+              prepend-icon="mdi-clipboard-file"
               @click="
                 async () => {
                   const nfile = await getFileFromClipboard();
@@ -188,7 +189,7 @@ function move(id, values, type) {
               />
             </div>
             <div :class="hookJson?.embeds?.length > 0 ? 'mt-6' : ''">
-              <v-btn :disabled="hookJson?.embeds?.length > 9" @click="() => addEmbed()" color="primary" variant="flat">Add Embed</v-btn>
+              <v-btn prepend-icon="mdi-comment-plus" :disabled="hookJson?.embeds?.length > 9" @click="() => addEmbed()" color="primary" variant="flat">Add Embed</v-btn>
             </div>
           </div>
 

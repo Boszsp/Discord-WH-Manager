@@ -50,7 +50,7 @@ function fetching() {
         <h4 class="text-h6 font-bold">{{ title ?? "Fetch Test" }}</h4>
         <div class="flex gap-4 items-center">
           <v-text-field label="URL" color="primary" :disabled="props.disabled" density="compact" variant="outlined" v-model="murl" hide-details class="bg-component-background"></v-text-field>
-          <v-btn @click="fetching">Fetch</v-btn>
+          <v-btn variant="flat" prepend-icon="mdi-email-fast" @click="fetching">Fetch</v-btn>
         </div>
         <v-select v-if="!props?.method" v-model="method" label="Method" :items="['GET', 'POST', 'PATCH', 'DELETE']" variant="outlined" density="compact" hide-details></v-select>
         <v-textarea auto-grow rows="3" label="body" v-model="body" color="primary" density="compact" variant="outlined" hide-details class="bg-component-background"></v-textarea>

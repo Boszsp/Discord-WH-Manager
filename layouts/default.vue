@@ -38,7 +38,10 @@ const navs = [
     </template>
     <v-app-bar-title>
       <div class="flex gap-2 items-center">
-        <NuxtLink to="/" class="font-bold">DWH Manager</NuxtLink>
+        <NuxtLink to="/" class="font-bold">
+          <v-icon>mdi-message-text</v-icon>
+          DWH Manager
+        </NuxtLink>
         <v-divider class="ml-4" vertical></v-divider>
         <div class="hidden lg:flex gap-2">
           <v-btn
@@ -53,6 +56,7 @@ const navs = [
               }
             "
             size="small"
+            :prepend-icon="i.icon"
           >
             {{ i.title }}
           </v-btn>

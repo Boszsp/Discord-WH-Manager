@@ -39,7 +39,7 @@ async function addHandler() {
     <div class="flex items-center gap-4">
       <v-text-field hide-details density="compact" color="primary" class="bg-component-background" label="Name" v-model="name" variant="outlined"></v-text-field>
       <v-text-field hide-details density="compact" color="primary" class="bg-component-background" label="Link" v-model="link" variant="outlined"></v-text-field>
-      <v-btn elevation="0" @click="addHandler" color="primary">เพิ่ม</v-btn>
+      <v-btn prepend-icon="mdi-database-plus" elevation="0" @click="addHandler" color="primary">เพิ่ม</v-btn>
     </div>
     <v-text-field hide-details disabled density="compact" color="primary" class="bg-component-background mt-4" label="Publickey" v-model="pubKey" variant="outlined"></v-text-field>
   </div>
@@ -50,7 +50,7 @@ async function addHandler() {
         <span class="w-52">
           <v-text-field v-model="search" label="Search" color="primary" class="bg-background-tertiary" prepend-inner-icon="mdi-magnify" density="compact" variant="outlined" size="small" hide-details></v-text-field>
         </span>
-        <v-btn elevation="0" @click="refresh" color="primary">Refresh</v-btn>
+        <v-btn prepend-icon="mdi-refresh" elevation="0" @click="refresh" color="primary">Refresh</v-btn>
       </span>
     </div>
     <v-divider></v-divider>

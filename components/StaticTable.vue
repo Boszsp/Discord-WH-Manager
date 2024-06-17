@@ -13,13 +13,14 @@ const search = ref("");
           <v-text-field v-model="search" label="Search" color="primary" class="bg-background-tertiary" prepend-inner-icon="mdi-magnify" density="compact" variant="outlined" size="small" hide-details></v-text-field>
         </span>
         <v-btn
-          elevation="0"
+          variant="flat"
           @click="
             () => {
               emit('refresh');
             }
           "
           color="primary"
+          prepend-icon="mdi-refresh"
         >
           Refresh
         </v-btn>
