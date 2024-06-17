@@ -41,22 +41,22 @@ const navs = [
         <NuxtLink to="/" class="font-bold">DWH Manager</NuxtLink>
         <v-divider class="ml-4" vertical></v-divider>
         <div class="hidden lg:flex gap-2">
-        <v-btn
-          v-for="i in navs"
-          :variant="curPath == i.path ? 'tonal' : 'text'"
-          :key="i.title"
-          @click="
-            () => {
-              navigateTo(i.path).then(() => {
-                curPath = i.path;
-              });
-            }
-          "
-          size="small"
-        >
-          {{ i.title }}
-        </v-btn>
-      </div>
+          <v-btn
+            v-for="i in navs"
+            :variant="curPath == i.path ? 'tonal' : 'text'"
+            :key="i.title"
+            @click="
+              () => {
+                navigateTo(i.path).then(() => {
+                  curPath = i.path;
+                });
+              }
+            "
+            size="small"
+          >
+            {{ i.title }}
+          </v-btn>
+        </div>
       </div>
     </v-app-bar-title>
     <template v-slot:append>
