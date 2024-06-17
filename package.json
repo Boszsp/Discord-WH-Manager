@@ -11,7 +11,9 @@
     "check": "prettier --check app.vue error.vue utils/**/* server/**/* pages/**/* components/**/* layouts/**/*",
     "format": "prettier --write app.vue error.vue utils/* server/* pages/* components/* layouts/*",
     "db:studio": "prisma studio",
-    "db:generate": "prisma generate",
+    "db:gen": "prisma generate",
+    "db:mig:pro": "prisma migrate deploy",
+    "db:mig:dev": "prisma migrate dev",
     "db:pull": "prisma db pull",
     "db:push": "prisma db push"
   },
