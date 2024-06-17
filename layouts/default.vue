@@ -113,6 +113,7 @@ const navs = [
         density="comfortable"
         link
         :prepend-icon="nav.icon"
+        class="mt-4"
       >
         <v-tooltip activator="parent" location="end">{{ nav.title }}</v-tooltip>
       </v-list-item>
