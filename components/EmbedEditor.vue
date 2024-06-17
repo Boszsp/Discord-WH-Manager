@@ -7,8 +7,8 @@ const props = defineProps({
 </script>
 <template>
   <v-expansion-panels color="background">
-    <v-expansion-panel :title="'Embed' + (props.id + 1)" class="border-l-4" :style="{borderColor: model.color}">
-      <v-expansion-panel-text class="bg-background">
+    <v-expansion-panel :title="'Embed' + (props.id + 1)" class="border-l-4 bg-background" :style="{borderColor: model.color}">
+      <v-expansion-panel-text>
         <v-expansion-panels elevation="0" variant="accordion" multiple color="background">
           <EmbedEditorAuthor v-model="model" />
           <EmbedEditorBody v-model="model" />
@@ -24,6 +24,7 @@ const props = defineProps({
                     emit('add:field', model);
                   }
                 "
+                class="mt-6"
                 size="small"
               >
                 Add Field
@@ -32,7 +33,8 @@ const props = defineProps({
           </v-expansion-panel>
           <EmbedEditorFooter v-model="model" />
         </v-expansion-panels>
-
+      </v-expansion-panel-text>
+      <div class="px-6 pb-4">
         <v-btn
           @click="
             () => {
@@ -40,7 +42,7 @@ const props = defineProps({
             }
           "
           size="small"
-          class="mt-4 mr-2"
+          class="mr-2"
           variant="outlined"
           color="danger"
         >
@@ -53,7 +55,7 @@ const props = defineProps({
             }
           "
           size="small"
-          class="mt-4 mr-2"
+          class="mr-2"
           variant="outlined"
           color="primary"
         >
@@ -66,7 +68,7 @@ const props = defineProps({
             }
           "
           size="small"
-          class="mt-4 mr-2"
+          class="mr-2"
           variant="outlined"
           color="warning"
         >
@@ -79,7 +81,7 @@ const props = defineProps({
             }
           "
           size="small"
-          class="mt-4 mr-2 opacity-75"
+          class="mr-2 opacity-75"
           variant="outlined"
           color=""
         >
@@ -92,13 +94,13 @@ const props = defineProps({
             }
           "
           size="small"
-          class="mt-4 mr-2 opacity-75"
+          class="mr-2 opacity-75"
           variant="outlined"
           color=""
         >
           DOWN
         </v-btn>
-      </v-expansion-panel-text>
+      </div>
     </v-expansion-panel>
   </v-expansion-panels>
 </template>
