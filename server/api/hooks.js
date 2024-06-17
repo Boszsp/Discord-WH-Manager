@@ -1,6 +1,5 @@
 import {PrismaClient} from "@prisma/client";
-import AES from "crypto-js/aes";
-import UTF8 from "crypto-js/enc-utf8";
+import CryptoJS from "crypto-js";
 
 async function getHooks(prisma, session) {
   const hooks = await prisma.hookLink.findMany({
@@ -13,7 +12,7 @@ async function getHooks(prisma, session) {
   });
   hooks.map((i) => {
     if (i.link) {
-      i.link = AES.decrypt(i.link, session.data.s_pubkey).toString(UTF8);
+      i.link = CryptoJS.AES.decrypt(i.link, session.data.s_pubkey).toString(CryptoJS.UTF8);
     }
     return i;
   });
@@ -23,7 +22,7 @@ async function getHooks(prisma, session) {
 async function createHooks(prisma, data, session) {
   await data?.map((i) => {
     if (i.link) {
-      i.link = AES.encrypt(i.link, session.data.s_pubkey).toString();
+      i.link = CryptoJS.AES.encrypt(i.link, session.data.s_pubkey).toString();
     }
     return i;
   });
@@ -33,7 +32,7 @@ async function createHooks(prisma, data, session) {
 
 async function updateHook(prisma, id, data, session) {
   if (data.link) {
-    data.link = AES.encrypt(data.link, session.data.s_pubkey).toString();
+    data.link = CryptoJS.AES.encrypt(data.link, session.data.s_pubkey).toString();
   }
   const result = await prisma.hookLink.update({where: {id}, data});
   return {status: 200, result};

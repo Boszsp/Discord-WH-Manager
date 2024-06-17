@@ -1,5 +1,5 @@
 import {PrismaClient} from "@prisma/client";
-import SHA256 from "crypto-js/sha256";
+import CryptoJS from "crypto-js";
 
 function generateRandomString(length = 16) {
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -37,12 +37,12 @@ export default defineEventHandler(async (event) => {
       if (!body?.username && !body?.password) return;
       if (!d && runtimeConfig.username == body.username && runtimeConfig.password == body.password) {
         return await prisma.user.create({
-          data: {username: runtimeConfig.username, password: SHA256(runtimeConfig.password).toString(), publicKey: generateRandomString(), privateKey: ""},
+          data: {username: runtimeConfig.username, password: CryptoJS.SHA256(runtimeConfig.password).toString(), publicKey: generateRandomString(), privateKey: ""},
         });
       }
       return d;
     });
-  if (user && user.password === SHA256(password ?? body.password).toString()) {
+  if (user && user.password === CryptoJS.SHA256(password ?? body.password).toString()) {
     let publicKey = user.publicKey;
     if (user && !user.publicKey) {
       publicKey = generateRandomString();
@@ -57,7 +57,7 @@ export default defineEventHandler(async (event) => {
     }
     await session.update({
       s_id: user.id,
-      s_password: SHA256(password ?? body.password).toString(),
+      s_password: CryptoJS.SHA256(password ?? body.password).toString(),
       s_date: new Date(),
       s_username: user.username,
       s_pubkey: publicKey,
