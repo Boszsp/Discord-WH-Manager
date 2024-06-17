@@ -5,16 +5,12 @@ const props = defineProps({
 const formatFileds = computed(() => {
   let hold = [],
     countRow = 0;
-  props.fields.forEach((i, c) => {
-    if (!i.inline || !props.fields[c - 1].inline) {
-      if (hold[countRow]) countRow += 1;
-      hold[countRow] = [i];
-    } else if (i.inline) {
-      if (!hold[countRow]) {
-        hold[countRow] = [];
-      }
-      hold[countRow].push(i);
+  props.fields.forEach((field, index) => {
+    if (!field.inline || !index || !props.fields[index - 1].inline) {
+      countRow++;
     }
+    hold[countRow] = hold[countRow] || [];
+    hold[countRow].push(field);
   });
   return hold;
 });
