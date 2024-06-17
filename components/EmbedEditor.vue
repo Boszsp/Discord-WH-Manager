@@ -42,6 +42,7 @@ const props = defineProps({
                 />
               </v-expansion-panels>
               <v-btn
+                prepend-icon="mdi-plus-thick"
                 @click="
                   () => {
                     emit('add:field', model);
@@ -69,8 +70,9 @@ const props = defineProps({
           variant="outlined"
           color="danger"
         >
-          Delete
+          <v-icon>mdi-delete</v-icon>
         </v-btn>
+
         <v-btn
           @click="
             () => {
@@ -82,7 +84,7 @@ const props = defineProps({
           variant="outlined"
           color="primary"
         >
-          Clone
+          <v-icon>mdi-content-copy</v-icon>
         </v-btn>
         <v-btn
           @click="
@@ -95,7 +97,8 @@ const props = defineProps({
           variant="outlined"
           color="warning"
         >
-          Sync Clone
+          <v-icon>mdi-sync</v-icon>
+          <v-icon>mdi-content-copy</v-icon>
         </v-btn>
         <v-btn
           @click="
@@ -108,7 +111,7 @@ const props = defineProps({
           variant="outlined"
           color=""
         >
-          UP
+          <v-icon>mdi-arrow-up-bold</v-icon>
         </v-btn>
         <v-btn
           @click="
@@ -121,7 +124,7 @@ const props = defineProps({
           variant="outlined"
           color=""
         >
-          DOWN
+          <v-icon>mdi-arrow-down-bold</v-icon>
         </v-btn>
       </div>
     </v-expansion-panel>

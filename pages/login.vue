@@ -11,7 +11,10 @@ const isLoading = ref(false);
 <template>
   <v-card-title class="fixed top-12 left-4 lg:left-12 opacity-90 z-50">
     <div>
-      <NuxtLink to="/" class="font-bold">DWH Manager</NuxtLink>
+      <NuxtLink to="/" class="font-bold">
+        <v-icon>mdi-message-text</v-icon>
+        DWH Manager
+      </NuxtLink>
     </div>
   </v-card-title>
   <div class="fixed z-0 top-0 w-screen h-screen flex items-center justify-center bg-cover" :style="{backgroundImage: 'url(' + img('/bg-1.png', {format: 'webp', blur: 4}) + ')'}">
