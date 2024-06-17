@@ -12,7 +12,7 @@ const emit = defineEmits(["delete"]);
         <span :class="'p-2 flex flex-col ' + (props?.data?.thumbnail?.url ? 'w-10/12' : 'w-full')">
           <a class="author flex items-center gap-2" :href="props?.data?.author?.url">
             <v-avatar v-if="props?.data?.author?.icon_url" :image="img(props?.data?.author?.icon_url, {format: 'webp'})" size="24"></v-avatar>
-            <p class="font-bold text-xs">{{ data?.author?.name }}</p>
+            <p class="font-bold text-sm">{{ data?.author?.name }}</p>
             <v-avatar v-if="data?.author?.name" image="" size="24"></v-avatar>
           </a>
           <a :href="props?.data?.url" class="title font-bold mt-2">{{ props?.data?.title }}</a>
@@ -23,12 +23,12 @@ const emit = defineEmits(["delete"]);
           <div v-if="props?.data?.image?.url" class="images mt-2">
             <NuxtImg class="rounded" :src="props?.data?.image?.url" />
           </div>
-          <div class="footer mt-2 flex items-center gap-2">
+          <div class="footer mt-2 flex items-center gap-2 text-xs">
             <v-avatar v-if="props?.data?.footer?.icon_url" :image="img(props?.data?.footer?.icon_url, {format: 'webp'})" size="24"></v-avatar>
             <div class="footer mt-2 flex items-center gap-1">
-              <p class="text-sm">{{ props?.data?.footer?.text }}</p>
-              <div v-if="props?.data?.footer?.timestamp" class="h-2 w-2 rounded-full bg-component-background"></div>
-              <p class="text-sm">{{ props?.data?.footer?.timestamp }}</p>
+              <p>{{ props?.data?.footer?.text }}</p>
+              <div v-if="props?.data?.footer?.timestamp && props?.data?.footer?.text" class="h-1 w-1 rounded-full bg-component-background"></div>
+              <p>{{ props?.data?.footer?.timestamp }}</p>
             </div>
           </div>
         </span>

@@ -3,6 +3,7 @@ const model = defineModel();
 const props = defineProps({
   id: Number,
 });
+const emit = defineEmits(["delete", "clone", "move:up", "move:down"]);
 </script>
 <template>
   <v-expansion-panel :title="'Field' + (id + 1)" class="bg-background">
