@@ -19,7 +19,7 @@ const clean_content = computed(() => sanitizeHtml(props.content));
       <div class="flex gap-1 items-center flex-wrap">
         <p class="font-bold">{{ props?.username?.length > 0 ? props.username : "Captain Hook" }}</p>
         <span class="flex items-center">
-          <span class="font-bold bg-primary text-white text-xs px-2 rounded">App</span>
+          <span class="font-bold bg-primary text-white text-xs px-1 rounded">App</span>
         </span>
         <sub>{{ new Date().toLocaleString("th") }}</sub>
       </div>

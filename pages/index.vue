@@ -41,39 +41,53 @@ function submitHandler() {
   }
 }
 
-function addEmbed() {
+function addEmbed(embed) {
+  if (hookJson?.value?.embeds?.length > 9) {
+    toast.warning("Embeds limit at 10 embeds");
+    return;
+  }
   if (!hookJson?.value?.embeds) hookJson.value.embeds = [];
-  hookJson.value.embeds.push({
-    avatar_url: "",
-    color: "#5864f2",
-    author: {
-      name: "",
-      url: "",
-      icon_url: "",
-    },
-    title: "",
-    description: "",
-    image: {
-      url: "",
-    },
-    fields: [],
-    footer: {
-      text: "",
-      icon_url: "",
-      timestamp: "",
-    },
-    thumbnail: {
-      url: "",
-    },
-  });
+  hookJson.value.embeds.push(
+    embed
+      ? JSON.parse(JSON.stringify(embed))
+      : {
+          avatar_url: "",
+          color: "#5864f2",
+          author: {
+            name: "",
+            url: "",
+            icon_url: "",
+          },
+          title: "",
+          description: "",
+          image: {
+            url: "",
+          },
+          fields: [],
+          footer: {
+            text: "",
+            icon_url: "",
+            timestamp: "",
+          },
+          thumbnail: {
+            url: "",
+          },
+        }
+  );
 }
 
-function addField(embed) {
+function addField(embed, field) {
   if (embed?.fields?.length > 24) {
     toast.warning("Fields limit at 25 fileds");
     return;
   }
-  embed?.fields.push({name: "", value: "", inline: false});
+  embed?.fields.push(field ? JSON.parse(JSON.stringify(field)) : {name: "", value: "", inline: false});
+}
+
+function move(id, values, type) {
+  let hold = values?.splice(id, 1);
+  let hold2 = values?.splice(type == "up" ? id - 1 : id + 1);
+  return [...values, ...hold, ...hold2];
 }
 </script>
 
@@ -132,11 +146,7 @@ function addField(embed) {
                     hookJson.embeds.push(obj);
                   }
                 "
-                @clone="
-                  (obj) => {
-                    hookJson.embeds.push(JSON.parse(JSON.stringify(obj)));
-                  }
-                "
+                @clone="addEmbed"
                 @delete="
                   (id) => {
                     hookJson.embeds.splice(id, 1);
@@ -147,24 +157,38 @@ function addField(embed) {
                 @move:up="
                   (id) => {
                     if (id > 0) {
-                      let hold = hookJson.embeds.splice(id, 1);
-                      let hold2 = hookJson.embeds.splice(id - 1);
-                      hookJson.embeds = [...hookJson.embeds, ...hold, ...hold2];
+                      hookJson.embeds = move(id, hookJson.embeds, 'up');
                     }
                   }
                 "
                 @move:down="
                   (id) => {
-                    let hold = hookJson.embeds.splice(id, 1);
-                    let hold2 = hookJson.embeds.splice(id + 1);
-                    hookJson.embeds = [...hookJson.embeds, ...hold, ...hold2];
+                    hookJson.embeds = move(id, hookJson.embeds, 'down');
                   }
                 "
                 @add:field="addField"
+                @delete:field="
+                  (id) => {
+                    hookJson.embeds[i].fields?.splice(id, 1);
+                  }
+                "
+                @clone:field="addField"
+                @move:up:field="
+                  (id) => {
+                    if (id > 0) {
+                      hookJson.embeds[i].fields = move(id, hookJson.embeds[i]?.fields, 'up');
+                    }
+                  }
+                "
+                @move:down:field="
+                  (id) => {
+                    hookJson.embeds[i].fields = move(id, hookJson.embeds[i]?.fields, 'down');
+                  }
+                "
               />
             </div>
             <div :class="hookJson?.embeds?.length > 0 ? 'mt-6' : ''">
-              <v-btn :disabled="hookJson?.embeds?.length > 9" @click="addEmbed" color="primary" variant="flat">Add Embed</v-btn>
+              <v-btn :disabled="hookJson?.embeds?.length > 9" @click="() => addEmbed()" color="primary" variant="flat">Add Embed</v-btn>
             </div>
           </div>
 

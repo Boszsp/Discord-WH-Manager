@@ -1,6 +1,6 @@
 <script setup>
 const model = defineModel();
-const emit = defineEmits(["delete", "clone", "cloneSync", "move:up", "move:down", "add:field", "delete:field", "clone:filed", "move:up:field", "move:down:field"]);
+const emit = defineEmits(["delete", "clone", "cloneSync", "move:up", "move:down", "add:field", "delete:field", "clone:field", "move:up:field", "move:down:field"]);
 const props = defineProps({
   id: Number,
 });
@@ -19,12 +19,22 @@ const props = defineProps({
                 <EmbedEditorField
                   @clone="
                     (field) => {
-                      emit('clone:filed', field);
+                      emit('clone:field', model, field);
                     }
                   "
                   @delete="
                     () => {
                       emit('delete:field', i);
+                    }
+                  "
+                  @move:up="
+                    (id) => {
+                      emit('move:up:field', id);
+                    }
+                  "
+                  @move:down="
+                    (id) => {
+                      emit('move:down:field', id);
                     }
                   "
                   v-model="model.fields[i]"
