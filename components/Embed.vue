@@ -27,8 +27,8 @@ const emit = defineEmits(["delete"]);
             <v-avatar v-if="props?.data?.footer?.icon_url" :image="img(props?.data?.footer?.icon_url, {format: 'webp'})" size="24"></v-avatar>
             <div class="footer mt-2 flex items-center gap-1">
               <p>{{ props?.data?.footer?.text }}</p>
-              <div v-if="props?.data?.footer?.timestamp && props?.data?.footer?.text" class="h-1 w-1 rounded-full bg-component-background"></div>
-              <p>{{ props?.data?.footer?.timestamp }}</p>
+              <div v-if="props?.data?.timestamp && props?.data?.footer?.text" class="h-1 w-1 rounded-full bg-component-background"></div>
+              <p>{{ props?.data?.timestamp }}</p>
             </div>
           </div>
         </span>
