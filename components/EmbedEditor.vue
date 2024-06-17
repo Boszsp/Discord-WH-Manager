@@ -1,6 +1,6 @@
 <script setup>
 const model = defineModel();
-const emit = defineEmits(["delete", "clone", "cloneSync", "move:up", "move:down"]);
+const emit = defineEmits(["delete", "clone", "cloneSync", "move:up", "move:down" , "add:field"]);
 const props = defineProps({
   id: Number,
 });
@@ -21,7 +21,7 @@ const props = defineProps({
               
           
               </v-expansion-panels>
-              <v-btn @click="()=>model.fields.push({name:'',value:'',inline:false})" size="small" >Add Field</v-btn>
+              <v-btn @click="()=>{emit('add:field',model)}" size="small" >Add Field</v-btn>
 
             </v-expansion-panel-text>
           </v-expansion-panel>
