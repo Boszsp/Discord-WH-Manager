@@ -22,7 +22,7 @@ export default defineNuxtConfig({
     viewer: true,
   },
   runtimeConfig: {
-    backendPassword: "xxxxxx-xxxx-xxxx-xxxx-xxxxxy",
+    backendPassword: "xxxxxx-xxxx-xxxx-xxx-xxxx-xxxxxx",
     public: {
       bypassList: ["/"],
       paramDataMode:false,
