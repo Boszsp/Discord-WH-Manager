@@ -1,5 +1,5 @@
 <script setup>
-import { toast } from 'vue-sonner';
+import {toast} from "vue-sonner";
 
 const config = useRuntimeConfig();
 const url = useRequestURL();
@@ -42,7 +42,6 @@ function submitHandler() {
 }
 
 function addEmbed() {
-
   if (!hookJson?.value?.embeds) hookJson.value.embeds = [];
   hookJson.value.embeds.push({
     avatar_url: "",
@@ -69,14 +68,12 @@ function addEmbed() {
   });
 }
 
-function addField(embed){
-  if(embed?.fields?.length > 24){
-    toast.warning("Fields limit at 25 fileds")
-    return
+function addField(embed) {
+  if (embed?.fields?.length > 24) {
+    toast.warning("Fields limit at 25 fileds");
+    return;
   }
-  embed?.fields.push(
-    {name:"",value:"",inline:false}
-  )
+  embed?.fields.push({name: "", value: "", inline: false});
 }
 </script>
 
@@ -163,7 +160,7 @@ function addField(embed){
                     hookJson.embeds = [...hookJson.embeds, ...hold, ...hold2];
                   }
                 "
-                @add:field = "addField"
+                @add:field="addField"
               />
             </div>
             <div :class="hookJson?.embeds?.length > 0 ? 'mt-6' : ''">

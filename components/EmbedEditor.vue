@@ -1,6 +1,6 @@
 <script setup>
 const model = defineModel();
-const emit = defineEmits(["delete", "clone", "cloneSync", "move:up", "move:down" , "add:field"]);
+const emit = defineEmits(["delete", "clone", "cloneSync", "move:up", "move:down", "add:field"]);
 const props = defineProps({
   id: Number,
 });
@@ -16,13 +16,18 @@ const props = defineProps({
           <v-expansion-panel title="Fileds">
             <v-expansion-panel-text class="bg-background">
               <v-expansion-panels v-for="(_, i) in model.fields" elevation="0" color="background">
-                
-                  <EmbedEditorField v-model="model.fields[i]" :id="i" />
-              
-          
+                <EmbedEditorField v-model="model.fields[i]" :id="i" />
               </v-expansion-panels>
-              <v-btn @click="()=>{emit('add:field',model)}" size="small" >Add Field</v-btn>
-
+              <v-btn
+                @click="
+                  () => {
+                    emit('add:field', model);
+                  }
+                "
+                size="small"
+              >
+                Add Field
+              </v-btn>
             </v-expansion-panel-text>
           </v-expansion-panel>
           <EmbedEditorFooter v-model="model" />
