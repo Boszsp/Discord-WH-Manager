@@ -122,7 +122,7 @@ export function cleanUpBlank(obj) {
     if (k == "content") continue;
 
     if (k == "color") obj[k] = colorCodeToInteger(obj[k]);
-    if (k == "timestamp") obj[k] = new Date(obj[k]).toISOString();
+    if (k == "timestamp" &&  obj[k]) obj[k] = new Date(obj[k]).toISOString();
 
     if (typeof obj[k] == "boolean" && (obj?.name?.length > 0 || obj?.value?.length > 0)) continue;
     if (!obj[k] || obj[k]?.length < 1) {
