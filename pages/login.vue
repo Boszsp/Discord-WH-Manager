@@ -10,7 +10,7 @@ const isLoading = ref(false);
 </script>
 <template>
   <v-card-title class="fixed top-12 left-4 lg:left-12 opacity-90 z-50">
-    <div >
+    <div>
       <NuxtLink to="/" class="font-bold">DWH Manager</NuxtLink>
     </div>
   </v-card-title>
