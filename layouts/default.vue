@@ -34,7 +34,7 @@ const navs = [
     </template>
     <v-app-bar-title>
       <div class="flex gap-2 items-center">
-        <h3>App</h3>
+        <NuxtLink to="/" class="font-bold">DWH Manager</NuxtLink>
         <v-divider class="ml-4" vertical></v-divider>
         <v-btn
           v-for="i in navs"
@@ -54,6 +54,14 @@ const navs = [
       </div>
     </v-app-bar-title>
     <template v-slot:append>
+      <v-btn
+        @click="
+          () => {
+            navigateTo('https://github.com/Boszsp/Discord-WH-Manager/discussions/', {external: true});
+          }
+        "
+        icon="mdi-forum"
+      ></v-btn>
       <v-no-ssr>
         <v-btn
           v-if="!isAuth"

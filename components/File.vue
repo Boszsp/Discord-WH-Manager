@@ -42,7 +42,6 @@ if (isImageFile(props.data)) {
     </v-sheet>
 
     <NuxtImg v-else class="rounded w-8/12" :src="Src" />
-
     <v-btn @click="(e) => emit('delete', e)" size="x-small" variant="text" icon="mdi-close" color="" class="p-2"></v-btn>
   </div>
 </template>

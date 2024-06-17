@@ -37,7 +37,7 @@ async function addHandler() {
   <div class="m-6">
     <h4 class="text-h6 mb-2 font-bold">Add New Hooks</h4>
     <div class="flex items-center gap-4">
-      <v-text-field hide-details density="compact" color="primary" class="bg-component-background" label="name" v-model="name" variant="outlined"></v-text-field>
+      <v-text-field hide-details density="compact" color="primary" class="bg-component-background" label="Name" v-model="name" variant="outlined"></v-text-field>
       <v-text-field hide-details density="compact" color="primary" class="bg-component-background" label="Link" v-model="link" variant="outlined"></v-text-field>
       <v-btn elevation="0" @click="addHandler" color="primary">เพิ่ม</v-btn>
     </div>
