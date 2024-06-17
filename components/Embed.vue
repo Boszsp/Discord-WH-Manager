@@ -17,7 +17,9 @@ const emit = defineEmits(["delete"]);
           </a>
           <a :href="props?.data?.url" class="title font-bold mt-2">{{ props?.data?.title }}</a>
           <p class="text-sm">{{ props?.data?.description }}</p>
-          <div class="fields grid"></div>
+          <div class="fields">
+            <EmbedFields :fields="props?.data?.fields" />
+          </div>
           <div v-if="props?.data?.image?.url" class="images mt-2">
             <NuxtImg class="rounded" :src="props?.data?.image?.url" />
           </div>
