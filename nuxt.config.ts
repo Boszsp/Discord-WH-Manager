@@ -22,6 +22,8 @@ export default defineNuxtConfig({
     viewer: true,
   },
   runtimeConfig: {
+    username:"",
+    password:"",
     backendPassword: "xxxxxx-xxxx-xxxx-xxx-xxxx-xxxxxx",
     public: {
       bypassList: ["/"],
