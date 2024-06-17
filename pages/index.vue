@@ -67,8 +67,8 @@ function addEmbed(embed) {
           footer: {
             text: "",
             icon_url: "",
-            timestamp: "",
           },
+          timestamp: "",
           thumbnail: {
             url: "",
           },
