@@ -6,8 +6,14 @@ definePageMeta({
 });
 const username = ref("");
 const password = ref("");
+const isLoading = ref(false);
 </script>
 <template>
+  <v-app-bar-title>
+    <div class="fixed top-12 left-12">
+      <NuxtLink to="/" class="font-bold">DWH Manager</NuxtLink>
+    </div>
+  </v-app-bar-title>
   <div class="w-screen h-screen flex items-center justify-center" :style="{backgroundImage: 'url(' + img('/bg-1.png', {format: 'webp', blur: 4}) + ')'}">
     <v-card elevation="4" class="bg-background w-[48rem] h-[26rem] m-2 lg:m-0">
       <div class="flex h-full items-center max-lg:justify-center">
@@ -30,10 +36,13 @@ const password = ref("");
               variant="elevated"
               color="primary"
               class="w-full"
+              :loading="isLoading"
               @click="
                 async () => {
+                  isLoading = true;
                   const res = await login(username, password);
                   if (res) navigateTo('/', {redirectCode: 302});
+                  isLoading = false;
                 }
               "
             >
