@@ -31,3 +31,9 @@ jobs:
 
       - name: Generate Nuxt.js project
         run: npm run generate
+        env:
+          NUXT_APP_AESKEY: ${{ secrets.NUXT_APP_AESKEY }}
+          NUXT_BACKEND_PASSWORD: ${{ secrets.NUXT_BACKEND_PASSWORD }}
+          DATABASE_URL: ${{ vars.DATABASE_URL }}
+          
+          
