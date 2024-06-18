@@ -1,6 +1,7 @@
 import {toast} from "vue-sonner";
 import TurndownService from "turndown";
 import {filesSchema, hookJsonSchema, urlSchema} from "~/zschemas";
+import CryptoJS from "crypto-js";
 
 export const turndownService = new TurndownService({headingStyle: "atx"});
 
@@ -73,23 +74,20 @@ export async function login(username, password) {
     return false;
   }
   const isAuth = useAuth();
-  const data = await $fetch("/api/login", {
-    server: false,
-    method: "POST",
-    body: {
-      username,
-      password,
-    },
-    baseURL: configg.public.apiBase,
-  }).catch(() => {
-    toast.error("Authentication Fail");
-    isAuth.value = false;
-  });
-  if (data && data.status / 100 == 2) {
-    toast.success("Authentication Success");
-    isAuth.value = true;
+  const session_hash = useCookie("session_hash");
+
+  if (username === configg.public.username && password === configg.public.password) {
+    session_hash.value = CryptoJS.SHA256(username + password).toString();
+    console.log(session_hash.value);
   }
-  return data;
+  if (!session_hash.value) {
+    toast.error("Username or Password incorrect");
+
+    isAuth.value = false;
+    return false;
+  }
+  isAuth.value = true;
+  return true;
 }
 
 export async function logout() {

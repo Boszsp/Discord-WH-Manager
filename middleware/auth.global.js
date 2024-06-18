@@ -9,16 +9,18 @@ export default defineNuxtRouteMiddleware(async (to,from) => {
     // or only skip middleware on initial client load
     //const nuxtApp = useNuxtApp()
     //if (import.meta.client && nuxtApp.isHydrating && nuxtApp.payload.serverRendered) return
-    const {data,error} = await useFetch("/api/session",{server:false,baseURL:runtimeConfig.public.apiBase})
+    const session_hash = useCookie("session_hash")
+    
+    console.log(session_hash.value)
   
-    if(error.value && to.path == "/login")return
-    else if(data.value && to.path == "/login")return navigateTo({path:"/"})
+    if(!session_hash.value && to.path == "/login")return
+    else if(session_hash.value && to.path == "/login")return navigateTo({path:"/"})
 
-    if((!data || !data.value || !data.value.user.id) && !runtimeConfig?.public?.bypassList?.includes(to.path)){
+    if((!session_hash.value) && !runtimeConfig?.public?.bypassList?.includes(to.path)){
       toast.error('Authentication Required ')
       throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
     } 
-    if(data.value){
+    if(session_hash.value){
       const isAuth = useAuth()
       isAuth.value = true
     }
