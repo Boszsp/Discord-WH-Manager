@@ -1,5 +1,6 @@
 import {toast} from "vue-sonner";
 import TurndownService from "turndown";
+import {hookJsonSchema, urlSchema} from "~/zschemas";
 
 export const turndownService = new TurndownService({headingStyle: "atx"});
 
@@ -37,7 +38,6 @@ export async function deleteHook(id) {
   const configg = useRuntimeConfig();
   if (!id) {
     toast.error("Delete Error");
-
     return false;
   }
   const res = await $fetch("/api/hooks", {
@@ -159,6 +159,15 @@ export async function sendToProxyD(url, json, files) {
   njson.content = turndownService.turndown(njson?.content);
   //njson?.embeds?.map((i) => cleanUpBlank(i));
   cleanUpBlank(njson);
+  const validate_url = urlSchema.safeParse(url);
+  const validate = hookJsonSchema.safeParse(njson);
+  console.log(validate);
+  if (!validate.success) {
+    validate?.error?.issues?.forEach((mss, c) => {
+      setTimeout(() => toast.error(mss.message), c);
+    });
+    return;
+  }
   const filesForm = new FormData();
   filesForm.append("url", url);
   let count = 0;
@@ -201,8 +210,6 @@ export async function sendToProxyD(url, json, files) {
       toast.error("Sending Fail");
     });
   }
-
-  console.log(data);
   if (data && data.status / 100 == 2) {
     toast.success("Sending Success");
   }
