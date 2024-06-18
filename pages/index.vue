@@ -140,7 +140,7 @@ function move(id, values, type) {
           <v-divider></v-divider>
 
           <div class="embed-editors flex flex-col gap-2">
-            <div  v-for="(_, i) in hookJson?.embeds">
+            <div v-for="(_, i) in hookJson?.embeds">
               <EmbedEditor
                 @clone-sync="
                   (obj) => {
