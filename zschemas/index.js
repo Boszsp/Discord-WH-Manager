@@ -1,6 +1,6 @@
 import {z} from "zod";
 
-const MAX_FILE_SIZE = 25 * 1024 * 1024; // 25 MB in bytes
+const MAX_FILE_SIZE = 24 * 1024 * 1024; // 25 MB in bytes
 
 export const urlSchema = z.string().url("Hook url invalid");
 
@@ -32,6 +32,7 @@ export const embedsSchema = z.object({
   fields: fieldsSchema.array().max(25, "Fields length must be less than 25 fields per embed"),
   footer: z.object({text: z.string().max(2048, "Footer text length must be less than 2048 characters"), icon_url: z.string().url("Please enter a valid image URL for the footer embed icon")}),
   thumbnail: z.object({url: z.string().url("Please enter a valid image URL for the embed thumbnail")}),
+  url: z.string().url("Please enter a valid  URL for the embed url"),
 });
 
 export const hookJsonSchema = z

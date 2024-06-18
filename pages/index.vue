@@ -12,7 +12,7 @@ const files = ref([]);
 const hookJson = ref({
   username: "",
   avatar_url: "",
-  content: "<p>Discord is great for playing games and chilling with friends, or even building a worldwide community. Customize your own space to talk, play, and hang out.</p>",
+  content: "<p>Hello world!</p>",
   embeds: [],
   thread_name: "",
 });
@@ -139,8 +139,8 @@ function move(id, values, type) {
           </div>
           <v-divider></v-divider>
 
-          <div class="embed-editors">
-            <div class="mt-2" v-for="(_, i) in hookJson?.embeds">
+          <div class="embed-editors flex flex-col gap-2">
+            <div  v-for="(_, i) in hookJson?.embeds">
               <EmbedEditor
                 @clone-sync="
                   (obj) => {
@@ -188,7 +188,7 @@ function move(id, values, type) {
                 "
               />
             </div>
-            <div :class="hookJson?.embeds?.length > 0 ? 'mt-6' : ''">
+            <div class="">
               <v-btn prepend-icon="mdi-comment-plus" :disabled="hookJson?.embeds?.length > 9" @click="() => addEmbed()" color="primary" variant="flat">Add Embed</v-btn>
             </div>
           </div>
@@ -203,7 +203,7 @@ function move(id, values, type) {
         <div class="h-full lg:fixed lg:overflow-y-auto lg:top-0 lg:pt-14 w-full p-4">
           <div class="max-lg:mb-8 w-full">
             <v-sheet class="bg-transparent lg:p-4 lg:w-6/12">
-              <Preview :avatarURL="hookJson?.avatar_url?.length > 6 ? hookJson?.avatar_url : null" :username="hookJson?.username" :content="hookJson?.content">
+              <Preview :avatarURL="hookJson?.avatar_url?.length > 6 ? hookJson?.avatar_url : null" :username="hookJson.username" :content="hookJson.content">
                 <div class="flex flex-col gap-2">
                   <div class="w-fit" v-for="(embed, i) in hookJson.embeds">
                     <Embed
