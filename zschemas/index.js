@@ -1,6 +1,14 @@
 import {z} from "zod";
 
+const MAX_FILE_SIZE = 25 * 1024 * 1024; // 25 MB in bytes
+
 export const urlSchema = z.string().url("Hook url invalid");
+
+export const fileSchema = z.instanceof(File).refine((file) => file.size <= MAX_FILE_SIZE, {
+  message: `File size cannot be greater than ${MAX_FILE_SIZE / (1024 * 1024)} MB.`,
+});
+
+export const filesSchema = fileSchema.array().max(10, "Files length must be less than 10 files");
 
 export const authorSchema = z.object({
   name: z.string().max(256, "Username length must be less than 256 characters"),

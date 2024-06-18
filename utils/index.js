@@ -1,6 +1,6 @@
 import {toast} from "vue-sonner";
 import TurndownService from "turndown";
-import {hookJsonSchema, urlSchema} from "~/zschemas";
+import {filesSchema, hookJsonSchema, urlSchema} from "~/zschemas";
 
 export const turndownService = new TurndownService({headingStyle: "atx"});
 
@@ -161,9 +161,16 @@ export async function sendToProxyD(url, json, files) {
   cleanUpBlank(njson);
   const validate_url = urlSchema.safeParse(url);
   const validate = hookJsonSchema.safeParse(njson);
-  console.log(validate);
-  if (!validate.success) {
+  const validate_files = filesSchema.safeParse(files);
+  console.log(files);
+  if (!validate.success || !validate_url.success || !validate_files.success) {
     validate?.error?.issues?.forEach((mss, c) => {
+      setTimeout(() => toast.error(mss.message), c);
+    });
+    validate_url?.error?.issues?.forEach((mss, c) => {
+      setTimeout(() => toast.error(mss.message), c);
+    });
+    validate_files?.error?.issues?.forEach((mss, c) => {
       setTimeout(() => toast.error(mss.message), c);
     });
     return;
