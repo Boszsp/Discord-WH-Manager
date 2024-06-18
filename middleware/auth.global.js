@@ -1,5 +1,7 @@
 import { useAuth } from "../composables/useAuth"
 import { toast } from 'vue-sonner'
+import CryptoJS from "crypto-js";
+
 export default defineNuxtRouteMiddleware(async (to,from) => {
     const runtimeConfig = useRuntimeConfig();
     // skip middleware on server
@@ -20,7 +22,7 @@ export default defineNuxtRouteMiddleware(async (to,from) => {
       toast.error('Authentication Required ')
       throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
     } 
-    if(session_hash.value){
+    if(session_hash.value && (session_hash.value == CryptoJS.SHA256(runtimeConfig.public.username+runtimeConfig.public.password))){
       const isAuth = useAuth()
       isAuth.value = true
     }

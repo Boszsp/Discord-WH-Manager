@@ -7,9 +7,12 @@ export const turndownService = new TurndownService({headingStyle: "atx"});
 
 export function getHooks() {
   const configg = useRuntimeConfig();
-  return useFetch("/api/hooks", {
-    baseURL: configg.public.apiBase,
-  });
+  return {
+    data: ref({
+      status: 200,
+      hooks: [],
+    }),
+  };
 }
 export function getPrefixs() {
   const configg = useRuntimeConfig();
@@ -93,16 +96,14 @@ export async function login(username, password) {
 export async function logout() {
   const configg = useRuntimeConfig();
   const isAuth = useAuth();
-  const data = await $fetch("/api/logout", {
-    server: false,
-    method: "POST",
-    baseURL: configg.public.apiBase,
-  });
-  if (data && data.status == 200) {
+  const session_hash = useCookie("session_hash");
+  session_hash.value = undefined;
+  if (!session_hash.value) {
     toast.success("Logout Success");
     isAuth.value = false;
+    return true;
   }
-  return data;
+  return false;
 }
 
 export function colorCodeToInteger(colorCode) {
