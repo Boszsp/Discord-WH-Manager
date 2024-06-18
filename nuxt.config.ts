@@ -42,6 +42,5 @@ export default defineNuxtConfig({
     },
   },
   routeRules: {
-    "/hooks": { ssr: false },
   },
 });
