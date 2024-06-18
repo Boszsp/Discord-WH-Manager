@@ -98,7 +98,7 @@ function move(id, values, type) {
         <div class="flex flex-col gap-6 md:pr-4">
           <div class="flex gap-2 items-center">
             <v-combobox variant="outlined" color="primary" v-model="hook_url" hide-details density="compact" label="Hook" class="bg-component-background" :items="hooks ? hooks.hooks.map((i) => i.name + '-' + i.id) : []"></v-combobox>
-            <v-btn prepend-icon="mdi-send" click="submitHandler" variant="flat" color="primary">Send</v-btn>
+            <v-btn prepend-icon="mdi-send" @click="submitHandler" variant="flat" color="primary">Send</v-btn>
           </div>
 
           <v-divider></v-divider>
