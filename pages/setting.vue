@@ -40,7 +40,7 @@ const resultValue = ref("");
 
           <h4 class="text-h6 font-bold lg:hidden">Export & Import Data</h4>
         </div>
-        <v-textarea v-model="resultValue" rows="20" hide-details class="bg-background-tertiary mt-8" variant="outlined"></v-textarea>
+        <v-textarea v-model="resultValue" rows="20" color="primary" hide-details class="bg-background mt-8" variant="solo"></v-textarea>
       </div>
     </v-card>
   </div>
