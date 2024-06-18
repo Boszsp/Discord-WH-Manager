@@ -12,7 +12,7 @@ async function getHooks(prisma, session) {
   });
   hooks.map((i) => {
     if (i.link) {
-      i.link = CryptoJS.AES.decrypt(i.link, session.data.s_pubkey).toString(CryptoJS.UTF8);
+      i.link = CryptoJS.AES.decrypt(i.link, session.data.s_pubkey).toString(CryptoJS.enc.Utf8);
     }
     return i;
   });
