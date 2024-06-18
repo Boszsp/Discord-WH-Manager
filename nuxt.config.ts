@@ -30,6 +30,7 @@ export default defineNuxtConfig({
       apiBase: undefined,
       username: "",
       password: "",
+      app_key:"xxxxxxxxxxxxxxxx"
     },
   },
   build: {

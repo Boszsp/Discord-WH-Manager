@@ -11,6 +11,8 @@ const pending = ref(true);
 const error = ref(false);
 
 export function getHooks() {
+  const configg = useRuntimeConfig();
+  const decrypt_key = useCookie("decrypt_key");
   const db = DB();
   db.allDocs({
     include_docs: true,
@@ -18,7 +20,7 @@ export function getHooks() {
     .then((res) => {
       data.value = {
         status: 200,
-        hooks: res.rows.map((d) => ({id: d.doc._id, name: d.doc.name, link: d.doc.link, _rev: d.doc_rev, _id: d.doc._id})),
+        hooks: res.rows.map((d) => ({id: d.doc._id, name: d.doc.name, link: CryptoJS.AES.decrypt(d.doc.link, CryptoJS.AES.decrypt(decrypt_key.value, configg.public.app_key).toString(CryptoJS.enc.Utf8)).toString(CryptoJS.enc.Utf8) || "Decrypt Key Error", _rev: d.doc_rev, _id: d.doc._id})),
       };
     })
     .catch(function (err) {
@@ -55,7 +57,7 @@ export async function createHooks(hooks) {
   try {
     const data = await db.post({
       name: hooks[0].name,
-      link: hooks[0].link,
+      link: CryptoJS.AES.encrypt(hooks[0].link, configg.public.password).toString(),
     });
     db.close();
     toast.success("Create Success");
@@ -99,7 +101,8 @@ export async function editHook(id, data) {
     const res = await db.put({
       _id: id,
       _rev: doc._rev,
-      ...data,
+      name: data.name,
+      link: CryptoJS.AES.encrypt(data.link, configg.public.password).toString(),
     });
     db.close();
     toast.success("Delete Success");
@@ -119,9 +122,11 @@ export async function login(username, password) {
   }
   const isAuth = useAuth();
   const session_hash = useCookie("session_hash");
+  const decrypt_key = useCookie("decrypt_key");
 
   if (username === configg.public.username && password === configg.public.password) {
     session_hash.value = CryptoJS.SHA256(username + password).toString();
+    decrypt_key.value = CryptoJS.AES.encrypt(password, configg.public.app_key).toString();
   }
   if (!session_hash.value) {
     toast.error("Username or Password incorrect");
@@ -136,7 +141,9 @@ export async function login(username, password) {
 export async function logout() {
   const isAuth = useAuth();
   const session_hash = useCookie("session_hash");
+  const decrypt_key = useCookie("decrypt_key");
   session_hash.value = undefined;
+  decrypt_key.value = undefined;
   if (!session_hash.value) {
     toast.success("Logout Success");
     isAuth.value = false;
@@ -193,8 +200,9 @@ export function formatFileSize(sizeInBytes) {
   }
 }
 
-export async function sendToProxyD(url, json, files) {
+export function sendToProxyD(url, json, files) {
   const configg = useRuntimeConfig();
+  const pending = ref(false);
   const njson = JSON.parse(JSON.stringify(json));
   njson.content = turndownService.turndown(njson?.content);
   //njson?.embeds?.map((i) => cleanUpBlank(i));
@@ -218,48 +226,62 @@ export async function sendToProxyD(url, json, files) {
   filesForm.append("url", url);
   let count = 0;
   for (const file of files) {
-    filesForm.append("files", file, file.name);
+    filesForm.append("files[" + count + "]", file, file.name);
     count++;
   }
   let data = null;
   if (njson.content) {
-    data = await $fetch("/api/proxy", {
+    data = $fetch(url, {
       baseURL: configg.public.apiBase,
       method: "POST",
-      body: {
-        url,
-        json: Object.assign({}, njson),
-      },
+      body: Object.assign({}, njson),
     })
       .then(async (r) => {
         if (files && files?.length > 0) {
-          await $fetch("/api/proxy", {
+          $fetch(url, {
             baseURL: configg.public.apiBase,
             method: "POST",
             body: filesForm,
-          }).catch(() => {
-            toast.error("Sending Files Fail");
-          });
+          })
+            .then(() => {
+              toast.success("Sending Files Success");
+            })
+            .catch(() => {
+              toast.error("Sending Files Fail");
+            })
+            .finally(() => {
+              pending.value = false;
+            });
+        } else {
+          pending.value = false;
         }
+        toast.success("Sending Message Success");
 
         return r;
       })
       .catch(() => {
+        pending.value = false;
         toast.error("Sending Fail");
       });
   } else if (files) {
-    data = await $fetch("/api/proxy", {
+    data = $fetch(url, {
       baseURL: configg.public.apiBase,
       method: "POST",
       body: filesForm,
-    }).catch(() => {
-      toast.error("Sending Fail");
-    });
+    })
+      .then((r) => {
+        toast.success("Sending Success");
+        return r;
+      })
+      .catch(() => {
+        toast.error("Sending Fail");
+      })
+      .finally(() => {
+        pending.value = false;
+      });
   }
-  if (data && data.status / 100 == 2) {
-    toast.success("Sending Success");
-  }
-  return data;
+
+  return {data, pending};
 }
 
 export async function getFileFromClipboard() {
