@@ -7,8 +7,6 @@ const props = defineProps({
   avatarURL: String,
   content: String,
 });
-
-const clean_content = computed(() => sanitizeHtml(props.content));
 </script>
 <template>
   <div class="flex gap-2">
@@ -24,7 +22,9 @@ const clean_content = computed(() => sanitizeHtml(props.content));
         <sub>{{ new Date().toLocaleString("th") }}</sub>
       </div>
       <div>
-        <div class="" v-html="clean_content"></div>
+        <ClientOnly>
+          <div class="" v-html="sanitizeHtml(props.content)"></div>
+        </ClientOnly>
         <slot />
       </div>
     </span>
