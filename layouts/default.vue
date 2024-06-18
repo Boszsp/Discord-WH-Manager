@@ -25,6 +25,11 @@ const navs = [
     path: "/tool",
     icon: "mdi-tools",
   },
+  {
+    title: "Setting",
+    path: "/setting",
+    icon: "mdi-cog",
+  },
 ];
 </script>
 
