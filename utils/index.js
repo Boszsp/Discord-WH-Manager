@@ -28,8 +28,14 @@ export async function createHooks(hooks) {
     method: "POST",
     body: {data: hooks.concat()},
     baseURL: configg.public.apiBase,
-  });
-  toast.success("Create Success");
+  })
+    .then((r) => {
+      toast.success("Create Success");
+      return r;
+    })
+    .catch((err) => {
+      toast.error("Create Error " + err);
+    });
 
   return res;
 }
@@ -44,8 +50,14 @@ export async function deleteHook(id) {
     method: "DELETE",
     body: {id},
     baseURL: configg.public.apiBase,
-  });
-  toast.success("Delete Success");
+  })
+    .then((r) => {
+      toast.success("Delete Success");
+      return r;
+    })
+    .catch((err) => {
+      toast.error("Delete Error " + err);
+    });
 
   return res;
 }
@@ -54,15 +66,20 @@ export async function editHook(id, data) {
   const configg = useRuntimeConfig();
   if (!id) {
     toast.error("Edit Error");
-
     return false;
   }
   const res = await $fetch("/api/hooks", {
     method: "PATCH",
     body: {id, data},
     baseURL: configg.public.apiBase,
-  });
-  toast.success("Edit Success");
+  })
+    .then((r) => {
+      toast.success("Edit Success");
+      return r;
+    })
+    .catch((err) => {
+      toast.error("Edit Error " + err);
+    });
   return data;
 }
 
