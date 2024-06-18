@@ -16,14 +16,14 @@ const navs = [
     icon: "mdi-hook",
   },
   {
-    title: "Prefix",
-    path: "/prefix",
-    icon: "mdi-format-letter-starts-with",
-  },
-  {
     title: "Tool",
     path: "/tool",
     icon: "mdi-tools",
+  },
+  {
+    title: "Setting",
+    path: "/setting",
+    icon: "mdi-cog",
   },
 ];
 </script>

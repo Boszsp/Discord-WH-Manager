@@ -10,6 +10,30 @@ const data = ref({status: 500, hooks: []});
 const pending = ref(true);
 const error = ref(false);
 
+export async function getDBInfo() {
+  const db = DB();
+  const info = await db
+    .info()
+    .then((info) => {
+      return info;
+    })
+    .catch((err) => {
+      console.error("Error getting IndexedDB size:", err);
+    });
+  db.close();
+  return info;
+}
+
+export async function destroyDB() {
+  const db = DB();
+  try {
+    await db.destroy();
+    toast.success(`Database destroyed successfully.`);
+  } catch (err) {
+    toast.error(`Error destroying database :`, err);
+  }
+}
+
 export function getHooks() {
   const configg = useRuntimeConfig();
   const decrypt_key = useCookie("decrypt_key");
@@ -55,10 +79,14 @@ export async function createHooks(hooks) {
   }
   const db = DB();
   try {
-    const data = await db.post({
-      name: hooks[0].name,
-      link: CryptoJS.AES.encrypt(hooks[0].link, configg.public.password).toString(),
-    });
+    const data = await Promise.all(
+      hooks?.map((hook) => {
+        db.post({
+          name: hook.name,
+          link: CryptoJS.AES.encrypt(hook.link, configg.public.password).toString(),
+        });
+      })
+    );
     db.close();
     toast.success("Create Success");
     return data;
