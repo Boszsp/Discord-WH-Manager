@@ -7,6 +7,7 @@ definePageMeta({
 const username = ref("");
 const password = ref("");
 const isLoading = ref(false);
+const isVisiblePassword = ref(false);
 </script>
 <template>
   <v-card-title class="fixed top-12 left-4 lg:left-12 opacity-90 z-50">
@@ -32,7 +33,7 @@ const isLoading = ref(false);
 
           <div class="flex flex-col items-center mt-4 gap-6 w-full mb-12">
             <v-text-field hide-details density="compact" color="primary" class="bg-background-tertiary w-full" label="Username*" v-model="username" variant="outlined"></v-text-field>
-            <v-text-field hide-details density="compact" color="primary" class="bg-background-tertiary w-full" label="Password*" v-model="password" variant="outlined"></v-text-field>
+            <v-text-field :append-inner-icon="isVisiblePassword ? 'mdi-eye-off' : 'mdi-eye'" :type="isVisiblePassword ? 'text' : 'password'" @click:append-inner="isVisiblePassword = !isVisiblePassword" hide-details density="compact" color="primary" class="bg-background-tertiary w-full" label="Password*" v-model="password" variant="outlined"></v-text-field>
           </div>
           <div class="flex flex-col items-center mt-4 gap-6 w-full mb-12">
             <v-btn
