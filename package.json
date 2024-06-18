@@ -9,14 +9,7 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "check": "prettier --check app.vue error.vue utils/**/* server/**/* pages/**/* components/**/* layouts/**/*",
-    "format": "prettier --write app.vue error.vue utils/* server/* pages/* components/* layouts/* zschemas/*",
-    "db:studio": "prisma studio",
-    "db:gen": "prisma generate",
-    "db:mig:pro": "prisma migrate deploy",
-    "db:mig:dev": "prisma migrate dev",
-    "db:mig:re": "prisma migrate reset",
-    "db:pull": "prisma db pull",
-    "db:push": "prisma db push"
+    "format": "prettier --write app.vue error.vue utils/* server/* pages/* components/* layouts/* zschemas/*"
   },
   "devDependencies": {
     "@nuxt/eslint": "^0.3.13",
@@ -25,7 +18,6 @@
     "@tailwindcss/typography": "^0.5.13",
     "nuxt": "^3.12.1",
     "prettier": "3.3.2",
-    "prisma": "^5.15.0",
     "vite-plugin-vuetify": "^2.0.3",
     "vue": "^3.4.20",
     "vue-router": "^4.3.0",
