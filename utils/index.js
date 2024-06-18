@@ -2,40 +2,69 @@ import {toast} from "vue-sonner";
 import TurndownService from "turndown";
 import {filesSchema, hookJsonSchema, urlSchema} from "~/zschemas";
 import CryptoJS from "crypto-js";
+import PouchDB from "pouchdb";
 
 export const turndownService = new TurndownService({headingStyle: "atx"});
+const DB = () => new PouchDB("DWHManager");
+const data = ref({status: 500, hooks: []});
+const pending = ref(true);
+const error = ref(false);
 
 export function getHooks() {
-  const configg = useRuntimeConfig();
+  const db = DB();
+  db.allDocs({
+    include_docs: true,
+  })
+    .then((res) => {
+      data.value = {
+        status: 200,
+        hooks: res.rows.map((d) => ({id: d.doc._id, name: d.doc.name, link: d.doc.link, _rev: d.doc_rev, _id: d.doc._id})),
+      };
+    })
+    .catch(function (err) {
+      error.value = err;
+    })
+    .finally(() => {
+      pending.value = false;
+    });
+  db.close();
+  return {
+    data,
+    pending,
+    error,
+    refresh: getHooks,
+  };
+}
+
+export function getPrefixs() {
   return {
     data: ref({
       status: 200,
-      hooks: [],
+      jaPrefix: [],
     }),
   };
-}
-export function getPrefixs() {
-  const configg = useRuntimeConfig();
-  return useFetch("/api/japrefix", {
-    baseURL: configg.public.apiBase,
-  });
 }
 
 export async function createHooks(hooks) {
   const configg = useRuntimeConfig();
   if (!(hooks && hooks[0].link && hooks[0].name)) {
     toast.error("Create Error");
-
     return false;
   }
-  const res = await $fetch("/api/hooks", {
-    method: "POST",
-    body: {data: hooks.concat()},
-    baseURL: configg.public.apiBase,
-  });
-  toast.success("Create Success");
-
-  return res;
+  const db = DB();
+  try {
+    const data = await db.post({
+      name: hooks[0].name,
+      link: hooks[0].link,
+    });
+    db.close();
+    toast.success("Create Success");
+    return data;
+  } catch {
+    db.close();
+    toast.error("Create Error");
+    return {status: 400};
+  }
 }
 
 export async function deleteHook(id) {
@@ -44,14 +73,17 @@ export async function deleteHook(id) {
     toast.error("Delete Error");
     return false;
   }
-  const res = await $fetch("/api/hooks", {
-    method: "DELETE",
-    body: {id},
-    baseURL: configg.public.apiBase,
-  });
-  toast.success("Delete Success");
-
-  return res;
+  const db = DB();
+  try {
+    const res = await db.remove(await db.get(id));
+    db.close();
+    toast.success("Delete Success");
+    return res;
+  } catch {
+    db.close();
+    toast.error("Delete Error");
+    return {status: 400};
+  }
 }
 
 export async function editHook(id, data) {
@@ -61,13 +93,22 @@ export async function editHook(id, data) {
 
     return false;
   }
-  const res = await $fetch("/api/hooks", {
-    method: "PATCH",
-    body: {id, data},
-    baseURL: configg.public.apiBase,
-  });
-  toast.success("Edit Success");
-  return data;
+  const db = DB();
+  try {
+    const doc = await db.get(id);
+    const res = await db.put({
+      _id: id,
+      _rev: doc._rev,
+      ...data,
+    });
+    db.close();
+    toast.success("Delete Success");
+    return res;
+  } catch {
+    db.close();
+    toast.error("Delete Error");
+    return {status: 400};
+  }
 }
 
 export async function login(username, password) {
@@ -81,7 +122,6 @@ export async function login(username, password) {
 
   if (username === configg.public.username && password === configg.public.password) {
     session_hash.value = CryptoJS.SHA256(username + password).toString();
-    console.log(session_hash.value);
   }
   if (!session_hash.value) {
     toast.error("Username or Password incorrect");
@@ -94,13 +134,14 @@ export async function login(username, password) {
 }
 
 export async function logout() {
-  const configg = useRuntimeConfig();
   const isAuth = useAuth();
   const session_hash = useCookie("session_hash");
   session_hash.value = undefined;
   if (!session_hash.value) {
     toast.success("Logout Success");
     isAuth.value = false;
+    setTimeout(() => reloadNuxtApp(), 100);
+
     return true;
   }
   return false;
@@ -161,7 +202,6 @@ export async function sendToProxyD(url, json, files) {
   const validate_url = urlSchema.safeParse(url);
   const validate = hookJsonSchema.safeParse(njson);
   const validate_files = filesSchema.safeParse(files);
-  console.log(files);
   if (!validate.success || !validate_url.success || !validate_files.success) {
     validate?.error?.issues?.forEach((mss, c) => {
       setTimeout(() => toast.error(mss.message), c);

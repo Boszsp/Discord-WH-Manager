@@ -12,8 +12,6 @@ export default defineNuxtRouteMiddleware(async (to,from) => {
     //const nuxtApp = useNuxtApp()
     //if (import.meta.client && nuxtApp.isHydrating && nuxtApp.payload.serverRendered) return
     const session_hash = useCookie("session_hash")
-    
-    console.log(session_hash.value)
   
     if(!session_hash.value && to.path == "/login")return
     else if(session_hash.value && to.path == "/login")return navigateTo({path:"/"})

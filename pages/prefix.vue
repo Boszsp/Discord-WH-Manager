@@ -8,10 +8,10 @@ const headers = [
 
 <template>
   <div class="m-6">
-    <FetchTool title="Update Prefixs" url="/api/japrefix" disabled method="post" :initBody="JSON.stringify({data: [{code: '', prefix: ''}]}, undefined, 4)"></FetchTool>
+    <!--<FetchTool title="Update Prefixs" url="/api/japrefix" disabled method="post" :initBody="JSON.stringify({data: [{code: '', prefix: ''}]}, undefined, 4)"></FetchTool>
     <div class="mt-8"></div>
     <FetchTool title="Delete Prefixs" url="/api/japrefix" disabled method="delete" :initBody="JSON.stringify({code: ''}, undefined, 4)"></FetchTool>
-    <div class="mt-8"></div>
+    <div class="mt-8"></div>-->
 
     <StaticTable @refresh="refresh" :isLoading="pending" :data="data.JaPrefixs" title="Prefixs"></StaticTable>
   </div>
