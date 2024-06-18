@@ -1,7 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import vuetify, {transformAssetUrls} from "vite-plugin-vuetify";
 export default defineNuxtConfig({
-  ssr:false,
   devtools: {enabled: true},
   modules: [
     "@nuxtjs/tailwindcss",
@@ -43,9 +42,6 @@ export default defineNuxtConfig({
       },
     },
     define:{global:"window"}
-  },
-  routeRules: {
-    "/tool": {ssr: false},
   },
   
 });
