@@ -7,6 +7,7 @@ const router = useRouter();
 
 const {data: hooks} = await getHooks();
 
+const isSending = ref(false)
 const hook_url = ref("");
 const files = ref([]);
 const hookJson = ref({
@@ -30,15 +31,17 @@ if (config.public.paramDataMode) {
   });
 }
 
-function submitHandler() {
+async function submitHandler() {
   const url = hooks?.value?.hooks?.filter((i) => {
     return i.name + "-" + i.id == hook_url.value;
   });
+  isSending.value = true
   if (url && url[0] && url[0].link) {
-    sendToProxyD(url[0].link, hookJson.value, files.value);
+    await sendToProxyD(url[0].link, hookJson.value, files.value);
   } else if (hook_url && hook_url.value) {
-    sendToProxyD(hook_url.value, hookJson.value, files.value);
+    await sendToProxyD(hook_url.value, hookJson.value, files.value);
   }
+  isSending.value = false
 }
 
 function addEmbed(embed) {
@@ -98,7 +101,7 @@ function move(id, values, type) {
         <div class="flex flex-col gap-6 md:pr-4">
           <div class="flex gap-2 items-center">
             <v-combobox variant="outlined" color="primary" v-model="hook_url" hide-details density="compact" label="Hook" class="bg-component-background" :items="hooks ? hooks.hooks.map((i) => i.name + '-' + i.id) : []"></v-combobox>
-            <v-btn prepend-icon="mdi-send" @click="submitHandler" variant="flat" color="primary">Send</v-btn>
+            <v-btn :loading="isSending" prepend-icon="mdi-send" @click="submitHandler" variant="flat" color="primary">Send</v-btn>
           </div>
 
           <v-divider></v-divider>
