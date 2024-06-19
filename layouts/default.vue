@@ -1,8 +1,8 @@
 <script setup>
 import Logo from "~/assets/logo.svg";
-
+const config = useRuntimeConfig();
 const route = useRoute();
-const curPath = ref(route.path);
+const curPath = ref(route?.path);
 const isAuth = useAuth();
 const isDrawerOpen = ref(false);
 
@@ -21,25 +21,27 @@ const navs = [
     title: "Prefix",
     path: "/prefix",
     icon: "mdi-format-letter-starts-with",
+    disable: true,
   },
   {
     title: "Tool",
     path: "/tool",
     icon: "mdi-tools",
+    disable: config.public.staticMode,
   },
   {
     title: "Setting",
     path: "/setting",
     icon: "mdi-cog",
   },
-];
+].filter((n) => !n?.disable);
 </script>
 
 <script></script>
 <template>
   <v-app-bar color="background" :elevation="2" density="compact">
     <template v-slot:prepend>
-      <div class="block xl:hidden">
+      <div class="block lg:hidden">
         <v-app-bar-nav-icon @click.stop="isDrawerOpen = !isDrawerOpen"></v-app-bar-nav-icon>
       </div>
     </template>
@@ -97,6 +99,7 @@ const navs = [
             async () => {
               await logout();
               await navigateTo('/', {redirectCode: 302});
+              curPath = '/';
               refresh();
             }
           "

@@ -39,13 +39,13 @@ async function addHandler() {
     <div class="flex items-center gap-4">
       <v-text-field hide-details density="compact" color="primary" class="bg-component-background" label="Name" v-model="name" variant="outlined"></v-text-field>
       <v-text-field hide-details density="compact" color="primary" class="bg-component-background" label="Link" v-model="link" variant="outlined"></v-text-field>
-      <v-btn prepend-icon="mdi-database-plus" elevation="0" @click="addHandler" color="primary">เพิ่ม</v-btn>
+      <v-btn prepend-icon="mdi-database-plus" elevation="0" @click="addHandler" color="primary">Add</v-btn>
     </div>
     <v-text-field hide-details disabled density="compact" color="primary" class="bg-component-background mt-4" label="Publickey" v-model="pubKey" variant="outlined"></v-text-field>
   </div>
-  <v-sheet class="m-6 rounded-lg bg-component-background" :elevation="2" rounded>
-    <div class="flex justify-between items-center px-4 py-2">
-      <h4 class="text-h6 font-bold">My Hooks</h4>
+  <v-sheet class="m-6 rounded-lg bg-component-background" :elevation="2" rounded="xl" border>
+    <div class="flex justify-between items-center px-4 py-2 overflow-x-auto">
+      <h4 class="text-h6 font-bold whitespace-nowrap mr-4">My Hooks</h4>
       <span class="flex gap-4 items-center">
         <span class="w-52">
           <v-text-field v-model="search" label="Search" color="primary" class="bg-background-tertiary" prepend-inner-icon="mdi-magnify" density="compact" variant="outlined" size="small" hide-details></v-text-field>
@@ -57,14 +57,14 @@ async function addHandler() {
     <v-data-table :headers="headers" class="bg-component-background" :items="data.hooks" :search="search" :loading="pending">
       <template v-slot:item.name="{item}">
         <span v-if="!item.action">{{ item.name }}</span>
-        <span v-else class="w-full">
-          <v-text-field hide-details density="compact" color="primary" class="bg-background-tertiary" label="" v-model="item.name" variant="outlined" single-line></v-text-field>
+        <span v-else>
+          <v-text-field hide-details density="compact" color="primary" class="bg-background-tertiary" min-width="160" label="" v-model="item.name" variant="outlined" single-line></v-text-field>
         </span>
       </template>
       <template v-slot:item.link="{item}">
         <span v-if="!item.action">{{ item.link }}</span>
-        <span v-else class="w-full">
-          <v-text-field hide-details density="compact" color="primary" class="bg-background-tertiary" label="" v-model="item.link" variant="outlined" single-line></v-text-field>
+        <span v-else>
+          <v-text-field hide-details density="compact" color="primary" class="bg-background-tertiary" min-width="160" label="" v-model="item.link" variant="outlined" single-line></v-text-field>
         </span>
       </template>
       <template v-slot:item.action="{item}">
@@ -80,8 +80,9 @@ async function addHandler() {
             elevation="0"
             variant="outlined"
             color="warning"
+            prepend-icon="mdi-square-edit-outline"
           >
-            แก้ไข
+            Edit
           </v-btn>
           <v-btn
             :loading="item.isSaving"
@@ -98,6 +99,7 @@ async function addHandler() {
             elevation="0"
             color="success"
             variant="outlined"
+            prepend-icon="mdi-content-save"
           >
             Save
           </v-btn>
@@ -112,8 +114,9 @@ async function addHandler() {
                 refresh();
               }
             "
+            prepend-icon="mdi-delete"
           >
-            ลบ
+            Delete
           </v-btn>
         </div>
       </template>

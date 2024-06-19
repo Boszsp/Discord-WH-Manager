@@ -4,6 +4,10 @@ import {filesSchema, hookJsonSchema, urlSchema} from "~/zschemas";
 
 export const turndownService = new TurndownService({headingStyle: "atx"});
 
+export function getDBInfo() {
+  return null;
+}
+
 export function getHooks() {
   const configg = useRuntimeConfig();
   return useFetch("/api/hooks", {
