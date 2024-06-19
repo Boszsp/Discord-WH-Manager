@@ -39,7 +39,7 @@ const navs = [
 <template>
   <v-app-bar color="background" :elevation="2" density="compact">
     <template v-slot:prepend>
-      <div class="block xl:hidden">
+      <div class="block lg:hidden">
         <v-app-bar-nav-icon @click.stop="isDrawerOpen = !isDrawerOpen"></v-app-bar-nav-icon>
       </div>
     </template>
