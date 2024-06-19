@@ -5,7 +5,7 @@ const search = ref("");
 </script>
 
 <template>
-  <v-sheet class="rounded-lg bg-component-background" :elevation="2" rounded>
+  <v-sheet class="rounded-lg bg-component-background" border :elevation="2" rounded>
     <div class="flex justify-between items-center px-4 py-2 overflow-x-auto">
       <h4 class="text-h6 font-bold whitespace-nowrap mr-4">{{ title ?? "Static Table" }}</h4>
       <span class="flex gap-4 items-center">

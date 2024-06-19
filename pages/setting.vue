@@ -1,5 +1,11 @@
 <script setup>
+const config = useRuntimeConfig();
+
 const resultValue = ref("");
+const DBInfo = ref(await getDBInfo());
+async function refresh() {
+  DBInfo.value = await getDBInfo();
+}
 </script>
 <template>
   <div class="w-full flex justify-center px-2 h-full">
@@ -8,11 +14,12 @@ const resultValue = ref("");
         <div class="flex flex-col-reverse lg:flex-row lg:items-center">
           <span class="w-full">
             <h4 class="text-h6 font-bold hidden lg:block">Export & Import Data</h4>
-            <div class="flex gap-4">
+            <div class="flex flex-wrap gap-4 mt-2">
               <v-btn
                 @click="
-                  () => {
-                    resultValue = JSON.stringify(getHooks().data.value.hooks);
+                  async () => {
+                    await getHooks();
+                    resultValue = JSON.stringify(await getHooks().data.value.hooks);
                   }
                 "
                 prepend-icon="mdi-database-export"
@@ -35,8 +42,25 @@ const resultValue = ref("");
               >
                 Import
               </v-btn>
+              <v-btn
+                v-if="config.public.staticMode"
+                @click="
+                  async () => {
+                    await destroyDB();
+                    await refresh();
+                  }
+                "
+                prepend-icon="mdi-database-minus"
+                variant="flat"
+                color="danger"
+                size="small"
+              >
+                Clean app
+              </v-btn>
             </div>
           </span>
+
+          <DBInfoCard v-if="config.public.staticMode" />
 
           <h4 class="text-h6 font-bold lg:hidden">Export & Import Data</h4>
         </div>

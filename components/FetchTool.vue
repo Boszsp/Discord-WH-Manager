@@ -44,7 +44,7 @@ function fetching() {
 }
 </script>
 <template>
-  <v-card class="rounded-lg bg-component-background" :elevation="2" rounded :loading="isLoading">
+  <v-card class="rounded-lg bg-component-background" :elevation="2" border rounded :loading="isLoading">
     <div :class="'px-4 pt-2 pb-8 flex flex-col lg:flex-row gap-4 border-l-4 ' + (method?.toUpperCase() == 'DELETE' ? 'border-danger' : method?.toUpperCase() == 'POST' || method?.toUpperCase() == 'PATCH' ? 'border-warning' : 'border-success')">
       <span class="flex flex-col gap-4 lg:w-1/2">
         <h4 class="text-h6 font-bold">{{ title ?? "Fetch Test" }}</h4>

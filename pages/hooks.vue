@@ -43,7 +43,7 @@ async function addHandler() {
     </div>
     <v-text-field hide-details disabled density="compact" color="primary" class="bg-component-background mt-4" label="Publickey" v-model="pubKey" variant="outlined"></v-text-field>
   </div>
-  <v-sheet class="m-6 rounded-lg bg-component-background" :elevation="2" rounded>
+  <v-sheet class="m-6 rounded-lg bg-component-background" :elevation="2" rounded="xl" border>
     <div class="flex justify-between items-center px-4 py-2 overflow-x-auto">
       <h4 class="text-h6 font-bold whitespace-nowrap mr-4">My Hooks</h4>
       <span class="flex gap-4 items-center">

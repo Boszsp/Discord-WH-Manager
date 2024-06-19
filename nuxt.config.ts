@@ -28,7 +28,8 @@ export default defineNuxtConfig({
     public: {
       bypassList: ["/"],
       paramDataMode:false,
-      apiBase:undefined
+      apiBase:undefined,
+      staticMode:false
     },
   },
   build: {
