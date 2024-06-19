@@ -51,7 +51,7 @@ const navs = [
           <NuxtImg src="/logo.png" sizes="48" format="webp" />
           DWH Manager
         </NuxtLink>
-        <v-divider class="ml-4" vertical></v-divider>
+        <v-divider class="my-2 mx-4" vertical></v-divider>
         <div class="hidden lg:flex gap-2">
           <v-btn
             v-for="i in navs"
