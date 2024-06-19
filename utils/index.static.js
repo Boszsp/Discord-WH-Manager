@@ -35,8 +35,7 @@ export async function destroyDB() {
 }
 
 export function getHooks() {
-  const configg = useRuntimeConfig();
-  const decrypt_key = useCookie("decrypt_key");
+  const session = useCookie("session");
   const db = DB();
   db.allDocs({
     include_docs: true,
@@ -44,7 +43,7 @@ export function getHooks() {
     .then((res) => {
       data.value = {
         status: 200,
-        hooks: res.rows.map((d) => ({id: d.doc._id, name: d.doc.name, link: CryptoJS.AES.decrypt(d.doc.link, CryptoJS.AES.decrypt(decrypt_key.value, configg.public.app_key).toString(CryptoJS.enc.Utf8)).toString(CryptoJS.enc.Utf8) || "Decrypt Key Error", _rev: d.doc_rev, _id: d.doc._id})),
+        hooks: res.rows.map((d) => ({id: d.doc._id, name: d.doc.name, link: CryptoJS.AES.decrypt(d.doc.link, session.value).toString(CryptoJS.enc.Utf8) || "Decrypt Key Error", _rev: d.doc_rev, _id: d.doc._id})),
       };
     })
     .catch(function (err) {
@@ -72,7 +71,8 @@ export function getPrefixs() {
 }
 
 export async function createHooks(hooks) {
-  const configg = useRuntimeConfig();
+  const session = useCookie("session");
+
   if (!(hooks && hooks[0].link && hooks[0].name)) {
     toast.error("Create Error");
     return false;
@@ -83,7 +83,7 @@ export async function createHooks(hooks) {
       hooks?.map((hook) => {
         db.post({
           name: hook.name,
-          link: CryptoJS.AES.encrypt(hook.link, configg.public.password).toString(),
+          link: CryptoJS.AES.encrypt(hook.link, session.value).toString(),
         });
       })
     );
@@ -98,7 +98,6 @@ export async function createHooks(hooks) {
 }
 
 export async function deleteHook(id) {
-  const configg = useRuntimeConfig();
   if (!id) {
     toast.error("Delete Error");
     return false;
@@ -117,7 +116,7 @@ export async function deleteHook(id) {
 }
 
 export async function editHook(id, data) {
-  const configg = useRuntimeConfig();
+  const session = useCookie("session");
   if (!id) {
     toast.error("Edit Error");
 
@@ -130,7 +129,7 @@ export async function editHook(id, data) {
       _id: id,
       _rev: doc._rev,
       name: data.name,
-      link: CryptoJS.AES.encrypt(data.link, configg.public.password).toString(),
+      link: CryptoJS.AES.encrypt(data.link, session.value).toString(),
     });
     db.close();
     toast.success("Delete Success");
@@ -143,27 +142,24 @@ export async function editHook(id, data) {
 }
 
 export async function login(username, password) {
-  const configg = useRuntimeConfig();
-  if (!username || !password) {
-    toast.warning("Username & Password cannot blank");
+  if (!password) {
+    toast.warning("Key cannot blank");
     return false;
   }
   const isAuth = useAuth();
-  const session_hash = useCookie("session_hash");
-  const decrypt_key = useCookie("decrypt_key");
+  const session = useCookie("session");
+  isAuth.value = false;
 
-  if (username === configg.public.username && password === configg.public.password) {
-    session_hash.value = CryptoJS.SHA256(username + password).toString();
-    decrypt_key.value = CryptoJS.AES.encrypt(password, configg.public.app_key).toString();
+  if (password && password.length == 16) {
+    session.value = password;
+    if (session.value) {
+      isAuth.value = true;
+      return true;
+    }
+    toast.error("Some thing went wrong");
+  } else {
+    toast.error("Key length muse be 16 characters");
   }
-  if (!session_hash.value) {
-    toast.error("Username or Password incorrect");
-
-    isAuth.value = false;
-    return false;
-  }
-  isAuth.value = true;
-  return true;
 }
 
 export async function logout() {
