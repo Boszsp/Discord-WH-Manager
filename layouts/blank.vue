@@ -1,8 +1,4 @@
-<script setup>
-const {data: authData} = await useFetch("/api/session");
-const isAuth = useAuth();
-isAuth.value = authData != null && authData.id;
-</script>
+<script setup></script>
 
 <template>
   <v-main>

@@ -51,7 +51,7 @@ const navs = [
           <NuxtImg src="/logo.png" sizes="48" format="webp" />
           DWH Manager
         </NuxtLink>
-        <v-divider class="ml-4" vertical></v-divider>
+        <v-divider class="my-2 mx-4" vertical></v-divider>
         <div class="hidden lg:flex gap-2">
           <v-btn
             v-for="i in navs"
@@ -81,7 +81,7 @@ const navs = [
         "
         icon="mdi-forum"
       ></v-btn>
-      <v-no-ssr>
+      <ClientOnly>
         <v-btn
           v-if="!isAuth"
           @click="
@@ -105,7 +105,7 @@ const navs = [
           "
           icon="mdi-logout"
         ></v-btn>
-      </v-no-ssr>
+      </ClientOnly>
     </template>
   </v-app-bar>
   <div class="lg:hidden">
