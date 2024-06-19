@@ -35,15 +35,18 @@ export async function destroyDB() {
 }
 
 export function getHooks() {
-  const session = useCookie("session");
+  const session = useCookie("session").value;
   const db = DB();
   db.allDocs({
     include_docs: true,
   })
     .then((res) => {
+      //console.log(res,res.rows.map((d) => ({id: d.doc._id, name: d.doc.name, link: CryptoJS.AES.decrypt(d.doc.link, session.value).toString(CryptoJS.enc.Utf8) ?? "Decrypt Key Error", _rev: d.doc_rev, _id: d.doc._id})))
+      //console.log(res.rows);
+      //res.rows.map((d)=>Object.assign({link:"xxx"},d))
       data.value = {
         status: 200,
-        hooks: res.rows.map((d) => ({id: d.doc._id, name: d.doc.name, link: CryptoJS.AES.decrypt(d.doc.link, session.value).toString(CryptoJS.enc.Utf8) || "Decrypt Key Error", _rev: d.doc_rev, _id: d.doc._id})),
+        hooks: res.rows.map((d) => ({id: d.doc._id, name: d.doc.name, link: CryptoJS.AES.decrypt(d.doc.link, session).toString(CryptoJS.enc.Utf8) || "Decrypt Key Error", _rev: d.doc_rev, _id: d.doc._id})),
       };
     })
     .catch(function (err) {
@@ -72,7 +75,6 @@ export function getPrefixs() {
 
 export async function createHooks(hooks) {
   const session = useCookie("session");
-
   if (!(hooks && hooks[0].link && hooks[0].name)) {
     toast.error("Create Error");
     return false;
@@ -81,7 +83,7 @@ export async function createHooks(hooks) {
   try {
     const data = await Promise.all(
       hooks?.map((hook) => {
-        db.post({
+        return db.post({
           name: hook.name,
           link: CryptoJS.AES.encrypt(hook.link, session.value).toString(),
         });
@@ -164,15 +166,12 @@ export async function login(username, password) {
 
 export async function logout() {
   const isAuth = useAuth();
-  const session_hash = useCookie("session_hash");
-  const decrypt_key = useCookie("decrypt_key");
-  session_hash.value = undefined;
-  decrypt_key.value = undefined;
-  if (!session_hash.value) {
+  const session = useCookie("session");
+  session.value = undefined;
+  if (!session.value) {
     toast.success("Logout Success");
     isAuth.value = false;
     setTimeout(() => reloadNuxtApp(), 100);
-
     return true;
   }
   return false;

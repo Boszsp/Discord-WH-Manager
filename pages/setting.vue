@@ -60,7 +60,7 @@ async function refresh() {
             </div>
           </span>
 
-          <DBInfoCard v-if="config.public.staticMode" />
+          <DBInfoCard v-if="config.public.staticMode" :DBInfo="DBInfo" />
 
           <h4 class="text-h6 font-bold lg:hidden">Export & Import Data</h4>
         </div>

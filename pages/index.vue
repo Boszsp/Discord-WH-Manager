@@ -33,7 +33,7 @@ if (config.public.paramDataMode) {
 
 async function submitHandler() {
   const url = hooks?.value?.hooks?.filter((i) => {
-    return i.name + "-" + i.id == hook_url.value;
+    return i.name + "-" + (config.public.staticMode ? i.id?.slice(0, 5) : i.id) == hook_url.value;
   });
   isSending.value = true;
   if (url && url[0] && url[0].link) {
@@ -100,7 +100,7 @@ function move(id, values, type) {
       <v-col order="2" cols="12" md="6">
         <div class="flex flex-col gap-6 md:pr-4">
           <div class="flex gap-2 items-center">
-            <v-combobox variant="outlined" color="primary" v-model="hook_url" hide-details density="compact" label="Hook" class="bg-component-background" :items="hooks ? hooks.hooks.map((i) => i.name + '-' + i.id) : []"></v-combobox>
+            <v-combobox variant="outlined" color="primary" v-model="hook_url" hide-details density="compact" label="Hook" class="bg-component-background" :items="hooks ? hooks.hooks.map((i) => i.name + '-' + (config.public.staticMode ? i.id?.slice(0, 5) : i.id)) : []"></v-combobox>
             <v-btn :loading="isSending" prepend-icon="mdi-send" @click="submitHandler" variant="flat" color="primary">Send</v-btn>
           </div>
 
