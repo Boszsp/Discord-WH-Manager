@@ -23,7 +23,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     if(session.value){
       isAuth.value = true
     }
-    
+    return
   }
 
 
