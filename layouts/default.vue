@@ -81,7 +81,7 @@ const navs = [
         "
         icon="mdi-forum"
       ></v-btn>
-      <v-no-ssr>
+      <ClientOnly>
         <v-btn
           v-if="!isAuth"
           @click="
@@ -105,7 +105,7 @@ const navs = [
           "
           icon="mdi-logout"
         ></v-btn>
-      </v-no-ssr>
+      </ClientOnly>
     </template>
   </v-app-bar>
   <div class="lg:hidden">
