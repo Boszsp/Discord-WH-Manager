@@ -12,8 +12,8 @@ const isVisiblePassword = ref(false);
 <template>
   <v-card-title class="fixed top-12 left-4 lg:left-12 opacity-90 z-50">
     <div>
-      <NuxtLink to="/" class="font-bold">
-        <v-icon>mdi-message-text</v-icon>
+      <NuxtLink to="/" class="font-bold flex items-center">
+        <NuxtImg src="/logo.png" sizes="48" format="webp" />
         DWH Manager
       </NuxtLink>
     </div>
