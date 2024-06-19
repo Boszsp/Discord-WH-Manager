@@ -2,6 +2,8 @@
 import {Toaster} from "vue-sonner";
 useSeoMeta({
   title: "Discord WH Manager",
+  ogTitle: "Discord WH Manager",
+  ogImage: "/cover.jpeg",
 });
 </script>
 <template>

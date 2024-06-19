@@ -1,4 +1,6 @@
 <script setup>
+import Logo from "~/assets/logo.svg";
+
 const route = useRoute();
 const curPath = ref(route.path);
 const isAuth = useAuth();
@@ -43,8 +45,8 @@ const navs = [
     </template>
     <v-app-bar-title>
       <div class="flex gap-2 items-center">
-        <NuxtLink to="/" class="font-bold">
-          <v-icon>mdi-message-text</v-icon>
+        <NuxtLink to="/" class="font-bold flex items-center">
+          <NuxtImg src="/logo.png" sizes="48" format="webp" />
           DWH Manager
         </NuxtLink>
         <v-divider class="ml-4" vertical></v-divider>

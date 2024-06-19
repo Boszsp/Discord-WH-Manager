@@ -20,7 +20,7 @@ watch(pending, () => {
 const search = ref("");
 const name = ref("");
 const link = ref("");
-const pubKey = "xxxxxxxxxxxxxxx";
+const pubKey = ref("xxxxxxxxxxxxxxx");
 
 async function addHandler() {
   const data2 = await createHooks([{name: name.value, link: link.value}]);
