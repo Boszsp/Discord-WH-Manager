@@ -1,4 +1,6 @@
 <script setup>
+const config = useRuntimeConfig();
+
 const img = useImage();
 
 definePageMeta({
@@ -26,20 +28,21 @@ const randomedBg = Math.floor(Math.random() * 2) == 1 ? "/cover.jpeg" : "/bg-1.p
         <span class="lg:w-3/5 h-fit p-8 w-[28rem]">
           <v-card-item>
             <v-card-title>
-              <p class="font-bold text-2xl text-center mt-6 mb-2">เข้าสู่ระบบ</p>
+              <p class="font-bold text-2xl text-center mt-6 mb-2">Login</p>
             </v-card-title>
             <v-card-subtitle>
-              <p class="text-center">ยินดีต้อนรับเข้าสู่ระบบ</p>
+              <p class="text-center">welcome to DWH Manager</p>
             </v-card-subtitle>
           </v-card-item>
 
           <div class="flex flex-col items-center mt-4 gap-6 w-full mb-12">
-            <v-text-field hide-details density="compact" color="primary" class="bg-background-tertiary w-full" label="Username*" v-model="username" variant="outlined"></v-text-field>
-            <v-text-field :append-inner-icon="isVisiblePassword ? 'mdi-eye-off' : 'mdi-eye'" :type="isVisiblePassword ? 'text' : 'password'" @click:append-inner="isVisiblePassword = !isVisiblePassword" hide-details density="compact" color="primary" class="bg-background-tertiary w-full" label="Password*" v-model="password" variant="outlined"></v-text-field>
+            <v-text-field v-if="!config.public.staticMode" hide-details density="compact" color="primary" class="bg-background-tertiary w-full" label="Username*" v-model="username" variant="outlined"></v-text-field>
+            <v-text-field v-if="!config.public.staticMode" :append-inner-icon="isVisiblePassword ? 'mdi-eye-off' : 'mdi-eye'" :type="isVisiblePassword ? 'text' : 'password'" @click:append-inner="isVisiblePassword = !isVisiblePassword" hide-details density="compact" color="primary" class="bg-background-tertiary w-full" label="Password*" v-model="password" variant="outlined"></v-text-field>
+            <v-text-field v-if="config.public.staticMode" :label="'Key*(' + password.length + '/16)'" :append-inner-icon="isVisiblePassword ? 'mdi-eye-off' : 'mdi-eye'" :type="isVisiblePassword ? 'text' : 'password'" @click:append-inner="isVisiblePassword = !isVisiblePassword" hide-details density="compact" color="primary" class="bg-background-tertiary w-full" v-model="password" variant="outlined"></v-text-field>
           </div>
           <div class="flex flex-col items-center mt-4 gap-6 w-full mb-12">
             <v-btn
-              variant="elevated"
+              variant="flat"
               color="primary"
               class="w-full"
               :loading="isLoading"
@@ -52,7 +55,7 @@ const randomedBg = Math.floor(Math.random() * 2) == 1 ? "/cover.jpeg" : "/bg-1.p
                 }
               "
             >
-              เข้าสู่ระบบ
+              login
             </v-btn>
           </div>
         </span>
