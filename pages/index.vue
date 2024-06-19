@@ -7,7 +7,7 @@ const router = useRouter();
 
 const {data: hooks} = await getHooks();
 
-const isSending = ref(false)
+const isSending = ref(false);
 const hook_url = ref("");
 const files = ref([]);
 const hookJson = ref({
@@ -35,13 +35,13 @@ async function submitHandler() {
   const url = hooks?.value?.hooks?.filter((i) => {
     return i.name + "-" + i.id == hook_url.value;
   });
-  isSending.value = true
+  isSending.value = true;
   if (url && url[0] && url[0].link) {
     await sendToProxyD(url[0].link, hookJson.value, files.value);
   } else if (hook_url && hook_url.value) {
     await sendToProxyD(hook_url.value, hookJson.value, files.value);
   }
-  isSending.value = false
+  isSending.value = false;
 }
 
 function addEmbed(embed) {
