@@ -225,7 +225,6 @@ export function formatFileSize(sizeInBytes) {
 
 export function sendToProxyD(url, json, files) {
   const configg = useRuntimeConfig();
-  const pending = ref(false);
   const njson = JSON.parse(JSON.stringify(json));
   njson.content = turndownService.turndown(njson?.content);
   //njson?.embeds?.map((i) => cleanUpBlank(i));
