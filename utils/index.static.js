@@ -223,7 +223,7 @@ export function formatFileSize(sizeInBytes) {
   }
 }
 
-export function sendToProxyD(url, json, files) {
+export async function sendToProxyD(url, json, files) {
   const configg = useRuntimeConfig();
   const njson = JSON.parse(JSON.stringify(json));
   njson.content = turndownService.turndown(njson?.content);
@@ -253,14 +253,14 @@ export function sendToProxyD(url, json, files) {
   }
   let data = null;
   if (njson.content) {
-    data = $fetch(url, {
+    data = await $fetch(url, {
       baseURL: configg.public.apiBase,
       method: "POST",
       body: Object.assign({}, njson),
     })
       .then(async (r) => {
         if (files && files?.length > 0) {
-          $fetch(url, {
+          await $fetch(url, {
             baseURL: configg.public.apiBase,
             method: "POST",
             body: filesForm,
@@ -274,6 +274,7 @@ export function sendToProxyD(url, json, files) {
             .finally(() => {
               pending.value = false;
             });
+            return r
         } else {
           pending.value = false;
         }
@@ -286,7 +287,7 @@ export function sendToProxyD(url, json, files) {
         toast.error("Sending Fail");
       });
   } else if (files) {
-    data = $fetch(url, {
+    data = await $fetch(url, {
       baseURL: configg.public.apiBase,
       method: "POST",
       body: filesForm,
