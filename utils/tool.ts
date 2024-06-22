@@ -6,7 +6,7 @@ export async function generatePDFFromImage(images: File[], name?: string) {
     let embedImage = null;
     if (img.type == "image/png") {
       embedImage = await pdfDoc.embedPng(await img.arrayBuffer());
-    } else if (img.type == "image/jpg") {
+    } else if (img.name.toLowerCase().endsWith(".jpg")) {
       embedImage = await pdfDoc.embedJpg(await img.arrayBuffer());
     } else {
       return;
