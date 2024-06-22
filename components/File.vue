@@ -29,7 +29,7 @@ if (isImageFile(props.data)) {
 <template>
   <div class="flex gap-1">
     <v-sheet v-if="!isImageFile(props.data)" border rounded="lg" class="bg-background-secondary">
-      <div class="p-4 w-[30rem] flex items-center gap-2 relative">
+      <div class="p-4 pr-24 max-w-[30rem] flex items-center gap-2 relative">
         <span>
           <v-icon size="36" class="opacity-50" icon="mdi-file-document-multiple"></v-icon>
         </span>

@@ -2,7 +2,7 @@
 import Logo from "~/assets/logo.svg";
 const config = useRuntimeConfig();
 const route = useRoute();
-const curPath = ref(route?.path);
+const curPath = useCurPath(route?.path);
 const isAuth = useAuth();
 const isDrawerOpen = ref(false);
 
