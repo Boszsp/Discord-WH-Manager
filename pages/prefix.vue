@@ -4,10 +4,10 @@ if (config.public.staticMode) {
   navigateTo("/");
 }
 const {data, refresh, pending} = await getPrefixs();
-const headers = [
+/*const headers = [
   {title: "CODE", key: "code"},
   {title: "PREFIX", key: "prefix"},
-];
+];*/
 </script>
 
 <template>
