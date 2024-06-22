@@ -119,7 +119,7 @@ function move(id, values, type) {
           -->
           <Editor :title="'Content (' + turndownService.turndown(hookJson?.content)?.length + '/2000)'" v-model="hookJson.content"></Editor>
 
-          <v-expansion-panels color="background" variant="accordion" multiple>
+          <v-expansion-panels border color="background" variant="accordion" multiple>
             <v-expansion-panel title="Profile">
               <v-expansion-panel-text class="bg-background">
                 <v-text-field :label="'Username (' + hookJson?.username?.length + '/80)'" maxlength="80" color="primary" density="compact" variant="outlined" hide-details class="bg-component-background mb-6" v-model="hookJson.username"></v-text-field>
@@ -132,8 +132,6 @@ function move(id, values, type) {
               </v-expansion-panel-text>
             </v-expansion-panel>
           </v-expansion-panels>
-
-          <v-divider></v-divider>
 
           <div id="file" class="flex gap-2 items-center">
             <v-file-input @click:clear="() => (files = [])" @update:modelValue="(nf) => (files = files.concat(nf))" chips :model-value="files" multiple label="File input" color="primary" density="compact" variant="outlined" hide-details></v-file-input>
@@ -151,46 +149,52 @@ function move(id, values, type) {
             </v-btn>
           </div>
 
-          <div class="flex gap-2 items-center mt-6">
-            <v-btn
-              :loading="isMakingPDF"
-              @click="
-                async () => {
-                  const whereFileIsImage = files.findIndex((v) => v?.type == 'image/png' || v?.type == 'image/jpg');
-                  if (!files || whereFileIsImage == -1) return;
-                  isMakingPDF = true;
-                  files.push(await generatePDFFromImage(files, pdfFileName || files[whereFileIsImage].name));
-                  pdfFileName = files[whereFileIsImage].name;
-                  isMakingPDF = false;
-                }
-              "
-              prepend-icon="mdi-file-pdf-box"
-              variant="flat"
-              color="success"
-            >
-              ALL Image To pdf
-            </v-btn>
-            <v-text-field label="PDF file name" color="success" density="compact" variant="outlined" hide-details class="bg-component-background" v-model="pdfFileName"></v-text-field>
-          </div>
-          <div class="flex gap-2 items-center">
-            <v-select variant="outlined" color="success" v-model="selectedPdf" hide-details density="compact" label="Select pdf to split" class="bg-component-background" :items="files?.length > 0 ? files?.filter((f) => f?.type == 'application/pdf' && convertFileSize(f?.size, 'MB') > 24).map((f) => f?.name) : []"></v-select>
+          <v-divider></v-divider>
 
-            <v-btn
-              @click="
-                async () => {
-                  isSplitingPDF = true;
-                  files = files.concat(await splitPDF(files.find((f) => f.name == selectedPdf)));
-                  isSplitingPDF = false;
-                }
-              "
-              :loading="isSplitingPDF"
-              prepend-icon="mdi-content-cut"
-              variant="flat"
-              color="success"
-            >
-              Splite PDF
-            </v-btn>
-          </div>
+          <v-sheet class="bg-background-tertiary" rounded border :elevation="2">
+            <div class="p-4 flex flex-col gap-4">
+              <div class="flex gap-2 items-center">
+                <v-btn
+                  :loading="isMakingPDF"
+                  @click="
+                    async () => {
+                      const whereFileIsImage = files.findIndex((v) => v?.type == 'image/png' || v?.type == 'image/jpg');
+                      if (!files || whereFileIsImage == -1) return;
+                      isMakingPDF = true;
+                      files.push(await generatePDFFromImage(files, pdfFileName || files[whereFileIsImage].name));
+                      pdfFileName = files[whereFileIsImage].name;
+                      isMakingPDF = false;
+                    }
+                  "
+                  prepend-icon="mdi-file-pdf-box"
+                  variant="flat"
+                  color="success"
+                >
+                  ALL Image To pdf
+                </v-btn>
+                <v-text-field label="PDF file name" color="success" density="compact" variant="outlined" hide-details class="bg-background-tertiary" v-model="pdfFileName"></v-text-field>
+              </div>
+              <div class="flex gap-2 items-center">
+                <v-select variant="outlined" color="success" v-model="selectedPdf" hide-details density="compact" label="Select pdf to split" class="bg-background-tertiary" :items="files?.length > 0 ? files?.filter((f) => f?.type == 'application/pdf' && convertFileSize(f?.size, 'MB') > 24).map((f) => f?.name) : []"></v-select>
+
+                <v-btn
+                  @click="
+                    async () => {
+                      isSplitingPDF = true;
+                      files = files.concat(await splitPDF(files.find((f) => f.name == selectedPdf)));
+                      isSplitingPDF = false;
+                    }
+                  "
+                  :loading="isSplitingPDF"
+                  prepend-icon="mdi-content-cut"
+                  variant="flat"
+                  color="success"
+                >
+                  Splite PDF
+                </v-btn>
+              </div>
+            </div>
+          </v-sheet>
 
           <v-divider></v-divider>
 
