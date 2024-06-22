@@ -11,9 +11,8 @@ const isSending = ref(false);
 const isMakingPDF = ref(false);
 const isSplitingPDF = ref(false);
 
-
 const pdfFileName = ref("");
-const selectedPdf = ref("")
+const selectedPdf = ref("");
 
 const hook_url = ref("");
 const filesLists = useFiles();
@@ -173,22 +172,21 @@ function move(id, values, type) {
             </v-btn>
             <v-text-field label="PDF file name" color="success" density="compact" variant="outlined" hide-details class="bg-component-background" v-model="pdfFileName"></v-text-field>
           </div>
-          <div class="flex gap-2 items-center" >
-            <v-select variant="outlined"  color="success" v-model="selectedPdf" hide-details density="compact" label="Select pdf to split" class="bg-component-background" :items="files?.length>0 ? (files?.filter((f) => f?.type == 'application/pdf' && convertFileSize(f?.size,'MB') > 24).map(f=>f?.name) ) : []"></v-select>
+          <div class="flex gap-2 items-center">
+            <v-select variant="outlined" color="success" v-model="selectedPdf" hide-details density="compact" label="Select pdf to split" class="bg-component-background" :items="files?.length > 0 ? files?.filter((f) => f?.type == 'application/pdf' && convertFileSize(f?.size, 'MB') > 24).map((f) => f?.name) : []"></v-select>
 
             <v-btn
               @click="
                 async () => {
-                  isSplitingPDF = true
+                  isSplitingPDF = true;
                   files = files.concat(await splitPDF(files.find((f) => f.name == selectedPdf)));
-                  isSplitingPDF = false
+                  isSplitingPDF = false;
                 }
               "
               :loading="isSplitingPDF"
               prepend-icon="mdi-content-cut"
               variant="flat"
               color="success"
-             
             >
               Splite PDF
             </v-btn>
