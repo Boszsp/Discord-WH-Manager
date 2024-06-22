@@ -183,7 +183,7 @@ export async function sendToProxyD(url, json, files) {
   const validate_url = urlSchema.safeParse(url);
   const validate = hookJsonSchema.safeParse(njson);
   const validate_files = filesSchema.safeParse(files);
-  console.log(files);
+
   if (!validate.success || !validate_url.success || !validate_files.success) {
     validate?.error?.issues?.forEach((mss, c) => {
       setTimeout(() => toast.error(mss.message), c);
