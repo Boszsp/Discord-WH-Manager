@@ -268,13 +268,13 @@ export async function sendToProxyD(url, json, files) {
             .then(() => {
               toast.success("Sending Files Success");
             })
-            .catch(() => {
-              toast.error("Sending Files Fail");
+            .catch((e) => {
+              toast.error("Sending Files Fail " + e);
             })
             .finally(() => {
               pending.value = false;
             });
-            return r
+          return r;
         } else {
           pending.value = false;
         }
@@ -282,9 +282,9 @@ export async function sendToProxyD(url, json, files) {
 
         return r;
       })
-      .catch(() => {
+      .catch((e) => {
         pending.value = false;
-        toast.error("Sending Fail");
+        toast.error("Sending Fail : " + e);
       });
   } else if (files) {
     data = await $fetch(url, {
