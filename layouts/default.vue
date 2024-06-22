@@ -1,5 +1,4 @@
 <script setup>
-import Logo from "~/assets/logo.svg";
 const config = useRuntimeConfig();
 const route = useRoute();
 const curPath = useCurPath(route?.path);

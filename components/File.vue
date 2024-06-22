@@ -1,5 +1,4 @@
 <script setup>
-const img = useImage();
 const props = defineProps({
   data: Object,
 });

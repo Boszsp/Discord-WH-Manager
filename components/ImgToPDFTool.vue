@@ -1,10 +1,7 @@
 <script setup>
 const pdfResult = ref(null);
-const pdfResultURL = ref("");
 
 const files = ref([]);
-const filesLists = useFiles();
-const curPath = useCurPath();
 function getFileUrl(f) {
   return URL.createObjectURL(f);
 }
