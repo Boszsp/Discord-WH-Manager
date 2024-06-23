@@ -34,6 +34,12 @@ export async function destroyDB() {
   }
 }
 
+export async function compressDB(){
+  const db = DB()
+  await db.compact().catch((e)=>console.error("Error "+e))
+  db.close()
+}
+
 export function getHooks() {
   const session = useCookie("session").value;
   const db = DB();
