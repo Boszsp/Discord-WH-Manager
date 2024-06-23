@@ -29,7 +29,8 @@ export default defineNuxtConfig({
       bypassList: ["/"],
       paramDataMode:false,
       apiBase:undefined,
-      staticMode:false
+      staticMode:false,
+      alwayMakeImageToWebp:false
     },
   },
   build: {
