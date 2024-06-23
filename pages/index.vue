@@ -10,6 +10,7 @@ const {data: hooks} = await getHooks();
 const isSending = ref(false);
 const isMakingPDF = ref(false);
 const isSplitingPDF = ref(false);
+const isConvertImgsToWebp = ref(false);
 
 const pdfFileName = ref("");
 const selectedPdf = ref("");
@@ -100,6 +101,11 @@ function move(id, values, type) {
   let hold2 = values?.splice(type == "up" ? id - 1 : id + 1);
   return [...values, ...hold, ...hold2];
 }
+async function allImagesToWebpHandler() {
+  isConvertImgsToWebp.value = true;
+  files.value = [].concat(await allImagesToWebp(files.value));
+  isConvertImgsToWebp.value = false;
+}
 </script>
 
 <template>
@@ -134,7 +140,24 @@ function move(id, values, type) {
           </v-expansion-panels>
 
           <div id="file" class="flex gap-2 items-center">
-            <v-file-input @click:clear="() => (files = [])" @update:modelValue="(nf) => (files = files.concat(nf))" chips :model-value="files" multiple label="File input" color="primary" density="compact" variant="outlined" hide-details></v-file-input>
+            <v-file-input
+              show-size
+              @click:clear="() => (files = [])"
+              @update:modelValue="
+                (nf) => {
+                  files = files.concat(nf);
+                  if (config.public.alwayMakeImageToWebp) allImagesToWebpHandler();
+                }
+              "
+              chips
+              :model-value="files"
+              multiple
+              label="File input"
+              color="primary"
+              density="compact"
+              variant="outlined"
+              hide-details
+            ></v-file-input>
             <v-btn
               variant="flat"
               prepend-icon="mdi-clipboard-file"
@@ -142,6 +165,7 @@ function move(id, values, type) {
                 async () => {
                   const nfile = await getFileFromClipboard();
                   if (nfile) files.push(nfile);
+                  if (config.public.alwayMakeImageToWebp) allImagesToWebpHandler();
                 }
               "
             >
@@ -159,7 +183,10 @@ function move(id, values, type) {
                   @click="
                     async () => {
                       const whereFileIsImage = files.findIndex((v) => v?.type == 'image/png' || v?.type == 'image/jpg');
-                      if (!files || whereFileIsImage == -1) return;
+                      if (!files || whereFileIsImage == -1) {
+                        toast.warning('Support only .jpg and .png file');
+                        return;
+                      }
                       isMakingPDF = true;
                       files.push(await generatePDFFromImage(files, pdfFileName || files[whereFileIsImage].name));
                       pdfFileName = files[whereFileIsImage].name;
@@ -181,7 +208,7 @@ function move(id, values, type) {
                   @click="
                     async () => {
                       isSplitingPDF = true;
-                      files = files.concat(await splitPDF(files.find((f) => f.name == selectedPdf)));
+                      if (selectedPdf) files = files.concat(await splitPDF(files.find((f) => f.name == selectedPdf)).catch(() => toast.error('Error : File not found')));
                       isSplitingPDF = false;
                     }
                   "
@@ -191,6 +218,24 @@ function move(id, values, type) {
                   color="success"
                 >
                   Splite PDF
+                </v-btn>
+              </div>
+
+              <div class="flex gap-2 items-center">
+                <v-btn
+                  v-if="!config.public.alwayMakeImageToWebp"
+                  @click="
+                    async () => {
+                      allImagesToWebpHandler();
+                    }
+                  "
+                  :loading="isConvertImgsToWebp"
+                  prepend-icon="mdi-image-multiple"
+                  variant="flat"
+                  color="success"
+                  class="w-full"
+                >
+                  All to webp
                 </v-btn>
               </div>
             </div>
@@ -276,6 +321,7 @@ function move(id, values, type) {
                   </div>
                   <div v-for="(file, i) in files">
                     <File
+                      v-if="!isConvertImgsToWebp"
                       @delete="
                         () => {
                           files.splice(i, 1);
@@ -283,6 +329,7 @@ function move(id, values, type) {
                       "
                       :data="file"
                     />
+                    <v-skeleton-loader v-else type="image"></v-skeleton-loader>
                   </div>
                 </div>
               </Preview>
