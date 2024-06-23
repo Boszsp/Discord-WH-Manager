@@ -34,10 +34,10 @@ export async function destroyDB() {
   }
 }
 
-export async function compressDB(){
-  const db = DB()
-  await db.compact().catch((e)=>console.error("Error "+e))
-  db.close()
+export async function compressDB() {
+  const db = DB();
+  await db.compact().catch((e) => console.error("Error " + e));
+  db.close();
 }
 
 export function getHooks() {
@@ -251,12 +251,12 @@ export async function sendToProxyD(url, json, files) {
     return;
   }
   const filesForm = new FormData();
-  filesForm.append("url", url);
-  let count = 0;
+  //filesForm.append("url", url);
+  /*let count = 0;
   for (const file of files) {
     filesForm.append("files[" + count + "]", file, file.name);
     count++;
-  }
+  }*/
   let data = null;
   if (njson.content) {
     data = await $fetch(url, {
@@ -266,20 +266,24 @@ export async function sendToProxyD(url, json, files) {
     })
       .then(async (r) => {
         if (files && files?.length > 0) {
-          await $fetch(url, {
-            baseURL: configg.public.apiBase,
-            method: "POST",
-            body: filesForm,
-          })
-            .then(() => {
-              toast.success("Sending Files Success");
+          await Promise.all(
+            files.map(async (file, c) => {
+              const filesForm = new FormData();
+              filesForm.append("files[0]", file, file.name);
+              await $fetch(url, {
+                baseURL: configg.public.apiBase,
+                method: "POST",
+                body: filesForm,
+              })
+                .then(() => {
+                  toast.success("Sending Files " + (c + 1) + " Success");
+                })
+                .catch((e) => {
+                  toast.error("Sending Files " + (c + 1) + " Fail " + e);
+                });
             })
-            .catch((e) => {
-              toast.error("Sending Files Fail " + e);
-            })
-            .finally(() => {
-              pending.value = false;
-            });
+          );
+          pending.value = false;
           return r;
         } else {
           pending.value = false;
