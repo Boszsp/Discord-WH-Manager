@@ -14,10 +14,10 @@ const isConvertImgsToWebp = ref(false);
 
 const pdfFileName = ref("");
 const selectedPdf = ref("");
+const avgSplitPdfSize = ref(20);
 
 const hook_url = ref("");
-const filesLists = useFiles();
-const files = ref(filesLists.value?.map ? [...filesLists.value] : []);
+const files = ref([]);
 const hookJson = ref({
   username: "",
   avatar_url: "",
@@ -202,13 +202,19 @@ async function allImagesToWebpHandler() {
                 <v-text-field label="PDF file name" color="success" density="compact" variant="outlined" hide-details class="bg-background-tertiary" v-model="pdfFileName"></v-text-field>
               </div>
               <div class="flex gap-2 items-center">
-                <v-select variant="outlined" color="success" v-model="selectedPdf" hide-details density="compact" label="Select pdf to split" class="bg-background-tertiary" :items="files?.length > 0 ? files?.filter((f) => f?.type == 'application/pdf' && convertFileSize(f?.size, 'MB') > 24).map((f) => f?.name) : []"></v-select>
-
+                <v-select variant="outlined" color="success" v-model="selectedPdf" hide-details density="compact" label="Select pdf to split" class="bg-background-tertiary w-6/12" :items="files?.length > 0 ? files?.filter((f) => f?.type == 'application/pdf' && convertFileSize(f?.size, 'MB') > 24).map((f) => f?.name) : []"></v-select>
+                <v-text-field min="1" type="number" label="AVG split PDF size" color="success" density="compact" variant="outlined" hide-details class="bg-background-tertiary w-3/12" v-model="avgSplitPdfSize"></v-text-field>
                 <v-btn
                   @click="
                     async () => {
                       isSplitingPDF = true;
-                      if (selectedPdf) files = files.concat(await splitPDF(files.find((f) => f.name == selectedPdf)).catch(() => toast.error('Error : File not found')));
+                      if (selectedPdf)
+                        files = files.concat(
+                          await splitPDF(
+                            files.find((f) => f.name == selectedPdf),
+                            avgSplitPdfSize
+                          ).catch(() => toast.error('Error : File not found'))
+                        );
                       isSplitingPDF = false;
                     }
                   "

@@ -19,11 +19,18 @@ function fileToDataURL(file) {
   reader.readAsDataURL(file);
 }
 
-if (isImageFile(props.data)) {
-  fileToDataURL(props.data);
-} else {
-  Src.value = URL.createObjectURL(props.data);
+function setupComponent() {
+  if (isImageFile(props.data)) {
+    fileToDataURL(props.data);
+  } else {
+    Src.value = URL.createObjectURL(props.data);
+  }
 }
+
+watch(props, () => {
+  setupComponent();
+});
+setupComponent();
 </script>
 <template>
   <div class="flex gap-1">

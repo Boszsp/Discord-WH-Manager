@@ -49,19 +49,26 @@ export function convertFileSize(byte: number, unit: "B" | "KB" | "MB" | "GB" | "
   return Math.round(byte / conversionFactor);
 }
 
-export async function splitPDF(pdf: File, limit = 24) {
+export async function splitPDF(pdf: File, limit = 20) {
   const pdfDocs: PDFDocument[] = [];
   const pdfDocConst = await PDFDocument.load(await pdf.arrayBuffer(), {
     updateMetadata: false,
   });
   const allPagesCount = pdfDocConst.getPageCount();
-  const splitSize = Math.ceil(convertFileSize(pdf.size, "MB") / limit);
+  let splitSize: number = Math.ceil(convertFileSize(pdf.size, "MB") / limit);
+  const pagesPerPdfCount = Math.ceil(allPagesCount / splitSize);
+  console.log("AllPagesCount : ", allPagesCount);
+  console.log("SplitSize : ", splitSize, pagesPerPdfCount);
+  console.log("PagesPerPdfCount : ", pagesPerPdfCount);
 
   for (let i = 0; i < splitSize; i++) {
+    if (pagesPerPdfCount * (i + 1) - 1 < allPagesCount - 1 && i == splitSize - 1) {
+      splitSize++;
+    }
     pdfDocs[i] = await PDFDocument.create();
-    const min = (i > 0 ? Math.floor(allPagesCount / (splitSize - (i - 1))) + 1 : 1) - 1;
-    const max = (allPagesCount / (splitSize - i) > allPagesCount ? allPagesCount : Math.floor(allPagesCount / (splitSize - i))) - 1;
-    console.log("i : " + i, "Min : " + min, "Max : " + max);
+    const min = pagesPerPdfCount * i;
+    const max = pagesPerPdfCount * (i + 1) - 1 < allPagesCount - 1 ? pagesPerPdfCount * (i + 1) - 1 : allPagesCount - 1;
+    //console.log("i : " + i, "Min : " + min, "Max : " + max);
 
     for (let x = min; x <= max; x++) {
       const copiedPages = await pdfDocs[i].copyPages(pdfDocConst, [x]);
