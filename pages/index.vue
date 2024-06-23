@@ -183,7 +183,10 @@ async function allImagesToWebpHandler() {
                   @click="
                     async () => {
                       const whereFileIsImage = files.findIndex((v) => v?.type == 'image/png' || v?.type == 'image/jpg');
-                      if (!files || whereFileIsImage == -1) return;
+                      if (!files || whereFileIsImage == -1) {
+                        toast.warning('Support only .jpg and .png file');
+                        return;
+                      }
                       isMakingPDF = true;
                       files.push(await generatePDFFromImage(files, pdfFileName || files[whereFileIsImage].name));
                       pdfFileName = files[whereFileIsImage].name;
@@ -220,7 +223,7 @@ async function allImagesToWebpHandler() {
 
               <div class="flex gap-2 items-center">
                 <v-btn
-                 v-if="!config.public.alwayMakeImageToWebp"
+                  v-if="!config.public.alwayMakeImageToWebp"
                   @click="
                     async () => {
                       allImagesToWebpHandler();
