@@ -306,30 +306,3 @@ export async function sendToProxyD(url, json, files) {
 
   return {data, pending};
 }
-
-export async function getFileFromClipboard() {
-  try {
-    // Request clipboard access
-    const clipboardItems = await navigator.clipboard.read();
-
-    for (const item of clipboardItems) {
-      // Check if the clipboard item has any file types
-      if (item.types.includes("image/png") || item.types.includes("image/jpeg") || item.types.includes("image/gif") || item.types.includes("application/pdf")) {
-        // Get the file from the clipboard item
-        const blob = await item.getType(item.types[1]);
-
-        // Create a File object from the Blob
-        const file = new File([blob], blob?.name ?? "clipboard-file." + blob.type.split("/")[1], {type: blob.type});
-
-        // Return the file
-        return file;
-      }
-    }
-
-    // No file found in the clipboard
-    return null;
-  } catch (error) {
-    console.error("Failed to read clipboard contents: ", error);
-    return null;
-  }
-}

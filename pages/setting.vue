@@ -57,6 +57,21 @@ async function refresh() {
               >
                 Clean app
               </v-btn>
+              <v-btn
+                v-if="config.public.staticMode"
+                @click="
+                  async () => {
+                    await compressDB();
+                    await refresh();
+                  }
+                "
+                prepend-icon="mdi-arrow-collapse-all"
+                variant="tonal"
+                color="danger"
+                size="small"
+              >
+                Compress DB
+              </v-btn>
             </div>
           </span>
 

@@ -27,9 +27,10 @@ export default defineNuxtConfig({
     backendPassword: "xxxxxx-xxxx-xxxx-xxx-xxxx-xxxxxx",
     public: {
       bypassList: ["/"],
-      paramDataMode: false,
-      apiBase: undefined,
-      staticMode: false,
+      paramDataMode:false,
+      apiBase:undefined,
+      staticMode:false,
+      alwayMakeImageToWebp:false
     },
   },
   build: {
