@@ -16,8 +16,7 @@ const pdfFileName = ref("");
 const selectedPdf = ref("");
 
 const hook_url = ref("");
-const filesLists = useFiles();
-const files = ref(filesLists.value?.map ? [...filesLists.value] : []);
+const files = ref([]);
 const hookJson = ref({
   username: "",
   avatar_url: "",
