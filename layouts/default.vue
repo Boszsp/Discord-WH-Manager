@@ -4,6 +4,7 @@ const route = useRoute();
 const curPath = useCurPath(route?.path);
 const isAuth = useAuth();
 const isDrawerOpen = ref(false);
+const theme = useCookie("theme");
 
 const navs = [
   {

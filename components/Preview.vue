@@ -23,7 +23,7 @@ const props = defineProps({
       </div>
       <div>
         <ClientOnly>
-          <div class="" v-html="sanitizeHtml(props.content)"></div>
+          <div v-html="sanitizeHtml(props.content)"></div>
         </ClientOnly>
         <slot />
       </div>

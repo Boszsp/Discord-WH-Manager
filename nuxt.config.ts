@@ -1,7 +1,9 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import vuetify, { transformAssetUrls } from "vite-plugin-vuetify";
 export default defineNuxtConfig({
-  devtools: { enabled: true },
+  devtools: { 
+    enabled: true ,
+  },
   modules: [
     "@nuxtjs/tailwindcss",
     "@nuxt/image",
@@ -45,4 +47,10 @@ export default defineNuxtConfig({
   },
   routeRules: {
   },
+  nitro:{
+    experimental:{
+      openAPI:true
+    },
+  },
+  
 });
