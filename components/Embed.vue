@@ -16,7 +16,7 @@ const emit = defineEmits(["delete"]);
             <v-avatar v-if="data?.author?.name" image="" size="24"></v-avatar>
           </a>
           <a :href="props?.data?.url" class="title font-bold mt-2">{{ props?.data?.title }}</a>
-          <p class="text-sm">{{ props?.data?.description }}</p>
+          <div class="text-sm" v-html="props?.data?.description.replaceAll('\n', '<br/>')"></div>
           <div class="fields">
             <EmbedFields :fields="props?.data?.fields" />
           </div>
@@ -25,7 +25,7 @@ const emit = defineEmits(["delete"]);
           </div>
           <div class="footer mt-2 flex items-center gap-2 text-xs">
             <v-avatar v-if="props?.data?.footer?.icon_url" :image="img(props?.data?.footer?.icon_url, {format: 'webp'})" size="24"></v-avatar>
-            <div class="footer mt-2 flex items-center gap-1">
+            <div class="footer flex items-center gap-1">
               <p>{{ props?.data?.footer?.text }}</p>
               <div v-if="props?.data?.timestamp && props?.data?.footer?.text" class="h-1 w-1 rounded-full bg-component-background"></div>
               <p>{{ props?.data?.timestamp }}</p>
