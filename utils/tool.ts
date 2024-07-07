@@ -2,25 +2,26 @@ import {PDFDocument, type PDFPageDrawImageOptions} from "pdf-lib";
 
 export async function generatePDFFromImage(images: File[], name?: string) {
   const pdfDoc = await PDFDocument.create();
-  const results = [...images]?.map(async (img) => {
+  const results = [...images]?.map(async (img, id) => {
+    const page = await pdfDoc.addPage();
     let embedImage = null;
     if (img.type == "image/png") {
       embedImage = await pdfDoc.embedPng(await img.arrayBuffer());
     } else if (img.name.toLowerCase().endsWith(".jpg")) {
       embedImage = await pdfDoc.embedJpg(await img.arrayBuffer());
     } else {
+      pdfDoc.removePage(pdfDoc.getPageCount() - 1);
       return;
     }
-    const {width, height} = embedImage.size();
-    const page = pdfDoc.addPage();
-    page.setSize(width, height);
+    const {width, height} = await embedImage.size();
+    await page.setSize(width, height);
     const embedOption: PDFPageDrawImageOptions = {
       x: 0,
       y: 0,
       width: page.getWidth(),
       height: page.getHeight(),
     };
-    page.drawImage(embedImage, embedOption);
+    await page.drawImage(embedImage, embedOption);
   });
   await Promise.all(results);
 

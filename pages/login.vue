@@ -10,6 +10,8 @@ const username = ref("");
 const password = ref("");
 const isLoading = ref(false);
 const isVisiblePassword = ref(false);
+
+const randomedBg = Math.floor(Math.random() * 2) == 1 ? "/bg-3.png" : "/bg-1.png";
 </script>
 <template>
   <v-card-title class="fixed top-12 left-4 lg:left-12 opacity-90 z-50">
@@ -20,7 +22,7 @@ const isVisiblePassword = ref(false);
       </NuxtLink>
     </div>
   </v-card-title>
-  <div class="fixed z-0 top-0 w-screen h-screen flex items-center justify-center bg-cover" :style="{backgroundImage: 'url(' + img(Math.floor(Math.random() * 2) == 1 ? '/cover.jpeg' : '/bg-1.png', {format: 'webp', blur: 4}) + ')'}">
+  <div class="fixed z-0 top-0 w-screen h-screen flex items-center justify-center bg-cover" :style="{backgroundImage: 'url(' + img(randomedBg || '/bg-3.png', {format: 'webp', blur: 4}) + ')'}">
     <v-card elevation="4" class="bg-background w-[48rem] h-[26rem] m-2 lg:m-0">
       <div class="flex h-full items-center max-lg:justify-center">
         <span class="lg:w-3/5 h-fit p-8 w-[28rem]">

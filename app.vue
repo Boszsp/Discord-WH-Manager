@@ -5,12 +5,13 @@ useSeoMeta({
   ogTitle: "Discord WH Manager",
   ogImage: "/cover.jpeg",
 });
+const theme = useCookie("theme");
 </script>
 <template>
   <NuxtLoadingIndicator color="#5864f2" />
-  <v-theme-provider class="h-full" theme="dark" with-background>
+  <v-theme-provider class="h-full" :theme="theme || 'dark'" with-background>
     <v-app>
-      <Toaster closeButton position="top-right" richColors theme="dark" />
+      <Toaster closeButton position="top-right" richColors :theme="theme || 'dark'" />
       <NuxtLayout>
         <NuxtPage />
       </NuxtLayout>
