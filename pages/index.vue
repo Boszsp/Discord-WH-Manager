@@ -189,7 +189,7 @@ async function allImagesToWebpHandler() {
                       }
                       isMakingPDF = true;
                       files.push(await generatePDFFromImage(files, pdfFileName || files[whereFileIsImage].name));
-                      pdfFileName = files[whereFileIsImage].name;
+                      if (!pdfFileName) pdfFileName = files[whereFileIsImage].name;
                       isMakingPDF = false;
                     }
                   "
