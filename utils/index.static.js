@@ -297,21 +297,24 @@ export async function sendToProxyD(url, json, files) {
         toast.error("Sending Fail : " + e);
       });
   } else if (files) {
-    data = await $fetch(url, {
-      baseURL: configg.public.apiBase,
-      method: "POST",
-      body: filesForm,
-    })
-      .then((r) => {
-        toast.success("Sending Success");
-        return r;
+    data = await Promise.all(
+      files.map(async (file, c) => {
+        const filesForm = new FormData();
+        filesForm.append("files[0]", file, file.name);
+        await $fetch(url, {
+          baseURL: configg.public.apiBase,
+          method: "POST",
+          body: filesForm,
+        })
+          .then(() => {
+            toast.success("Sending Files " + (c + 1) + " Success");
+          })
+          .catch((e) => {
+            toast.error("Sending Files " + (c + 1) + " Fail " + e);
+          });
       })
-      .catch(() => {
-        toast.error("Sending Fail");
-      })
-      .finally(() => {
-        pending.value = false;
-      });
+    );
+    pending.value = false;
   }
 
   return {data, pending};
