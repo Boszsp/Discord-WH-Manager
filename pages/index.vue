@@ -16,7 +16,7 @@ const isRemoveSource = ref(false);
 const pdfFileName = ref("");
 const selectedPdf = ref("");
 const avgSplitPdfSize = ref(20);
-const webpImgQuality = ref(100)
+const webpImgQuality = ref(100);
 
 const hook_url = ref("");
 const files = ref([]);
@@ -105,7 +105,7 @@ function move(id, values, type) {
 }
 async function allImagesToWebpHandler() {
   isConvertImgsToWebp.value = true;
-  files.value = [].concat(await allImagesToWebp(files.value,webpImgQuality.value));
+  files.value = [].concat(await allImagesToWebp(files.value, webpImgQuality.value));
   isConvertImgsToWebp.value = false;
 }
 </script>
@@ -191,8 +191,7 @@ async function allImagesToWebpHandler() {
                       }
                       isMakingPDF = true;
                       files.push(await generatePDFFromImage(files, pdfFileName || files[whereFileIsImage].name));
-                      if(isRemoveSource)
-                      files = files.filter( (file)=> !(file.type == 'image/png' || file.name.toLowerCase().endsWith('.jpg')))
+                      if (isRemoveSource) files = files.filter((file) => !(file.type == 'image/png' || file.name.toLowerCase().endsWith('.jpg')));
                       if (!pdfFileName) pdfFileName = files[whereFileIsImage].name;
                       isMakingPDF = false;
                     }
@@ -253,7 +252,6 @@ async function allImagesToWebpHandler() {
                   All to webp
                 </v-btn>
                 <v-text-field min="0" max="100" type="number" label="Quality" color="success" density="compact" variant="outlined" hide-details class="bg-background-tertiary w-3/12" v-model="webpImgQuality"></v-text-field>
-
               </div>
             </div>
           </v-sheet>
