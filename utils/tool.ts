@@ -25,6 +25,7 @@ export async function generatePDFFromImage(images: File[], name?: string) {
   });
   await Promise.all(results);
 
+
   const pdfB64 = await pdfDoc.save();
   const pdfFile = new File([pdfB64], name ? name + ".pdf" : "pdffile.pdf", {
     type: "application/pdf",
@@ -86,7 +87,7 @@ export async function splitPDF(pdf: File, limit = 20) {
   );
 }
 
-export async function imageToWebp(src: string): Promise<Blob | null> {
+export async function imageToWebp(src: string , quality:number = 100 ): Promise<Blob | null> {
   const canvas = document.createElement("canvas");
   const img = new Image();
 
@@ -103,7 +104,9 @@ export async function imageToWebp(src: string): Promise<Blob | null> {
     if (ctx) {
       ctx.drawImage(img, 0, 0, img.width, img.height);
       return await new Promise((resolve, reject) => {
-        canvas.toBlob(resolve, "image/webp");
+        console.log(quality)
+        canvas.toBlob(resolve, "image/webp", quality/100);
+        setTimeout(()=>canvas.remove(),500)
       });
     } else {
       throw new Error("Canvas context not available");
@@ -122,12 +125,12 @@ export function toBase64(imageFile: File): Promise<string> {
   });
 }
 
-export async function allImagesToWebp(imgs: never[]) {
+export async function allImagesToWebp(imgs: never[] , quality:number) {
   const webps: File[] = [].concat(imgs);
   return await Promise.all(
     webps.map(async (f) => {
-      if (f.type.startsWith("image/") && !f.type.endsWith("webp")) {
-        const webp = await imageToWebp(await toBase64(f));
+      if (f.type.startsWith("image/") ) {
+        const webp = await imageToWebp(await toBase64(f),quality);
         if (webp)
           return new File([await webp.arrayBuffer()], f.name.split(".")[0] + ".webp", {
             type: "image/webp",
