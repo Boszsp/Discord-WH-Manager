@@ -16,7 +16,7 @@ const isRemoveSource = ref(false);
 const pdfFileName = ref("");
 const selectedPdf = ref("");
 const avgSplitPdfSize = ref(20);
-const webpImgQuality = ref(100);
+const webpImgQuality = ref(95);
 
 const hook_url = ref("");
 const files = ref([]);
@@ -202,7 +202,7 @@ async function allImagesToWebpHandler() {
                 >
                   ALL Image To pdf
                 </v-btn>
-                <v-tooltip text="Remove Source" location="top">
+                <v-tooltip text="Remove Source Images" location="top">
                   <template v-slot:activator="{props}">
                     <v-checkbox v-bind="props" v-model="isRemoveSource" hide-details label=""></v-checkbox>
                   </template>
