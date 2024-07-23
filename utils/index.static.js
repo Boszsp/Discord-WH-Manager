@@ -266,23 +266,23 @@ export async function sendToProxyD(url, json, files) {
     })
       .then(async (r) => {
         if (files && files?.length > 0) {
-          await Promise.all(
-            files.map(async (file, c) => {
-              const filesForm = new FormData();
-              filesForm.append("files[0]", file, file.name);
-              await $fetch(url, {
-                baseURL: configg.public.apiBase,
-                method: "POST",
-                body: filesForm,
-              })
-                .then(() => {
-                  toast.success("Sending Files " + (c + 1) + " Success");
-                })
-                .catch((e) => {
-                  toast.error("Sending Files " + (c + 1) + " Fail " + e);
-                });
+          let c = 0;
+          for (let file of files) {
+            const filesForm = new FormData();
+            filesForm.append("files[0]", file, file.name);
+            await $fetch(url, {
+              baseURL: configg.public.apiBase,
+              method: "POST",
+              body: filesForm,
             })
-          );
+              .then(() => {
+                toast.success("Sending Files " + (c + 1) + " Success");
+              })
+              .catch((e) => {
+                toast.error("Sending Files " + (c + 1) + " Fail " + e);
+              });
+            c++;
+          }
           pending.value = false;
           return r;
         } else {
@@ -297,23 +297,23 @@ export async function sendToProxyD(url, json, files) {
         toast.error("Sending Fail : " + e);
       });
   } else if (files) {
-    data = await Promise.all(
-      files.map(async (file, c) => {
-        const filesForm = new FormData();
-        filesForm.append("files[0]", file, file.name);
-        await $fetch(url, {
-          baseURL: configg.public.apiBase,
-          method: "POST",
-          body: filesForm,
-        })
-          .then(() => {
-            toast.success("Sending Files " + (c + 1) + " Success");
-          })
-          .catch((e) => {
-            toast.error("Sending Files " + (c + 1) + " Fail " + e);
-          });
+    let c = 0;
+    for (let file of files) {
+      const filesForm = new FormData();
+      filesForm.append("files[0]", file, file.name);
+      await $fetch(url, {
+        baseURL: configg.public.apiBase,
+        method: "POST",
+        body: filesForm,
       })
-    );
+        .then(() => {
+          toast.success("Sending Files " + (c + 1) + " Success");
+        })
+        .catch((e) => {
+          toast.error("Sending Files " + (c + 1) + " Fail " + e);
+        });
+      c++;
+    }
     pending.value = false;
   }
 

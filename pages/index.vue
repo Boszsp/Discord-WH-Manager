@@ -23,7 +23,7 @@ const files = ref([]);
 const hookJson = ref({
   username: "",
   avatar_url: "",
-  content: "<p>Hello world!</p>",
+  content: "",
   embeds: [],
   thread_name: "",
 });
