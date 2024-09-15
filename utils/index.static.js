@@ -301,7 +301,7 @@ export async function sendToProxyD(url, json, files, sendImagesOnlyMode) {
 async function sentFiles(url, files, mode) {
   const configg = useRuntimeConfig();
   if (mode) {
-    await $fetch("/api/proxy", {
+    await $fetch(url, {
       baseURL: configg.public.apiBase,
       method: "POST",
       body: files,
