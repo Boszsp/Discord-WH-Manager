@@ -174,7 +174,7 @@ export function formatFileSize(sizeInBytes) {
   }
 }
 
-export async function sendToProxyD(url, json, files) {
+export async function sendToProxyD(url, json, files, sendImagesOnlyMode) {
   const configg = useRuntimeConfig();
   const njson = JSON.parse(JSON.stringify(json));
   njson.content = turndownService.turndown(njson?.content);
@@ -199,10 +199,11 @@ export async function sendToProxyD(url, json, files) {
   const filesForm = new FormData();
   filesForm.append("url", url);
   let count = 0;
-  for (const file of files) {
-    filesForm.append("files", file, file.name);
-    count++;
-  }
+  if (sendImagesOnlyMode)
+    for (let file of files) {
+      filesForm.append("files", file, file.name);
+      count++;
+    }
   let data = null;
   if (njson.content) {
     data = await $fetch("/api/proxy", {
@@ -214,7 +215,7 @@ export async function sendToProxyD(url, json, files) {
       },
     })
       .then(async (r) => {
-        if (files && files?.length > 0) {
+        if (sendImagesOnlyMode && files && files?.length > 0) {
           await $fetch("/api/proxy", {
             baseURL: configg.public.apiBase,
             method: "POST",
@@ -222,6 +223,8 @@ export async function sendToProxyD(url, json, files) {
           }).catch(() => {
             toast.error("Sending Files Fail");
           });
+        } else if (files && files?.length > 0) {
+          await sentFiles(url, files);
         }
 
         return r;
@@ -230,16 +233,41 @@ export async function sendToProxyD(url, json, files) {
         toast.error("Sending Fail");
       });
   } else if (files) {
-    data = await $fetch("/api/proxy", {
-      baseURL: configg.public.apiBase,
-      method: "POST",
-      body: filesForm,
-    }).catch(() => {
-      toast.error("Sending Fail");
-    });
+    if (sendImagesOnlyMode) {
+      data = await $fetch("/api/proxy", {
+        baseURL: configg.public.apiBase,
+        method: "POST",
+        body: filesForm,
+      }).catch(() => {
+        toast.error("Sending Fail");
+      });
+    } else {
+      await sentFiles(url, files);
+    }
   }
   if (data && data.status / 100 == 2) {
     toast.success("Sending Success");
   }
   return data;
+}
+
+async function sentFiles(url, files) {
+  const configg = useRuntimeConfig();
+  let c = 0;
+  for (let file of files) {
+    const filesForm = new FormData();
+    filesForm.append("files[0]", file, file.name);
+    await $fetch(url, {
+      baseURL: configg.public.apiBase,
+      method: "POST",
+      body: filesForm,
+    })
+      .then(() => {
+        toast.success("Sending Files " + (c + 1) + " Success");
+      })
+      .catch((e) => {
+        toast.error("Sending Files " + (c + 1) + " Fail " + e);
+      });
+    c++;
+  }
 }

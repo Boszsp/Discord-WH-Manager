@@ -12,6 +12,7 @@ const isMakingPDF = ref(false);
 const isSplitingPDF = ref(false);
 const isConvertImgsToWebp = ref(false);
 const isRemoveSource = ref(false);
+const isSendImagesMode = ref(false);
 
 const pdfFileName = ref("");
 const selectedPdf = ref("");
@@ -23,7 +24,7 @@ const files = ref([]);
 const hookJson = ref({
   username: "",
   avatar_url: "",
-  content: "<p>Hello world!</p>",
+  content: "<p></p>",
   embeds: [],
   thread_name: "",
 });
@@ -48,9 +49,9 @@ async function submitHandler() {
   });
   isSending.value = true;
   if (url && url[0] && url[0].link) {
-    await sendToProxyD(url[0].link, hookJson.value, files.value);
+    await sendToProxyD(url[0].link, hookJson.value, files.value, isSendImagesMode.value);
   } else if (hook_url && hook_url.value) {
-    await sendToProxyD(hook_url.value, hookJson.value, files.value);
+    await sendToProxyD(hook_url.value, hookJson.value, files.value, isSendImagesMode.value);
   }
   isSending.value = false;
 }
@@ -174,6 +175,23 @@ async function allImagesToWebpHandler() {
               Clipboard
             </v-btn>
           </div>
+
+          <v-sheet rounded :elevation="1" class="w-full bg-background px-5">
+            <div class="flex items-center gap-5">
+              <v-btn
+                @click="
+                  () => {
+                    hooks = getHooks().data;
+                  }
+                "
+                prepend-icon="mdi-refresh"
+                variant="flat"
+              >
+                Refresh Hooks
+              </v-btn>
+              <v-switch v-model="isSendImagesMode" color="primary" inset hide-details label="Sent Images Only Mode"></v-switch>
+            </div>
+          </v-sheet>
 
           <v-divider></v-divider>
 
