@@ -229,7 +229,7 @@ export function formatFileSize(sizeInBytes) {
   }
 }
 
-export async function sendToProxyD(url, json, files) {
+export async function sendToProxyD(url, json, files, sendImagesOnlyMode) {
   const configg = useRuntimeConfig();
   const njson = JSON.parse(JSON.stringify(json));
   njson.content = turndownService.turndown(njson?.content);
@@ -238,6 +238,7 @@ export async function sendToProxyD(url, json, files) {
   const validate_url = urlSchema.safeParse(url);
   const validate = hookJsonSchema.safeParse(njson);
   const validate_files = filesSchema.safeParse(files);
+
   if (!validate.success || !validate_url.success || !validate_files.success) {
     validate?.error?.issues?.forEach((mss, c) => {
       setTimeout(() => toast.error(mss.message), c);
@@ -251,12 +252,13 @@ export async function sendToProxyD(url, json, files) {
     return;
   }
   const filesForm = new FormData();
-  //filesForm.append("url", url);
-  /*let count = 0;
-  for (const file of files) {
-    filesForm.append("files[" + count + "]", file, file.name);
-    count++;
-  }*/
+  filesForm.append("url", url);
+  let count = 0;
+  if (sendImagesOnlyMode)
+    for (let file of files) {
+      filesForm.append("files[" + count + "]", file, file.name);
+      count++;
+    }
   let data = null;
   if (njson.content) {
     data = await $fetch(url, {
@@ -266,22 +268,10 @@ export async function sendToProxyD(url, json, files) {
     })
       .then(async (r) => {
         if (files && files?.length > 0) {
-          let c = 0;
-          for (let file of files) {
-            const filesForm = new FormData();
-            filesForm.append("files[0]", file, file.name);
-            await $fetch(url, {
-              baseURL: configg.public.apiBase,
-              method: "POST",
-              body: filesForm,
-            })
-              .then(() => {
-                toast.success("Sending Files " + (c + 1) + " Success");
-              })
-              .catch((e) => {
-                toast.error("Sending Files " + (c + 1) + " Fail " + e);
-              });
-            c++;
+          if (sendImagesOnlyMode) {
+            await sentFiles(url, filesForm, sendImagesOnlyMode);
+          } else {
+            await sentFiles(url, files, sendImagesOnlyMode);
           }
           pending.value = false;
           return r;
@@ -297,6 +287,32 @@ export async function sendToProxyD(url, json, files) {
         toast.error("Sending Fail : " + e);
       });
   } else if (files) {
+    if (sendImagesOnlyMode) {
+      await sentFiles(url, filesForm, sendImagesOnlyMode);
+    } else {
+      await sentFiles(url, files, sendImagesOnlyMode);
+    }
+    pending.value = false;
+  }
+
+  return {data, pending};
+}
+
+async function sentFiles(url, files, mode) {
+  const configg = useRuntimeConfig();
+  if (mode) {
+    await $fetch("/api/proxy", {
+      baseURL: configg.public.apiBase,
+      method: "POST",
+      body: files,
+    })
+      .then(() => {
+        toast.success("Sending Files Success");
+      })
+      .catch(() => {
+        toast.error("Sending Files Fail");
+      });
+  } else {
     let c = 0;
     for (let file of files) {
       const filesForm = new FormData();
@@ -314,8 +330,5 @@ export async function sendToProxyD(url, json, files) {
         });
       c++;
     }
-    pending.value = false;
   }
-
-  return {data, pending};
 }
