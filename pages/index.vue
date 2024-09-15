@@ -49,9 +49,9 @@ async function submitHandler() {
   });
   isSending.value = true;
   if (url && url[0] && url[0].link) {
-    await sendToProxyD(url[0].link, hookJson.value, files.value , isSendImagesMode.value);
+    await sendToProxyD(url[0].link, hookJson.value, files.value, isSendImagesMode.value);
   } else if (hook_url && hook_url.value) {
-    await sendToProxyD(hook_url.value, hookJson.value, files.value , isSendImagesMode.value);
+    await sendToProxyD(hook_url.value, hookJson.value, files.value, isSendImagesMode.value);
   }
   isSending.value = false;
 }
@@ -176,7 +176,7 @@ async function allImagesToWebpHandler() {
             </v-btn>
           </div>
 
-          <v-sheet rounded :elevation="1" class="w-full bg-background  px-5">
+          <v-sheet rounded :elevation="1" class="w-full bg-background px-5">
             <div class="flex items-center gap-5">
               <v-btn
                 @click="

@@ -224,7 +224,7 @@ export async function sendToProxyD(url, json, files, sendImagesOnlyMode) {
             toast.error("Sending Files Fail");
           });
         } else if (files && files?.length > 0) {
-          await sentFiles(url,files)
+          await sentFiles(url, files);
         }
 
         return r;
@@ -233,7 +233,7 @@ export async function sendToProxyD(url, json, files, sendImagesOnlyMode) {
         toast.error("Sending Fail");
       });
   } else if (files) {
-    if(sendImagesOnlyMode){
+    if (sendImagesOnlyMode) {
       data = await $fetch("/api/proxy", {
         baseURL: configg.public.apiBase,
         method: "POST",
@@ -241,10 +241,9 @@ export async function sendToProxyD(url, json, files, sendImagesOnlyMode) {
       }).catch(() => {
         toast.error("Sending Fail");
       });
-    }else{
-      await sentFiles(url,files)
+    } else {
+      await sentFiles(url, files);
     }
-    
   }
   if (data && data.status / 100 == 2) {
     toast.success("Sending Success");
@@ -252,8 +251,7 @@ export async function sendToProxyD(url, json, files, sendImagesOnlyMode) {
   return data;
 }
 
-
-async function sentFiles(url,files){
+async function sentFiles(url, files) {
   const configg = useRuntimeConfig();
   let c = 0;
   for (let file of files) {
