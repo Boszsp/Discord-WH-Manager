@@ -61,6 +61,10 @@ async function refresh() {
                 v-if="config.public.staticMode"
                 @click="
                   async () => {
+                    await getHooks();
+                    resultValue = JSON.stringify(await getHooks().data.value.hooks);
+                    await destroyDB();
+                    createHooks(JSON.parse(resultValue));
                     await compressDB();
                     await refresh();
                   }
