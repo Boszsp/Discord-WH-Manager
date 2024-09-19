@@ -220,7 +220,7 @@ async function allImagesToWebpHandler() {
                 >
                   ALL Image To pdf
                 </v-btn>
-                <v-tooltip text="Remove Source Images" location="top">
+                <v-tooltip text="Remove Source" location="top">
                   <template v-slot:activator="{props}">
                     <v-checkbox v-bind="props" v-model="isRemoveSource" hide-details label=""></v-checkbox>
                   </template>
@@ -270,6 +270,46 @@ async function allImagesToWebpHandler() {
                   All to webp
                 </v-btn>
                 <v-text-field min="0" max="100" type="number" label="Quality" color="success" density="compact" variant="outlined" hide-details class="bg-background-tertiary w-3/12" v-model="webpImgQuality"></v-text-field>
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <v-btn
+                  v-if="!config.public.alwayMakeImageToWebp"
+                  @click="
+                    async () => {
+                      files.forEach(async (f) => {
+                        if (f.type.toUpperCase().endsWith('ZIP')) {
+                          if (isRemoveSource) {
+                            files = files.filter((file) => file.name != f.name);
+                          }
+                          (await extractZipFile(f)).sort((a, b) => (a.name < b.name ? -1 : 1)).forEach((file) => files.push(file));
+                        }
+                      });
+                    }
+                  "
+                  :loading="isConvertImgsToWebp"
+                  prepend-icon="mdi-zip-box"
+                  variant="flat"
+                  color="success"
+                  class="w-full"
+                >
+                  Unzip All
+                </v-btn>
+
+                <v-btn
+                  v-if="!config.public.alwayMakeImageToWebp"
+                  @click="
+                    async () => {
+                      files.push(await createZipFile(files, pdfFileName));
+                    }
+                  "
+                  :loading="isConvertImgsToWebp"
+                  prepend-icon="mdi-folder-zip"
+                  variant="flat"
+                  color="success"
+                  class="w-full"
+                >
+                  zip All
+                </v-btn>
               </div>
             </div>
           </v-sheet>
@@ -358,6 +398,9 @@ async function allImagesToWebpHandler() {
                       @delete="
                         () => {
                           files.splice(i, 1);
+                          if (files.length == 0) {
+                            files = [];
+                          }
                         }
                       "
                       :data="file"
