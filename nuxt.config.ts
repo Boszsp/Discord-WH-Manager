@@ -4,6 +4,7 @@ export default defineNuxtConfig({
   devtools: { 
     enabled: true ,
   },
+
   modules: [
     "@nuxtjs/tailwindcss",
     "@nuxt/image",
@@ -14,6 +15,7 @@ export default defineNuxtConfig({
       });
     },
   ],
+
   tailwindcss: {
     cssPath: ["~/assets/css/tailwind.css", { injectPosition: "first" }],
     configPath: "tailwind.config",
@@ -23,6 +25,7 @@ export default defineNuxtConfig({
     config: {},
     viewer: true,
   },
+
   runtimeConfig: {
     username:"",
     password:"",
@@ -35,9 +38,11 @@ export default defineNuxtConfig({
       alwayMakeImageToWebp:false
     },
   },
+
   build: {
     transpile: ["vuetify"],
   },
+
   vite: {
     vue: {
       template: {
@@ -45,12 +50,15 @@ export default defineNuxtConfig({
       },
     },
   },
+
   routeRules: {
   },
+
   nitro:{
     experimental:{
       openAPI:true
     },
   },
-  
+
+  compatibilityDate: "2024-09-20",
 });
