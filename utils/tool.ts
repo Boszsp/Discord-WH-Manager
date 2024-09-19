@@ -1,5 +1,5 @@
 import {PDFDocument, type PDFPageDrawImageOptions} from "pdf-lib";
-import {ZipReader, BlobReader, BlobWriter , ZipWriter } from "@zip.js/zip.js";
+import {ZipReader, BlobReader, BlobWriter, ZipWriter} from "@zip.js/zip.js";
 
 export async function generatePDFFromImage(images: File[], name?: string) {
   const pdfDoc = await PDFDocument.create();
@@ -170,21 +170,14 @@ export async function getFileFromClipboard() {
 
 export async function extractZipFile(file: File) {
   const zip = new ZipReader(new BlobReader(file));
-  return await Promise.all(
-  (await zip.getEntries({filenameEncoding: "utf-8"})).map(async (entry) => await (entry.getData ? new File([await entry?.getData(new BlobWriter())], entry.filename, {type: entry.filename.toUpperCase().endsWith(".JPG") || entry.filename.toUpperCase().endsWith(".PNG") || entry.filename.toUpperCase().endsWith(".JPEG") || entry.filename.toUpperCase().endsWith(".WEBP") ? "image/*" : "application/*"}) : null))
-);
+  return await Promise.all((await zip.getEntries({filenameEncoding: "utf-8"})).map(async (entry) => await (entry.getData ? new File([await entry?.getData(new BlobWriter())], entry.filename, {type: entry.filename.toUpperCase().endsWith(".JPG") || entry.filename.toUpperCase().endsWith(".PNG") || entry.filename.toUpperCase().endsWith(".JPEG") || entry.filename.toUpperCase().endsWith(".WEBP") ? "image/*" : "application/*"}) : null)));
 }
 
+export async function createZipFile(files: File[], name: string) {
+  const zip = new ZipWriter(new BlobWriter("application/zip"), {bufferedWrite: true});
+  files.forEach((f) => {
+    zip.add(f.name, new BlobReader(f));
+  });
 
-export async function createZipFile(files:File[],name:string){
-  const zip = new ZipWriter(new BlobWriter("application/zip"), { bufferedWrite: true  });
-  files.forEach(
-    f=>{
-     zip.add(f.name,new BlobReader(f))
-    }
-  )
-
-
-  return new File([await zip.close()], name && name !="" ? name : "ZIP_"+Date.now()+".zip",{type:"application/zip"});
-				
+  return new File([await zip.close()], name && name != "" ? name : "ZIP_" + Date.now() + ".zip", {type: "application/zip"});
 }

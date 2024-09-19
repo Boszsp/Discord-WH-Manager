@@ -299,7 +299,7 @@ async function allImagesToWebpHandler() {
                   v-if="!config.public.alwayMakeImageToWebp"
                   @click="
                     async () => {
-                   files.push(await createZipFile(files,pdfFileName));
+                      files.push(await createZipFile(files, pdfFileName));
                     }
                   "
                   :loading="isConvertImgsToWebp"
