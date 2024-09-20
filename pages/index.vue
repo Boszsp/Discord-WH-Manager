@@ -13,6 +13,7 @@ const isSplitingPDF = ref(false);
 const isConvertImgsToWebp = ref(false);
 const isRemoveSource = ref(false);
 const isSendImagesMode = ref(false);
+const isFixedSizePdfPages = ref(false);
 
 const pdfFileName = ref("");
 const selectedPdf = ref("");
@@ -202,13 +203,13 @@ async function allImagesToWebpHandler() {
                   :loading="isMakingPDF"
                   @click="
                     async () => {
-                      const whereFileIsImage = files.findIndex((v) => v?.type == 'image/png' || v?.type == 'image/jpg');
+                      const whereFileIsImage = files.findIndex((v) => v?.type == 'image/png' || v?.type == 'image/jpeg' || v?.type == 'image/jpg');
                       if (!files || whereFileIsImage == -1) {
                         toast.warning('Support only .jpg and .png file');
                         return;
                       }
                       isMakingPDF = true;
-                      files.push(await generatePDFFromImage(files, pdfFileName || files[whereFileIsImage].name));
+                      files.push(await generatePDFFromImage(files, pdfFileName || files[whereFileIsImage].name, isFixedSizePdfPages));
                       if (isRemoveSource) files = files.filter((file) => !(file.type == 'image/png' || file.name.toLowerCase().endsWith('.jpg')));
                       if (!pdfFileName) pdfFileName = files[whereFileIsImage].name;
                       isMakingPDF = false;
@@ -218,11 +219,16 @@ async function allImagesToWebpHandler() {
                   variant="flat"
                   color="success"
                 >
-                  ALL Image To pdf
+                  Images To pdf
                 </v-btn>
                 <v-tooltip text="Remove Source" location="top">
                   <template v-slot:activator="{props}">
                     <v-checkbox v-bind="props" v-model="isRemoveSource" hide-details label=""></v-checkbox>
+                  </template>
+                </v-tooltip>
+                <v-tooltip text="Fixed PDF Pages Size From Frist Page" location="top">
+                  <template v-slot:activator="{props}">
+                    <v-checkbox v-bind="props" v-model="isFixedSizePdfPages" hide-details label=""></v-checkbox>
                   </template>
                 </v-tooltip>
                 <v-text-field label="PDF file name" color="success" density="compact" variant="outlined" hide-details class="bg-background-tertiary" v-model="pdfFileName"></v-text-field>
