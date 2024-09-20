@@ -1,28 +1,33 @@
 import {PDFDocument, type PDFPageDrawImageOptions} from "pdf-lib";
 import {ZipReader, BlobReader, BlobWriter, ZipWriter} from "@zip.js/zip.js";
 
-export async function generatePDFFromImage(images: File[], name?: string) {
+export async function generatePDFFromImage(images: File[], name?: string, fixedSize?: boolean) {
   const pdfDoc = await PDFDocument.create();
+  let fristPageSize: number[] = [];
   const results = [...images]?.map(async (img, id) => {
-    const page = await pdfDoc.addPage();
-    let embedImage = null;
-    if (img.type == "image/png") {
-      embedImage = await pdfDoc.embedPng(await img.arrayBuffer());
-    } else if (img.name.toLowerCase().endsWith(".jpg")) {
-      embedImage = await pdfDoc.embedJpg(await img.arrayBuffer());
-    } else {
-      pdfDoc.removePage(pdfDoc.getPageCount() - 1);
-      return;
+    if (img.type == "image/png" || img.name.toLowerCase().endsWith(".jpg")) {
+      const page = await pdfDoc.addPage();
+      let embedImage = null;
+      if (img.type == "image/png") {
+        embedImage = await pdfDoc.embedPng(await img.arrayBuffer());
+      } else if (img.name.toLowerCase().endsWith(".jpg")) {
+        embedImage = await pdfDoc.embedJpg(await img.arrayBuffer());
+      } else {
+        pdfDoc.removePage(pdfDoc.getPageCount() - 1);
+        return;
+      }
+      const {width, height} = await embedImage.size();
+      if (fristPageSize.length == 0 && fixedSize) fristPageSize = [width, height];
+
+      await page.setSize(fristPageSize[0] ?? width, fristPageSize[1] ?? height);
+      const embedOption: PDFPageDrawImageOptions = {
+        x: 0,
+        y: 0,
+        width: page.getWidth(),
+        height: page.getHeight(),
+      };
+      await page.drawImage(embedImage, embedOption);
     }
-    const {width, height} = await embedImage.size();
-    await page.setSize(width, height);
-    const embedOption: PDFPageDrawImageOptions = {
-      x: 0,
-      y: 0,
-      width: page.getWidth(),
-      height: page.getHeight(),
-    };
-    await page.drawImage(embedImage, embedOption);
   });
   await Promise.all(results);
 
@@ -168,9 +173,43 @@ export async function getFileFromClipboard() {
   }
 }
 
+export function getMimeTypeFromFilename(fname: string): string {
+  const extension = fname.split(".").pop()?.toLowerCase();
+  switch (extension) {
+    case "png":
+      return "image/png";
+    case "jpg":
+    case "jpeg":
+      return "image/jpeg";
+    case "gif":
+      return "image/gif";
+    case "bmp":
+      return "image/bmp";
+    case "svg":
+      return "image/svg+xml";
+    case "pdf":
+      return "application/pdf";
+    case "txt":
+      return "text/plain";
+    case "html":
+      return "text/html";
+    case "css":
+      return "text/css";
+    case "js":
+      return "application/javascript";
+    case "json":
+      return "application/json";
+    case "zip":
+      return "application/zip";
+    // Add more cases for other mime types as needed
+    default:
+      return "application/octet-stream"; // Default to generic binary type
+  }
+}
+
 export async function extractZipFile(file: File) {
   const zip = new ZipReader(new BlobReader(file));
-  return await Promise.all((await zip.getEntries({filenameEncoding: "utf-8"})).map(async (entry) => await (entry.getData ? new File([await entry?.getData(new BlobWriter())], entry.filename, {type: entry.filename.toUpperCase().endsWith(".JPG") || entry.filename.toUpperCase().endsWith(".PNG") || entry.filename.toUpperCase().endsWith(".JPEG") || entry.filename.toUpperCase().endsWith(".WEBP") ? "image/*" : "application/*"}) : null)));
+  return await Promise.all((await zip.getEntries({filenameEncoding: "utf-8"})).map(async (entry) => await (entry.getData ? new File([await entry?.getData(new BlobWriter())], entry.filename, {type: getMimeTypeFromFilename(entry.filename)}) : null)));
 }
 
 export async function createZipFile(files: File[], name: string) {
@@ -178,6 +217,5 @@ export async function createZipFile(files: File[], name: string) {
   files.forEach((f) => {
     zip.add(f.name, new BlobReader(f));
   });
-
   return new File([await zip.close()], name && name != "" ? name : "ZIP_" + Date.now() + ".zip", {type: "application/zip"});
 }
