@@ -5,7 +5,7 @@ const props = defineProps({
 const formatFileds = computed(() => {
   let hold = [],
     countRow = 0;
-  props.fields.forEach((field, index) => {
+  props.fields?.forEach((field, index) => {
     if (!field.inline || !index || !props.fields[index - 1].inline) {
       countRow++;
     }

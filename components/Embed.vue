@@ -16,7 +16,7 @@ const emit = defineEmits(["delete"]);
             <v-avatar v-if="data?.author?.name" image="" size="24"></v-avatar>
           </a>
           <a :href="props?.data?.url" class="title font-bold mt-2">{{ props?.data?.title }}</a>
-          <div class="text-sm" v-html="props?.data?.description.replaceAll('\n', '<br/>')"></div>
+          <div class="text-sm" v-html="props?.data?.description?.replaceAll('\n', '<br/>')"></div>
           <div class="fields">
             <EmbedFields :fields="props?.data?.fields" />
           </div>

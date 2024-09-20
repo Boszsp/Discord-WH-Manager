@@ -35,3 +35,12 @@ model JaPrefix{
   code String @unique
   prefix String
 }
+
+
+//model Template{
+//  id      Int      @id @default(autoincrement())
+//  template String
+//  owner  User @relation(fields: [ownerId], references: [id])
+//  ownerId Int
+//}
+
