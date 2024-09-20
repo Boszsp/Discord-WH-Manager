@@ -4,7 +4,7 @@ const config = useRuntimeConfig();
 const {data: hooks} = await getHooks();
 
 const route = useRoute();
-const id = 0; //route.query?.id;
+const id = route.query?.id;
 const json_query = route.query?.json;
 
 const templateString = ref(json_query ? decodeURI(json_query) : null);

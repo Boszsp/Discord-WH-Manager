@@ -44,5 +44,3 @@ export const hookJsonSchema = z
     thread_name: z.string().max(100, "Thread name length must be less than 100 characters"),
   })
   .deepPartial();
-
-  

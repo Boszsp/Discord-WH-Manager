@@ -3,7 +3,19 @@ import {toast} from "vue-sonner";
 import {z} from "zod";
 
 export function getTemplateFromId(id: number = 0) {
-  return localStorage.getItem("template_" + id) || `{"content":"<p></p>{{content}}","embeds":[{"title":" {{embeds0title}}"}]}`;
+  return localStorage?.getItem("template_" + id) || `{"content":"{{content}}"}`;
+}
+
+export function getAllTemplateId(): number[] {
+  const holds: number[] = [];
+  new Set(JSON.parse(localStorage?.getItem("template_id_list") ?? "[0]")).forEach((hold) => holds.push(hold as number));
+  return holds;
+}
+
+export function deleteTemplate(id: number) {
+  localStorage?.removeItem("template_" + id);
+  localStorage?.setItem("template_id_list", JSON.stringify(getAllTemplateId().filter((item) => item != id)));
+  toast.success("Deleted template");
 }
 
 export function saveTemplate(id: number = 0, template: string) {
@@ -20,8 +32,9 @@ export function saveTemplate(id: number = 0, template: string) {
 
   if (safeParseTemplate?.data) {
     toast.success("Saved template");
-    localStorage.setItem("template_" + id, JSON.stringify(safeParseTemplate?.data));
-    localStorage.setItem("template_id_list" + id, JSON.stringify([id].concat(JSON.parse(localStorage.getItem("template_id_list") ?? "[]"))));
+    localStorage?.setItem("template_" + id, JSON.stringify(safeParseTemplate?.data));
+    localStorage?.setItem("template_id_list", JSON.stringify([id].concat(getAllTemplateId())));
+    localStorage?.setItem("template_id_list", JSON.stringify(getAllTemplateId()));
   }
 }
 
