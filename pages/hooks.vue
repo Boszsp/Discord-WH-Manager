@@ -50,7 +50,7 @@ async function addHandler() {
         <span class="w-52">
           <v-text-field v-model="search" label="Search" color="primary" class="bg-background-tertiary" prepend-inner-icon="mdi-magnify" density="compact" variant="outlined" size="small" hide-details></v-text-field>
         </span>
-        <v-btn prepend-icon="mdi-refresh" elevation="0" @click="refresh" color="primary">Refresh</v-btn>
+        <v-btn size="small" prepend-icon="mdi-refresh" elevation="0" @click="refresh" color="primary">Refresh</v-btn>
       </span>
     </div>
     <v-divider></v-divider>
