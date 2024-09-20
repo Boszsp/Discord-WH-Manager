@@ -1,12 +1,23 @@
 <script setup>
 import {toast} from "vue-sonner";
-import {urlSchema} from "~/zschemas";
-
 const config = useRuntimeConfig();
-const url = useRequestURL();
-const router = useRouter();
-
 const {data: hooks} = await getHooks();
+
+const route = useRoute();
+const id = route.query?.id;
+const json_query = route.query?.json;
+
+const templateString = ref(json_query ? decodeURI(json_query) : null);
+
+const hook_url = ref("");
+const files = ref([]);
+const hookJson = ref({
+  username: "",
+  avatar_url: "",
+  content: "<p></p>",
+  embeds: [],
+  thread_name: "",
+});
 
 const isSending = ref(false);
 const isMakingPDF = ref(false);
@@ -21,29 +32,7 @@ const selectedPdf = ref("");
 const avgSplitPdfSize = ref(20);
 const webpImgQuality = ref(95);
 
-const hook_url = ref("");
-const files = ref([]);
-const hookJson = ref({
-  username: "",
-  avatar_url: "",
-  content: "<p></p>",
-  embeds: [],
-  thread_name: "",
-});
-
-if (config.public.paramDataMode) {
-  onBeforeMount(() => {
-    if (url.searchParams.get("d")) {
-      try {
-        decodeURIComponent(window.atob(url.searchParams.get("d")));
-        Object.assign(hookJson.value, JSON.parse(decodeURIComponent(window.atob(url.searchParams.get("d")))));
-      } catch {}
-    }
-  });
-  watch(hookJson.value, (n) => {
-    router.push({query: {d: window.btoa(encodeURIComponent(JSON.stringify(n)))}});
-  });
-}
+const formFields = ref({});
 
 async function submitHandler() {
   const url = hooks?.value?.hooks?.filter((i) => {
@@ -58,61 +47,28 @@ async function submitHandler() {
   isSending.value = false;
 }
 
-function addEmbed(embed) {
-  if (hookJson?.value?.embeds?.length > 9) {
-    toast.warning("Embeds limit at 10 embeds");
-    return;
-  }
-  if (!hookJson?.value?.embeds) hookJson.value.embeds = [];
-  hookJson.value.embeds.push(
-    embed
-      ? JSON.parse(JSON.stringify(embed))
-      : {
-          avatar_url: "",
-          color: "#5864f2",
-          author: {
-            name: "",
-            url: "",
-            icon_url: "",
-          },
-          title: "",
-          description: "",
-          image: {
-            url: "",
-          },
-          fields: [],
-          footer: {
-            text: "",
-            icon_url: "",
-          },
-          timestamp: "",
-          thumbnail: {
-            url: "",
-          },
-        }
-  );
-}
-
-function addField(embed, field) {
-  if (embed?.fields?.length > 24) {
-    toast.warning("Fields limit at 25 fileds");
-    return;
-  }
-  embed?.fields.push(field ? JSON.parse(JSON.stringify(field)) : {name: "", value: "", inline: false});
-}
-
-function move(id, values, type) {
-  let hold = values?.splice(id, 1);
-  let hold2 = values?.splice(type == "up" ? id - 1 : id + 1);
-  return [...values, ...hold, ...hold2];
-}
 async function allImagesToWebpHandler() {
   isConvertImgsToWebp.value = true;
   files.value = [].concat(await allImagesToWebp(files.value, webpImgQuality.value));
   isConvertImgsToWebp.value = false;
 }
-</script>
 
+onNuxtReady((_) => {
+  if (!templateString.value) templateString.value = getTemplateFromId(id);
+
+  templateString.value = JSON.stringify(JSON.parse(templateString.value), undefined, 4);
+
+  formFields.value = getAllVariable(templateString.value);
+  hookJson.value = Object.assign(hookJson.value, JSON.parse(renderTemplate(templateString.value, formFields.value)));
+
+  watch(formFields.value, (_) => {
+    hookJson.value = Object.assign(hookJson.value, JSON.parse(renderTemplate(templateString.value, formFields.value)));
+  });
+  watch(templateString, (_) => {
+    hookJson.value = Object.assign(hookJson.value, JSON.parse(renderTemplate(templateString.value, formFields.value)));
+  });
+});
+</script>
 <template>
   <div class="p-6">
     <v-row no-gutters class="h-full">
@@ -125,24 +81,14 @@ async function allImagesToWebpHandler() {
 
           <v-divider></v-divider>
 
-          <!--
-          <v-textarea color="primary" density="compact" :label="'Content (' + hookJson?.content?.length + '/2000)'" maxlength="2000" variant="outlined" hide-details class="bg-component-background" v-model="hookJson.content"></v-textarea>
-          -->
-          <Editor :title="'Content (' + turndownService.turndown(hookJson?.content)?.length + '/2000)'" v-model="hookJson.content"></Editor>
+          <div v-for="(_, title) in formFields" class="flex h-full overflow-hidden">
+            <div class="h-full p-2 px-3 bg-primary/50 rounded-l" border hide-details>
+              {{ title }}
+            </div>
+            <v-text-field v-model="formFields[title]" type="text" density="compact" hide-details clearable flat rounded="none" class="bg-background-tertiary rounded rounded-l-none" variant="solo"></v-text-field>
+          </div>
 
-          <v-expansion-panels border color="background" variant="accordion" multiple>
-            <v-expansion-panel title="Profile">
-              <v-expansion-panel-text class="bg-background">
-                <v-text-field :label="'Username (' + hookJson?.username?.length + '/80)'" maxlength="80" color="primary" density="compact" variant="outlined" hide-details class="bg-component-background mb-6" v-model="hookJson.username"></v-text-field>
-                <v-text-field label="Avatar URL" color="primary" density="compact" variant="outlined" hide-details class="bg-component-background" v-model="hookJson.avatar_url"></v-text-field>
-              </v-expansion-panel-text>
-            </v-expansion-panel>
-            <v-expansion-panel title="Thread">
-              <v-expansion-panel-text class="bg-background">
-                <v-text-field :label="'Thread Name (' + hookJson?.thread_name?.length + '/100)'" maxlength="80" color="primary" density="compact" variant="outlined" hide-details class="bg-component-background mb-6" v-model="hookJson.thread_name"></v-text-field>
-              </v-expansion-panel-text>
-            </v-expansion-panel>
-          </v-expansion-panels>
+          <v-divider></v-divider>
 
           <div id="file" class="flex gap-2 items-center">
             <v-file-input
@@ -177,6 +123,8 @@ async function allImagesToWebpHandler() {
               Clipboard
             </v-btn>
           </div>
+
+          <v-divider></v-divider>
 
           <v-sheet rounded :elevation="1" class="w-full bg-background px-5">
             <div class="flex items-center gap-5">
@@ -288,7 +236,7 @@ async function allImagesToWebpHandler() {
                           if (isRemoveSource) {
                             files = files.filter((file) => file.name != f.name);
                           }
-                          (await extractZipFile(f)).sort((a, b) => (!(isNaN(parseInt(a.name)) || isNaN(parseInt(b.name))) ? parseInt(a.name) - parseInt(b.name) : a.name < b.name ? -1 : 1)).forEach((file) => files.push(file));
+                          (await extractZipFile(f)).sort((a, b) => (parseInt(a.name) != NaN && parseInt(b.name) != NaN ? parseInt(a.name) - parseInt(b.name) : a.name < b.name ? -1 : 1)).forEach((file) => files.push(file));
                         }
                       });
                     }
@@ -320,80 +268,10 @@ async function allImagesToWebpHandler() {
           </v-sheet>
 
           <v-divider></v-divider>
-
-          <div class="embed-editors flex flex-col gap-2">
-            <div v-for="(_, i) in hookJson?.embeds">
-              <EmbedEditor
-                @clone-sync="
-                  (obj) => {
-                    hookJson.embeds.push(obj);
-                  }
-                "
-                @clone="addEmbed"
-                @delete="
-                  (id) => {
-                    hookJson.embeds.splice(id, 1);
-                  }
-                "
-                :id="i"
-                v-model="hookJson.embeds[i]"
-                @move:up="
-                  (id) => {
-                    if (id > 0) {
-                      hookJson.embeds = move(id, hookJson.embeds, 'up');
-                    }
-                  }
-                "
-                @move:down="
-                  (id) => {
-                    hookJson.embeds = move(id, hookJson.embeds, 'down');
-                  }
-                "
-                @add:field="addField"
-                @delete:field="
-                  (id) => {
-                    hookJson.embeds[i].fields?.splice(id, 1);
-                  }
-                "
-                @clone:field="addField"
-                @move:up:field="
-                  (id) => {
-                    if (id > 0) {
-                      hookJson.embeds[i].fields = move(id, hookJson.embeds[i]?.fields, 'up');
-                    }
-                  }
-                "
-                @move:down:field="
-                  (id) => {
-                    hookJson.embeds[i].fields = move(id, hookJson.embeds[i]?.fields, 'down');
-                  }
-                "
-              />
-            </div>
-            <div class="">
-              <v-btn prepend-icon="mdi-comment-plus" :disabled="hookJson?.embeds?.length > 9" @click="() => addEmbed()" color="primary" variant="flat">Add Embed</v-btn>
-            </div>
-          </div>
-
-          <v-divider></v-divider>
-          <v-textarea rows="3" label="VALUE PREVIEW" auto-grow variant="outlined" bg-color="background-tertiary" flat readonly :model-value="JSON.stringify(hookJson, undefined, 4)"></v-textarea>
-          <div class="">
-            <DialogButton title="Exported Template" btn_color="warning" btn_titles="Export Template" btn_icon="mdi-export-variant" v-model="hookJson">
-              <v-btn
-                variant="text"
-                @click="
-                  () => {
-                    navigateTo('/form?json=' + encodeURIComponent(JSON.stringify(exportAsTemplate(JSON.parse(JSON.stringify(hookJson))))));
-                  }
-                "
-              >
-                View Result
-              </v-btn>
-            </DialogButton>
-          </div>
+          <v-textarea rows="3" label="Base Template Preview" auto-grow variant="outlined" bg-color="background-tertiary" flat v-model="templateString"></v-textarea>
+          <v-btn flat @click="() => saveTemplate(id, templateString)" prepend-icon="mdi-content-save">Save</v-btn>
         </div>
       </v-col>
-      <v-spacer></v-spacer>
 
       <v-col order="1" order-md="2" cols="12" md="6" class="relative lg:top-0">
         <div class="h-full lg:fixed lg:overflow-y-auto lg:top-0 lg:pt-14 w-full p-4">

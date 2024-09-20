@@ -18,6 +18,11 @@ const navs = [
     icon: "mdi-hook",
   },
   {
+    title: "Templates",
+    path: "/templates",
+    icon: "mdi-list-box",
+  },
+  {
     title: "Prefix",
     path: "/prefix",
     icon: "mdi-format-letter-starts-with",
