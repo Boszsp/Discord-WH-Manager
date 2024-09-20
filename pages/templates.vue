@@ -7,7 +7,7 @@ function renderAll() {
   const hold_allTemplate = {};
   const hold_allTemplateRender = {};
   allTemplateId.value.forEach((v) => {
-    hold_allTemplate["i" + v] = JSON.stringify(JSON.parse(getTemplateFromId(v)), undefined, 4);
+    hold_allTemplate["i" + v] = JSON.stringify(safeParse(getTemplateFromId(v)), undefined, 4);
   });
   allTemplate.value = hold_allTemplate;
 }
@@ -24,7 +24,7 @@ onNuxtReady(() => {
         <h6 class="text-h6">Template {{ id + 1 }}</h6>
         <div class="w-full grid lg:grid-cols-2">
           <div class="pb-6">
-            <DryPreview :model="JSON.parse(allTemplate['i' + id] ?? '{}')"></DryPreview>
+            <DryPreview :model="safeParse(allTemplate['i' + id] ?? '{}')"></DryPreview>
           </div>
           <div>
             <v-textarea rows="5" label="" auto-grow variant="outlined" bg-color="background-tertiary" flat v-model="allTemplate['i' + id]"></v-textarea>

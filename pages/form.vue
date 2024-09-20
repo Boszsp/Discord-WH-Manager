@@ -33,6 +33,7 @@ const avgSplitPdfSize = ref(20);
 const webpImgQuality = ref(95);
 
 const formFields = ref({});
+const formFieldsTextArea = ref({});
 
 async function submitHandler() {
   const url = hooks?.value?.hooks?.filter((i) => {
@@ -53,19 +54,27 @@ async function allImagesToWebpHandler() {
   isConvertImgsToWebp.value = false;
 }
 
+function fillHookJson() {
+  hookJson.value = Object.assign(hookJson.value, safeParse(renderTemplate(templateString.value, formFields.value)));
+}
+
 onNuxtReady((_) => {
   if (!templateString.value) templateString.value = getTemplateFromId(id);
 
-  templateString.value = JSON.stringify(JSON.parse(templateString.value), undefined, 4);
+  templateString.value = JSON.stringify(safeParse(templateString.value), undefined, 4);
 
   formFields.value = getAllVariable(templateString.value);
-  hookJson.value = Object.assign(hookJson.value, JSON.parse(renderTemplate(templateString.value, formFields.value)));
+  fillHookJson();
+
+  Object.keys(hookJson.value).forEach((k) => {
+    formFieldsTextArea.value[k] = false;
+  });
 
   watch(formFields.value, (_) => {
-    hookJson.value = Object.assign(hookJson.value, JSON.parse(renderTemplate(templateString.value, formFields.value)));
+    fillHookJson();
   });
   watch(templateString, (_) => {
-    hookJson.value = Object.assign(hookJson.value, JSON.parse(renderTemplate(templateString.value, formFields.value)));
+    fillHookJson();
   });
 });
 </script>
@@ -81,11 +90,12 @@ onNuxtReady((_) => {
 
           <v-divider></v-divider>
 
-          <div v-for="(_, title) in formFields" class="flex h-full overflow-hidden">
-            <div class="h-full p-2 px-3 bg-primary/50 rounded-l" border hide-details>
+          <div v-for="(_, title) in formFields" :class="'items-center h-full gap-1 overflow-hidden ' + (formFieldsTextArea[title] ? '' : 'flex')">
+            <v-btn @click="(_) => (formFieldsTextArea[title] = !formFieldsTextArea[title])" :elevation="0" class="h-full p-2 px-3 bg-primary/50" hide-details :block="formFieldsTextArea[title]">
               {{ title }}
-            </div>
-            <v-text-field v-model="formFields[title]" type="text" density="compact" hide-details clearable flat rounded="none" class="bg-background-tertiary rounded rounded-l-none" variant="solo"></v-text-field>
+            </v-btn>
+            <v-textarea v-if="formFieldsTextArea[title]" v-model="formFields[title]" density="compact" hide-details clearable flat rounded class="bg-background-tertiary" variant="solo"></v-textarea>
+            <v-text-field v-else v-model="formFields[title]" type="text" density="compact" hide-details clearable flat rounded class="bg-background-tertiary" variant="solo"></v-text-field>
           </div>
 
           <v-divider></v-divider>
@@ -269,6 +279,8 @@ onNuxtReady((_) => {
 
           <v-divider></v-divider>
           <v-textarea rows="3" label="Base Template Preview" auto-grow variant="outlined" bg-color="background-tertiary" flat v-model="templateString"></v-textarea>
+          <v-textarea rows="3" label="VALUE PREVIEW" auto-grow variant="outlined" bg-color="background-tertiary" flat readonly :model-value="JSON.stringify(hookJson, undefined, 4)"></v-textarea>
+
           <v-btn flat @click="() => saveTemplate(id, templateString)" prepend-icon="mdi-content-save">Save</v-btn>
         </div>
       </v-col>
