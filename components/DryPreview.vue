@@ -3,7 +3,7 @@ const props = defineProps({
   model: Object,
 });
 
-const model = defineModel();
+//const model = defineModel();
 </script>
 
 <template>
