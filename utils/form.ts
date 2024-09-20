@@ -1,5 +1,4 @@
-import type {content} from "#tailwind-config";
-import {precompile, compile} from "handlebars";
+import {compile} from "handlebars";
 import {toast} from "vue-sonner";
 import {z} from "zod";
 
@@ -8,8 +7,22 @@ export function getTemplateFromId(id: number = 0) {
 }
 
 export function saveTemplate(id: number = 0, template: string) {
-  toast.success("Saved template");
-  localStorage.setItem("template_" + id, JSON.stringify(JSON.parse(template)));
+  const literalSchema = z.union([z.string(), z.number(), z.boolean(), z.null()]);
+  type Literal = z.infer<typeof literalSchema>;
+  type Json = Literal | {[key: string]: Json} | Json[];
+  const jsonSchema: z.ZodType<Json> = z.lazy(() => z.union([literalSchema, z.array(jsonSchema), z.record(jsonSchema)]));
+  const safeParseTemplate = jsonSchema.safeParse(JSON.parse(template));
+
+  if (!safeParseTemplate.success) {
+    toast.error("Save template failed");
+    return false;
+  }
+
+  if (safeParseTemplate?.data) {
+    toast.success("Saved template");
+    localStorage.setItem("template_" + id, JSON.stringify(safeParseTemplate?.data));
+    localStorage.setItem("template_id_list" + id, JSON.stringify([id].concat(JSON.parse(localStorage.getItem("template_id_list") ?? "[]"))));
+  }
 }
 
 let count: any = {};
