@@ -281,12 +281,11 @@ async function allImagesToWebpHandler() {
                           if (isRemoveSource) {
                             files = files.filter((file) => file.name != f.name);
                           }
-                          (await extractZipFile(f)).sort((a, b) => (a.name < b.name ? -1 : 1)).forEach((file) => files.push(file));
+                          (await extractZipFile(f)).sort((a, b) => (parseInt(a.name) != NaN && parseInt(b.name) != NaN ? parseInt(a.name) - parseInt(b.name) : a.name < b.name ? -1 : 1)).forEach((file) => files.push(file));
                         }
                       });
                     }
                   "
-                  :loading="isConvertImgsToWebp"
                   prepend-icon="mdi-zip-box"
                   variant="flat"
                   color="success"
@@ -302,13 +301,12 @@ async function allImagesToWebpHandler() {
                       files.push(await createZipFile(files, pdfFileName));
                     }
                   "
-                  :loading="isConvertImgsToWebp"
                   prepend-icon="mdi-folder-zip"
                   variant="flat"
                   color="success"
                   class="w-full"
                 >
-                  zip All
+                  Zip All
                 </v-btn>
               </div>
             </div>
