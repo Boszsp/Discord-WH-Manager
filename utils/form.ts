@@ -1,4 +1,4 @@
-import {compile} from "handlebars";
+import {compile, registerHelper} from "handlebars";
 import {toast} from "vue-sonner";
 import {z} from "zod";
 
@@ -18,12 +18,16 @@ export function deleteTemplate(id: number) {
   toast.success("Deleted template");
 }
 
-export function saveTemplate(id: number = 0, template: string) {
+export function safeParseJson(template: string) {
   const literalSchema = z.union([z.string(), z.number(), z.boolean(), z.null()]);
   type Literal = z.infer<typeof literalSchema>;
   type Json = Literal | {[key: string]: Json} | Json[];
   const jsonSchema: z.ZodType<Json> = z.lazy(() => z.union([literalSchema, z.array(jsonSchema), z.record(jsonSchema)]));
-  const safeParseTemplate = jsonSchema.safeParse(JSON.parse(template));
+  return jsonSchema.safeParse(JSON.parse(template));
+}
+
+export function saveTemplate(id: number = 0, template: string) {
+  const safeParseTemplate = safeParseJson(template);
 
   if (!safeParseTemplate.success) {
     toast.error("Save template failed");
@@ -73,7 +77,26 @@ export function getAllVariable(templateString: string) {
   return allVariable;
 }
 
+export function safeParse(str: string) {
+  try {
+    return JSON.parse(str);
+  } catch {
+    return {};
+  }
+}
+
 export function renderTemplate(templateString: string, data: Object) {
-  const template = compile(templateString, {data: true});
-  return template(data);
+  const template = compile(templateString, {data: true, strict: true});
+  const escapedData = Object.entries(data).reduce(
+    (acc: Record<string, any>, [key, value]) => {
+      if (typeof value === "string") {
+        acc[key] = value.replace(/\n/g, "\\n"); // Escape newlines
+      } else {
+        acc[key] = value;
+      }
+      return acc;
+    },
+    {} as Record<string, any>
+  );
+  return template(escapedData);
 }
