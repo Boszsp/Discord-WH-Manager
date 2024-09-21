@@ -1,5 +1,8 @@
 <script setup>
 import {toast} from "vue-sonner";
+import hljs from "highlight.js";
+import "highlight.js/styles/github-dark-dimmed.min.css";
+
 const config = useRuntimeConfig();
 const {data: hooks} = await getHooks();
 
@@ -59,6 +62,15 @@ function fillHookJson() {
 }
 
 onNuxtReady((_) => {
+  hooks?.value?.hooks?.sort((a, b) => {
+    let comprare = 0;
+    a?.name?.split("")?.forEach((i, ii) => {
+      if (comprare !== 0) return;
+      comprare = i?.toUpperCase()?.charCodeAt() - b?.name?.split("")[ii]?.toUpperCase()?.charCodeAt();
+    });
+    return comprare;
+  });
+
   if (!templateString.value) templateString.value = getTemplateFromId(id);
 
   templateString.value = JSON.stringify(safeParse(templateString.value), undefined, 4);
@@ -69,7 +81,6 @@ onNuxtReady((_) => {
   Object.keys(hookJson.value).forEach((k) => {
     formFieldsTextArea.value[k] = false;
   });
-
   watch(formFields.value, (_) => {
     fillHookJson();
   });
@@ -278,10 +289,10 @@ onNuxtReady((_) => {
           </v-sheet>
 
           <v-divider></v-divider>
-          <v-textarea rows="3" label="Base Template Preview" auto-grow variant="outlined" bg-color="background-tertiary" flat v-model="templateString"></v-textarea>
-          <v-textarea rows="3" label="VALUE PREVIEW" auto-grow variant="outlined" bg-color="background-tertiary" flat readonly :model-value="JSON.stringify(hookJson, undefined, 4)"></v-textarea>
+          <EditorJson title="Base Template Preview" v-model:string="templateString"></EditorJson>
+          <EditorJson readonly title="Value Preview" v-model="hookJson"></EditorJson>
 
-          <v-btn flat @click="() => saveTemplate(id, templateString)" prepend-icon="mdi-content-save">Save</v-btn>
+          <v-btn flat @click="() => saveTemplate(parseInt(id), templateString)" prepend-icon="mdi-content-save">Save Template</v-btn>
         </div>
       </v-col>
 

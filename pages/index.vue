@@ -1,6 +1,5 @@
 <script setup>
 import {toast} from "vue-sonner";
-import {urlSchema} from "~/zschemas";
 
 const config = useRuntimeConfig();
 const url = useRequestURL();
@@ -44,6 +43,17 @@ if (config.public.paramDataMode) {
     router.push({query: {d: window.btoa(encodeURIComponent(JSON.stringify(n)))}});
   });
 }
+
+onNuxtReady(() => {
+  hooks?.value?.hooks?.sort((a, b) => {
+    let comprare = 0;
+    a?.name?.split("")?.forEach((i, ii) => {
+      if (comprare !== 0) return;
+      comprare = i?.toUpperCase()?.charCodeAt() - b?.name?.split("")[ii]?.toUpperCase()?.charCodeAt();
+    });
+    return comprare;
+  });
+});
 
 async function submitHandler() {
   const url = hooks?.value?.hooks?.filter((i) => {
@@ -376,14 +386,15 @@ async function allImagesToWebpHandler() {
           </div>
 
           <v-divider></v-divider>
-          <v-textarea rows="3" label="VALUE PREVIEW" auto-grow variant="outlined" bg-color="background-tertiary" flat readonly :model-value="JSON.stringify(hookJson, undefined, 4)"></v-textarea>
+          <EditorJson title="Value Preivew" v-model="hookJson"></EditorJson>
+
           <div class="">
             <DialogButton title="Exported Template" btn_color="warning" btn_titles="Export Template" btn_icon="mdi-export-variant" v-model="hookJson">
               <v-btn
                 variant="text"
                 @click="
                   () => {
-                    navigateTo('/form?json=' + encodeURIComponent(JSON.stringify(exportAsTemplate(JSON.parse(JSON.stringify(hookJson))))));
+                    navigateTo('/form?json=' + encodeURIComponent(JSON.stringify(exportAsTemplate(safeParse(JSON.stringify(hookJson))?.data))));
                   }
                 "
               >
