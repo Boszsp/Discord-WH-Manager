@@ -386,8 +386,8 @@ async function allImagesToWebpHandler() {
           </div>
 
           <v-divider></v-divider>
-          <EditorJson title="Value Preivew" v-model="hookJson" ></EditorJson>
-  
+          <EditorJson title="Value Preivew" v-model="hookJson"></EditorJson>
+
           <div class="">
             <DialogButton title="Exported Template" btn_color="warning" btn_titles="Export Template" btn_icon="mdi-export-variant" v-model="hookJson">
               <v-btn

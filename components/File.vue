@@ -48,10 +48,10 @@ setupComponent();
     </v-sheet>
 
     <div class="relative w-8/12" v-else>
-      <NuxtImg  class="rounded" :src="Src" />
+      <NuxtImg class="rounded" :src="Src" />
       <span class="absolute top-1 right-1">
-      <v-btn  @click="(e) => emit('delete', e)" size="x-small" variant="tonal" icon="mdi-close" color="" class="p-2"></v-btn>
-    </span>
+        <v-btn @click="(e) => emit('delete', e)" size="x-small" variant="tonal" icon="mdi-close" color="" class="p-2"></v-btn>
+      </span>
     </div>
     <v-btn v-if="!isImageFile(props.data)" @click="(e) => emit('delete', e)" size="x-small" variant="text" icon="mdi-close" color="" class="p-2"></v-btn>
   </div>
