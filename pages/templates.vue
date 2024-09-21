@@ -1,5 +1,5 @@
 <script setup>
-let allTemplateId = ref([1, 2, 3, 4]);
+let allTemplateId = ref([-1]);
 let allTemplate = ref({i0: ""});
 
 function renderAll() {
@@ -27,8 +27,8 @@ onNuxtReady(() => {
             <DryPreview :model="safeParse(allTemplate['i' + id] ?? '{}')"></DryPreview>
           </div>
           <div>
-            <v-textarea rows="5" label="" auto-grow variant="outlined" bg-color="background-tertiary" flat v-model="allTemplate['i' + id]"></v-textarea>
-            <div class="flex justify-end gap-4">
+            <EditorJson title="" v-model:string="allTemplate['i' + id]"></EditorJson>
+            <div class="flex justify-end gap-4 pt-5">
               <v-btn
                 @click="
                   (_) => {
