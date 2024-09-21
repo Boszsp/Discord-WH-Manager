@@ -35,11 +35,13 @@
   "dependencies": {
     "@mdi/font": "^7.4.47",
     "@prisma/client": "5.15.0",
+    "@toast-ui/editor": "^3.2.2",
     "@types/crypto-js": "^4.2.2",
     "@vueup/vue-quill": "^1.2.0",
     "@zip.js/zip.js": "^2.7.52",
     "crypto-js": "^4.2.0",
     "handlebars": "^4.7.8",
+    "highlight.js": "^11.10.0",
     "pdf-lib": "^1.17.1",
     "sanitize-html": "^2.13.0",
     "turndown": "^7.2.0",

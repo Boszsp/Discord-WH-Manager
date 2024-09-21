@@ -6,8 +6,6 @@ const props = defineProps({
   btn_color: String,
 });
 const model = defineModel();
-const templateVlalue = ref(JSON.stringify(exportAsTemplate(JSON.parse(JSON.stringify(model.value)))));
-watch(model.value, (_) => (templateVlalue.value = JSON.stringify(exportAsTemplate(JSON.parse(JSON.stringify(model.value))))));
 </script>
 
 <template>
@@ -19,7 +17,7 @@ watch(model.value, (_) => (templateVlalue.value = JSON.stringify(exportAsTemplat
     <template v-slot:default="{isActive}">
       <v-card :title="props.title ?? 'Dialog'">
         <div class="p-5">
-          <v-textarea :value="templateVlalue" variant="outlined"></v-textarea>
+          <v-textarea :model-value="JSON.stringify(exportAsTemplate(safeParseJson(JSON.stringify(model))?.data))" variant="outlined"></v-textarea>
           <slot />
         </div>
         <v-card-actions>
