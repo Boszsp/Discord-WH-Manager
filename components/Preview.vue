@@ -1,6 +1,7 @@
 <script setup>
 import sanitizeHtml from "sanitize-html";
 const img = useImage();
+const now_date = useState(() => new Date().toLocaleString("th"));
 
 const props = defineProps({
   username: String,
@@ -19,7 +20,7 @@ const props = defineProps({
         <span class="flex items-center">
           <span class="font-bold bg-primary text-white text-xs px-1 rounded">App</span>
         </span>
-        <sub>{{ new Date().toLocaleString("th") }}</sub>
+        <sub>{{ now_date }}</sub>
       </div>
       <div>
         <ClientOnly>
