@@ -2,6 +2,7 @@
 import {toast} from "vue-sonner";
 import hljs from "highlight.js";
 import "highlight.js/styles/github-dark-dimmed.min.css";
+import {z} from "zod";
 
 const config = useRuntimeConfig();
 const {data: hooks} = await getHooks();
@@ -29,6 +30,7 @@ const isConvertImgsToWebp = ref(false);
 const isRemoveSource = ref(false);
 const isSendImagesMode = ref(false);
 const isFixedSizePdfPages = ref(false);
+const isRequireAll = ref(true);
 
 const pdfFileName = ref("");
 const selectedPdf = ref("");
@@ -43,6 +45,19 @@ async function submitHandler() {
     return i.name + "-" + i.id == hook_url.value;
   });
   isSending.value = true;
+
+  if (isRequireAll.value) {
+    const requiredString = z.string({required_error: "required"}).min(1, " >= 1 length is required");
+    for (let i in formFields.value) {
+      const {success, data, error} = requiredString.safeParse(formFields.value[i]);
+      if (!success) {
+        toast.error(i + " " + error.formErrors.formErrors.join(""));
+        isSending.value = false;
+        return false;
+      }
+    }
+  }
+
   if (url && url[0] && url[0].link) {
     await sendToProxyD(url[0].link, hookJson.value, files.value, isSendImagesMode.value);
   } else if (hook_url && hook_url.value) {
@@ -61,8 +76,8 @@ function fillHookJson() {
   hookJson.value = Object.assign(hookJson.value, safeParse(renderTemplate(templateString.value, formFields.value)));
 }
 
-onNuxtReady((_) => {
-  hooks?.value?.hooks?.sort((a, b) => {
+function sortedHooks() {
+  return hooks?.value?.hooks?.sort((a, b) => {
     let comprare = 0;
     a?.name?.split("")?.forEach((i, ii) => {
       if (comprare !== 0) return;
@@ -70,7 +85,9 @@ onNuxtReady((_) => {
     });
     return comprare;
   });
+}
 
+onNuxtReady((_) => {
   if (!templateString.value) templateString.value = getTemplateFromId(id);
 
   templateString.value = JSON.stringify(safeParse(templateString.value), undefined, 4);
@@ -95,19 +112,18 @@ onNuxtReady((_) => {
       <v-col order="2" cols="12" md="6">
         <div class="flex flex-col gap-6 md:pr-4">
           <div class="flex gap-2 items-center">
-            <v-combobox variant="outlined" color="primary" v-model="hook_url" hide-details density="compact" label="Hook" class="bg-component-background" :items="hooks ? hooks.hooks.map((i) => i.name + '-' + i.id) : []"></v-combobox>
+            <v-combobox variant="outlined" color="primary" v-model="hook_url" hide-details density="compact" label="Hook" class="bg-component-background" :items="hooks ? sortedHooks().map((i) => i.name + '-' + i.id) : []"></v-combobox>
             <v-btn :loading="isSending" prepend-icon="mdi-send" @click="submitHandler" variant="flat" color="primary">Send</v-btn>
           </div>
 
           <v-divider></v-divider>
 
           <div v-for="(_, title) in formFields" :class="'items-center h-full gap-1 overflow-hidden ' + (formFieldsTextArea[title] ? '' : 'flex')">
-            <v-btn @click="(_) => (formFieldsTextArea[title] = !formFieldsTextArea[title])" :elevation="0" class="h-full p-2 px-3 bg-primary/50" hide-details :block="formFieldsTextArea[title]">
-              {{ title }}
-            </v-btn>
-            <v-textarea v-if="formFieldsTextArea[title]" v-model="formFields[title]" density="compact" hide-details clearable flat rounded class="bg-background-tertiary" variant="solo"></v-textarea>
-            <v-text-field v-else v-model="formFields[title]" type="text" density="compact" hide-details clearable flat rounded class="bg-background-tertiary" variant="solo"></v-text-field>
+            <v-btn @click="(_) => (formFieldsTextArea[title] = !formFieldsTextArea[title])" :elevation="0" :color="isRequireAll && formFields[title]?.length == 0 ? 'danger' : 'primary'" class="'h-full p-2 px-3 bg-primary/50" hide-details :block="formFieldsTextArea[title]">{{ title + (isRequireAll ? "*" : "") }}</v-btn>
+            <v-textarea counter v-if="formFieldsTextArea[title]" v-model="formFields[title]" density="compact" hide-details clearable flat rounded class="bg-background-tertiary" variant="solo"></v-textarea>
+            <v-text-field counter v-else v-model="formFields[title]" type="text" density="compact" hide-details clearable flat rounded class="bg-background-tertiary" variant="solo"></v-text-field>
           </div>
+          <v-switch v-model="isRequireAll" color="primary" inset hide-details label="Required All"></v-switch>
 
           <v-divider></v-divider>
 

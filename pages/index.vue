@@ -44,8 +44,8 @@ if (config.public.paramDataMode) {
   });
 }
 
-onNuxtReady(() => {
-  hooks?.value?.hooks?.sort((a, b) => {
+function sortedHooks() {
+  return hooks?.value?.hooks?.sort((a, b) => {
     let comprare = 0;
     a?.name?.split("")?.forEach((i, ii) => {
       if (comprare !== 0) return;
@@ -53,7 +53,7 @@ onNuxtReady(() => {
     });
     return comprare;
   });
-});
+}
 
 async function submitHandler() {
   const url = hooks?.value?.hooks?.filter((i) => {
@@ -129,7 +129,7 @@ async function allImagesToWebpHandler() {
       <v-col order="2" cols="12" md="6">
         <div class="flex flex-col gap-6 md:pr-4">
           <div class="flex gap-2 items-center">
-            <v-combobox variant="outlined" color="primary" v-model="hook_url" hide-details density="compact" label="Hook" class="bg-component-background" :items="hooks ? hooks.hooks.map((i) => i.name + '-' + i.id) : []"></v-combobox>
+            <v-combobox variant="outlined" color="primary" v-model="hook_url" hide-details density="compact" label="Hook" class="bg-component-background" :items="hooks ? sortedHooks().map((i) => i.name + '-' + i.id) : []"></v-combobox>
             <v-btn :loading="isSending" prepend-icon="mdi-send" @click="submitHandler" variant="flat" color="primary">Send</v-btn>
           </div>
 
