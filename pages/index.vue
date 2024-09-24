@@ -44,9 +44,7 @@ if (config.public.paramDataMode) {
   });
 }
 
-
-
-function sortedHooks(){
+function sortedHooks() {
   return hooks?.value?.hooks?.sort((a, b) => {
     let comprare = 0;
     a?.name?.split("")?.forEach((i, ii) => {

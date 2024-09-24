@@ -49,9 +49,9 @@ async function submitHandler() {
   if (isRequireAll.value) {
     const requiredString = z.string({required_error: "required"}).min(1, " >= 1 length is required");
     for (let i in formFields.value) {
-      const {success, data ,error} = requiredString.safeParse(formFields.value[i]);
+      const {success, data, error} = requiredString.safeParse(formFields.value[i]);
       if (!success) {
-        toast.error(i+" "+error.formErrors.formErrors.join(""));
+        toast.error(i + " " + error.formErrors.formErrors.join(""));
         isSending.value = false;
         return false;
       }
@@ -119,7 +119,7 @@ onNuxtReady((_) => {
           <v-divider></v-divider>
 
           <div v-for="(_, title) in formFields" :class="'items-center h-full gap-1 overflow-hidden ' + (formFieldsTextArea[title] ? '' : 'flex')">
-            <v-btn  @click="(_) => (formFieldsTextArea[title] = !formFieldsTextArea[title])" :elevation="0" :color="isRequireAll && formFields[title]?.length == 0 ? 'danger' : 'primary'" class="'h-full p-2 px-3 bg-primary/50" hide-details :block="formFieldsTextArea[title]">{{ title + (isRequireAll ? "*" : "") }} </v-btn>
+            <v-btn @click="(_) => (formFieldsTextArea[title] = !formFieldsTextArea[title])" :elevation="0" :color="isRequireAll && formFields[title]?.length == 0 ? 'danger' : 'primary'" class="'h-full p-2 px-3 bg-primary/50" hide-details :block="formFieldsTextArea[title]">{{ title + (isRequireAll ? "*" : "") }}</v-btn>
             <v-textarea counter v-if="formFieldsTextArea[title]" v-model="formFields[title]" density="compact" hide-details clearable flat rounded class="bg-background-tertiary" variant="solo"></v-textarea>
             <v-text-field counter v-else v-model="formFields[title]" type="text" density="compact" hide-details clearable flat rounded class="bg-background-tertiary" variant="solo"></v-text-field>
           </div>

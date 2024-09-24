@@ -1,7 +1,7 @@
 <script setup>
 import sanitizeHtml from "sanitize-html";
 const img = useImage();
-const now_date = useState(()=>new Date().toLocaleString("th"))
+const now_date = useState(() => new Date().toLocaleString("th"));
 
 const props = defineProps({
   username: String,
