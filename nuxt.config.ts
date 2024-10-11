@@ -51,7 +51,6 @@ export default defineNuxtConfig({
     },
     define: {global: "window"},
   },
-
   routeRules: {
   },
 

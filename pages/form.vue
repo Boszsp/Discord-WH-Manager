@@ -273,7 +273,7 @@ onNuxtReady((_) => {
                           if (isRemoveSource) {
                             files = files.filter((file) => file.name != f.name);
                           }
-                          (await extractZipFile(f)).sort((a, b) => (parseInt(a.name) != NaN && parseInt(b.name) != NaN ? parseInt(a.name) - parseInt(b.name) : a.name < b.name ? -1 : 1)).forEach((file) => files.push(file));
+                          (await extractZipFile(f)).sort((a, b) => (!(isNaN(parseInt(a.name)) || isNaN(parseInt(b.name))) || (a?.name?.search(/(\d+)\./) != -1 && b?.name?.search(/(\d+)\./) != -1) ? parseInt(a?.name?.match(/(\d+)\./)[1] || a.name) - parseInt(b?.name?.match(/(\d+)\./)[1] || b.name) : a.name < b.name ? -1 : 1)).forEach((file) => files.push(file));
                         }
                       });
                     }
