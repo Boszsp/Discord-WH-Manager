@@ -11,7 +11,7 @@ if (config.public.staticMode) {
       <FileTools1 />
     </ClientOnly>
 
-   <!-- <ClientOnly>
+    <!-- <ClientOnly>
       <ImageTool />
     </ClientOnly>-->
 

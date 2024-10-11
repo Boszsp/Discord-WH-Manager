@@ -135,7 +135,6 @@ async function getSentMessage() {
     timestamp.value = new Date(res.timestamp).toLocaleString("th");
   }
   return null;
-  
 }
 </script>
 
@@ -184,7 +183,6 @@ async function getSentMessage() {
           -->
           <Editor :title="'Content (' + turndownService.turndown(hookJson?.content)?.length + '/2000)'" v-model="hookJson.content"></Editor>
 
-          
           <v-expansion-panels border color="background" variant="accordion" multiple>
             <v-expansion-panel title="Profile">
               <v-expansion-panel-text class="bg-background">

@@ -13,11 +13,11 @@ const isFixedSizePdfPages = ref(false);
 const isSplitingPDF = ref(false);
 
 const headers = [
-  {title:"Icon",align: 'start',key:"icon"},
-    { title: 'Name', align: 'start', key: 'name'  },
-    { title: 'Size', align: 'end', key: 'size' },
-    { title: 'Type', align: 'end', key: 'type' }
-  ]
+  {title: "Icon", align: "start", key: "icon"},
+  {title: "Name", align: "start", key: "name"},
+  {title: "Size", align: "end", key: "size"},
+  {title: "Type", align: "end", key: "type"},
+];
 
 function getFileUrl(f) {
   const objURL = URL.createObjectURL(f);
@@ -208,16 +208,23 @@ function deleteFile(index) {
         </span>
       </div>
       <div v-else>
-          <v-data-table-virtual class="bg-component-background" color="" :headers="headers" :items="[].concat(files).map(
-            (f)=>{
-              return {name:f.name,type:f.type,size:convertFileSize(f.size,'MB')+'Mb',icon:f.type}
-            }
-          )" height="400" item-value="name">
-           <template v-slot:item.icon="{ value }">
-            <v-icon >
-              {{value.includes("image")  ?'mdi-image' : 'mdi-file'}}
-            </v-icon>  
-           </template>  
+        <v-data-table-virtual
+          class="bg-component-background"
+          color=""
+          :headers="headers"
+          :items="
+            [].concat(files).map((f) => {
+              return {name: f.name, type: f.type, size: convertFileSize(f.size, 'MB') + 'Mb', icon: f.type};
+            })
+          "
+          height="400"
+          item-value="name"
+        >
+          <template v-slot:item.icon="{value}">
+            <v-icon>
+              {{ value.includes("image") ? "mdi-image" : "mdi-file" }}
+            </v-icon>
+          </template>
         </v-data-table-virtual>
       </div>
     </div>

@@ -8,9 +8,8 @@ const props = defineProps({
   username: String,
   avatarURL: String,
   content: String,
-  timestamp:String
+  timestamp: String,
 });
-
 </script>
 <template>
   <div class="flex gap-2">
@@ -23,7 +22,7 @@ const props = defineProps({
         <span class="flex items-center">
           <span class="font-bold bg-primary text-white text-xs px-1 rounded">App</span>
         </span>
-        <sub>{{ timestamp  || now_date }}</sub>
+        <sub>{{ timestamp || now_date }}</sub>
       </div>
       <div>
         <ClientOnly>
