@@ -17,6 +17,9 @@ const isFixedSizePdfPages = ref(false);
 
 const pdfFileName = ref("");
 const selectedPdf = ref("");
+const message_id = ref("");
+const timestamp = ref(null);
+
 const avgSplitPdfSize = ref(20);
 const webpImgQuality = ref(95);
 
@@ -121,6 +124,19 @@ async function allImagesToWebpHandler() {
   files.value = [].concat(await allImagesToWebp(files.value, webpImgQuality.value));
   isConvertImgsToWebp.value = false;
 }
+
+async function getSentMessage() {
+  const url = hooks?.value?.hooks?.filter((i) => {
+    return i.name + "-" + i.id == hook_url.value;
+  });
+  if (url && url[0] && url[0].link) {
+    const res = await fetchMessage(url[0].link, message_id.value);
+    hookJson.value = Object.assign(hookJson.value, extractMessage(res));
+    timestamp.value = new Date(res.timestamp).toLocaleString("th");
+  }
+  return null;
+  
+}
 </script>
 
 <template>
@@ -133,6 +149,34 @@ async function allImagesToWebpHandler() {
             <v-btn :loading="isSending" prepend-icon="mdi-send" @click="submitHandler" variant="flat" color="primary">Send</v-btn>
           </div>
 
+          <v-sheet rounded :elevation="1" class="w-full bg-background px-5">
+            <div class="flex items-center gap-5 py-3">
+              <v-btn @click="getSentMessage" prepend-icon="mdi-refresh" variant="tonal" hide-details>Fetch Message</v-btn>
+              <v-text-field label="Message Id" color="primary" density="compact" variant="outlined" hide-details class="bg-component-background" v-model="message_id"></v-text-field>
+            </div>
+            <div class="grid grid-cols-2 items-center gap-5 py-3 w-full overflow-hidden">
+              <v-btn @click="" prepend-icon="mdi-edit-icon" variant="tonal" hide-details color="warning">Edit Message</v-btn>
+              <v-btn @click="" prepend-icon="mdi-delete" variant="tonal" hide-details color="danger">Delete Message</v-btn>
+            </div>
+          </v-sheet>
+
+          <v-sheet rounded :elevation="1" class="w-full bg-background px-5">
+            <div class="flex items-center gap-5">
+              <v-btn
+                @click="
+                  () => {
+                    hooks = getHooks().data;
+                  }
+                "
+                prepend-icon="mdi-refresh"
+                variant="flat"
+              >
+                Refresh Hooks
+              </v-btn>
+              <v-switch v-model="isSendImagesMode" color="primary" inset hide-details label="Sent Images Only Mode"></v-switch>
+            </div>
+          </v-sheet>
+
           <v-divider></v-divider>
 
           <!--
@@ -140,6 +184,7 @@ async function allImagesToWebpHandler() {
           -->
           <Editor :title="'Content (' + turndownService.turndown(hookJson?.content)?.length + '/2000)'" v-model="hookJson.content"></Editor>
 
+          
           <v-expansion-panels border color="background" variant="accordion" multiple>
             <v-expansion-panel title="Profile">
               <v-expansion-panel-text class="bg-background">
@@ -187,23 +232,6 @@ async function allImagesToWebpHandler() {
               Clipboard
             </v-btn>
           </div>
-
-          <v-sheet rounded :elevation="1" class="w-full bg-background px-5">
-            <div class="flex items-center gap-5">
-              <v-btn
-                @click="
-                  () => {
-                    hooks = getHooks().data;
-                  }
-                "
-                prepend-icon="mdi-refresh"
-                variant="flat"
-              >
-                Refresh Hooks
-              </v-btn>
-              <v-switch v-model="isSendImagesMode" color="primary" inset hide-details label="Sent Images Only Mode"></v-switch>
-            </div>
-          </v-sheet>
 
           <v-divider></v-divider>
 
@@ -290,7 +318,6 @@ async function allImagesToWebpHandler() {
               </div>
               <div class="grid grid-cols-2 gap-2">
                 <v-btn
-                  v-if="!config.public.alwayMakeImageToWebp"
                   @click="
                     async () => {
                       files.forEach(async (f) => {
@@ -298,7 +325,7 @@ async function allImagesToWebpHandler() {
                           if (isRemoveSource) {
                             files = files.filter((file) => file.name != f.name);
                           }
-                          (await extractZipFile(f)).sort((a, b) => (!(isNaN(parseInt(a.name)) || isNaN(parseInt(b.name))) ? parseInt(a.name) - parseInt(b.name) : a.name < b.name ? -1 : 1)).forEach((file) => files.push(file));
+                          (await extractZipFile(f)).sort((a, b) => (!(isNaN(parseInt(a.name)) || isNaN(parseInt(b.name))) || (a?.name?.search(/(\d+)\./) != -1 && b?.name?.search(/(\d+)\./) != -1) ? parseInt(a?.name?.match(/(\d+)\./)[1] || a.name) - parseInt(b?.name?.match(/(\d+)\./)[1] || b.name) : a.name < b.name ? -1 : 1)).forEach((file) => files.push(file));
                         }
                       });
                     }
@@ -312,7 +339,6 @@ async function allImagesToWebpHandler() {
                 </v-btn>
 
                 <v-btn
-                  v-if="!config.public.alwayMakeImageToWebp"
                   @click="
                     async () => {
                       files.push(await createZipFile(files, pdfFileName));
@@ -394,7 +420,7 @@ async function allImagesToWebpHandler() {
                 variant="text"
                 @click="
                   () => {
-                    navigateTo('/form?json=' + encodeURIComponent(JSON.stringify(exportAsTemplate(safeParse(JSON.stringify(hookJson))?.data))));
+                    navigateTo('/form?json=' + encodeURIComponent(JSON.stringify(exportAsTemplate(safeParse(JSON.stringify(hookJson))))));
                   }
                 "
               >
@@ -410,7 +436,7 @@ async function allImagesToWebpHandler() {
         <div class="h-full lg:fixed lg:overflow-y-auto lg:top-0 lg:pt-14 w-full p-4">
           <div class="max-lg:mb-8 w-full">
             <v-sheet class="bg-transparent lg:p-4 lg:w-6/12">
-              <Preview :avatarURL="hookJson?.avatar_url?.length > 6 ? hookJson?.avatar_url : null" :username="hookJson.username" :content="hookJson.content">
+              <Preview :timestamp="timestamp" :avatarURL="hookJson?.avatar_url?.length > 6 ? hookJson?.avatar_url : null" :username="hookJson.username" :content="hookJson.content">
                 <div class="flex flex-col gap-2">
                   <div class="w-fit" v-for="(embed, i) in hookJson.embeds">
                     <Embed
