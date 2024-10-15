@@ -39,7 +39,7 @@ export async function generatePDFFromImage(images: File[], name?: string, fixedS
   return pdfFile;
 }
 
-export function convertFileSize(byte: number, unit: "B" | "KB" | "MB" | "GB" | "TB"): number {
+export function convertFileSize(byte: number = 0, unit: "B" | "KB" | "MB" | "GB" | "TB" = "MB", floating_point: number = 2): number {
   const units: {[key in "B" | "KB" | "MB" | "GB" | "TB"]: number} = {
     B: 1,
     KB: 1024,
@@ -53,7 +53,7 @@ export function convertFileSize(byte: number, unit: "B" | "KB" | "MB" | "GB" | "
     throw new Error(`Invalid unit: ${unit}`);
   }
 
-  return Math.round(byte / conversionFactor);
+  return parseFloat((byte / conversionFactor).toFixed(floating_point));
 }
 
 export async function splitPDF(pdf: File, limit = 20) {
@@ -209,13 +209,39 @@ export function getMimeTypeFromFilename(fname: string): string {
 
 export async function extractZipFile(file: File) {
   const zip = new ZipReader(new BlobReader(file));
-  return await Promise.all((await zip.getEntries({filenameEncoding: "utf-8"})).map(async (entry) => await (entry.getData ? new File([await entry?.getData(new BlobWriter())], entry.filename, {type: getMimeTypeFromFilename(entry.filename)}) : null)));
+  return await Promise.all((await zip.getEntries({filenameEncoding: "utf-8"})).map(async (entry) => await (entry.getData ? new File([await entry?.getData(new BlobWriter())], entry.filename, {type: getMimeTypeFromFilename(entry.filename)}) : undefined)));
 }
 
-export async function createZipFile(files: File[], name: string) {
+export async function createZipFile(files: File[], name: string): Promise<File> {
   const zip = new ZipWriter(new BlobWriter("application/zip"), {bufferedWrite: true});
   files.forEach((f) => {
     zip.add(f.name, new BlobReader(f));
   });
   return new File([await zip.close()], name && name != "" ? name : "ZIP_" + Date.now() + ".zip", {type: "application/zip"});
+}
+
+export async function createZipWithLimitSize(files: File[], name: string = "ZIP", limitSize: number): Promise<File[]> {
+  let filesset: Array<Array<File> | File> = new Array();
+  let count = 0;
+  let size = 0;
+  for (let f of files) {
+    size += convertFileSize(f.size, "MB");
+    if (size >= (limitSize - 1 || 24)) {
+      filesset[count] = await createZipFile(filesset[count] as File[], name + "-" + count + ".zip");
+      count += 1;
+      size = convertFileSize(f.size, "MB");
+    }
+    if (!filesset[count]) filesset[count] = new Array(0) as File[];
+    (filesset[count] as Array<File>).push(f);
+  }
+  filesset[filesset.length - 1] = await createZipFile(filesset[count] as File[], name + "-" + count + ".zip");
+  return await Promise.all(filesset as Array<File>);
+}
+
+export function sortingFileNameFn(a: string, b: string) {
+  if (a.search(/\d+\s/) != -1 && b.search(/\d+\s/) != -1) {
+    return parseInt((a?.match(/\d+/) as Array<string>)[0] || a) - parseInt((b?.match(/\d+/) as Array<string>)[0] || b);
+  }
+
+  return !(isNaN(parseInt(a)) || isNaN(parseInt(b))) || (a?.search(/(\d+)\./) != -1 && b?.search(/(\d+)\./) != -1) ? parseInt(a?.match(/(\d+)\./) != null ? (a.match(/(\d+)\./) as Array<string>)[1] : a) - parseInt(b?.match(/(\d+)\./) ? (b.match(/(\d+)\./) as Array<string>)[1] : b) : a < b ? -1 : 1;
 }

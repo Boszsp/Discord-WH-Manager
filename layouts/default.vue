@@ -78,14 +78,14 @@ const navs = [
       </div>
     </v-app-bar-title>
     <template v-slot:append>
-      <v-btn
+      <!--<v-btn
         @click="
           () => {
             navigateTo('https://github.com/Boszsp/Discord-WH-Manager/discussions/', {external: true});
           }
         "
         icon="mdi-forum"
-      ></v-btn>
+      ></v-btn>-->
       <ClientOnly>
         <v-btn
           v-if="!isAuth"
