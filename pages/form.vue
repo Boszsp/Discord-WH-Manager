@@ -273,7 +273,11 @@ onNuxtReady((_) => {
                           if (isRemoveSource) {
                             files = files.filter((file) => file.name != f.name);
                           }
-                          (await extractZipFile(f)).sort((a, b) => (!(isNaN(parseInt(a.name)) || isNaN(parseInt(b.name))) || (a?.name?.search(/(\d+)\./) != -1 && b?.name?.search(/(\d+)\./) != -1) ? parseInt(a?.name?.match(/(\d+)\./)[1] || a.name) - parseInt(b?.name?.match(/(\d+)\./)[1] || b.name) : a.name < b.name ? -1 : 1)).forEach((file) => files.push(file));
+                          (await extractZipFile(f))
+                            ?.sort((a, b) => sortingFileNameFn(a.name, b.name))
+                            .forEach((file) => {
+                              files.push(file);
+                            });
                         }
                       });
                     }
@@ -290,7 +294,9 @@ onNuxtReady((_) => {
                   v-if="!config.public.alwayMakeImageToWebp"
                   @click="
                     async () => {
-                      files.push(await createZipFile(files, pdfFileName));
+                      files = await createZipWithLimitSize(files, pdfFileName || 'zip', 24);
+
+                      //files.push(await createZipFile(files, pdfFileName));
                     }
                   "
                   prepend-icon="mdi-folder-zip"
