@@ -44,6 +44,7 @@
     "crypto-js": "^4.2.0",
     "handlebars": "^4.7.8",
     "highlight.js": "^11.10.0",
+    "openpgp": "^6.0.0",
     "pdf-lib": "^1.17.1",
     "sanitize-html": "^2.13.0",
     "turndown": "^7.2.0",

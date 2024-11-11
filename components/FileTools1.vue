@@ -1,22 +1,23 @@
 <script setup>
-const pdfResult = ref(null);
-const files = ref([]);
+import {toast} from "vue-sonner";
 
+const pdfResult = ref(null);
+const files = ref([])
 const pdfFileName = ref("");
 const selectedPdf = ref("");
 const avgSplitPdfSize = ref(20);
 const preview_mode = ref(0);
 
-const isMakingPDF = ref(false);
+const isLoading = ref(false);
 const isRemoveSource = ref(false);
 const isFixedSizePdfPages = ref(false);
-const isSplitingPDF = ref(false);
 
 const headers = [
   {title: "Icon", align: "start", key: "icon"},
   {title: "Name", align: "start", key: "name"},
   {title: "Size", align: "end", key: "size"},
   {title: "Type", align: "end", key: "type"},
+  {title: "Action", align: "end", key: "action"},
 ];
 
 function getFileUrl(f) {
@@ -50,7 +51,7 @@ function deleteFile(index) {
 <template>
   <v-sheet class="rounded-lg bg-component-background" :elevation="2" border rounded>
     <div class="p-4">
-      <h6 class="text-h6">Files Tools</h6>
+      <h6 class="text-h6">Files Tools 1</h6>
       <div class="flex items-center mt-4 gap-2">
         <v-file-input show-size @click:clear="() => (files = [])" @update:modelValue="(nf) => (files = files.concat(nf))" chips :model-value="files" multiple label="File input" color="primary" density="compact" variant="outlined" hide-details></v-file-input>
         <v-btn
@@ -73,9 +74,9 @@ function deleteFile(index) {
             <v-checkbox v-bind="props" v-model="isFixedSizePdfPages" hide-details label="Fixed Pdf Pages Size"></v-checkbox>
           </template>
         </v-tooltip>
-        <v-text-field label="PDF file name" color="success" density="compact" variant="outlined" hide-details v-model="pdfFileName"></v-text-field>
+        <v-text-field label="PDF/ZIP file name" color="success" density="compact" variant="outlined" hide-details v-model="pdfFileName"></v-text-field>
         <v-btn
-          :loading="isMakingPDF"
+          :loading="isLoading"
           @click="
             async () => {
               const whereFileIsImage = files.findIndex((v) => v?.type == 'image/png' || v?.type == 'image/jpeg' || v?.type == 'image/jpg');
@@ -83,11 +84,11 @@ function deleteFile(index) {
                 toast.warning('Support only .jpg and .png file');
                 return;
               }
-              isMakingPDF = true;
+              isLoading = true;
               files.push(await generatePDFFromImage(files, pdfFileName || files[whereFileIsImage].name, isFixedSizePdfPages));
               if (isRemoveSource) files = files.filter((file) => !(file.type == 'image/png' || file.name.toLowerCase().endsWith('.jpg')));
               if (!pdfFileName) pdfFileName = files[whereFileIsImage].name;
-              isMakingPDF = false;
+              isLoading = false;
             }
           "
           prepend-icon="mdi-file-pdf-box"
@@ -103,7 +104,7 @@ function deleteFile(index) {
         <v-btn
           @click="
             async () => {
-              isSplitingPDF = true;
+              isLoading = true;
               if (selectedPdf)
                 files = files.concat(
                   await splitPDF(
@@ -111,10 +112,10 @@ function deleteFile(index) {
                     avgSplitPdfSize
                   ).catch(() => toast.error('Error : File not found'))
                 );
-              isSplitingPDF = false;
+              isLoading = false;
             }
           "
-          :loading="isSplitingPDF"
+          :loading="isLoading"
           prepend-icon="mdi-content-cut"
           variant="flat"
           color="success"
@@ -123,20 +124,32 @@ function deleteFile(index) {
         </v-btn>
       </div>
 
-      <div class="grid grid-cols-2 gap-2 mt-4">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-2 mt-4">
         <v-btn
           @click="
             async () => {
-              files.forEach(async (f) => {
+              let holds = [...files];
+              let length = files.length;
+              isLoading = true;
+              files.forEach(async (f, ii) => {
                 if (f.type.toUpperCase().endsWith('ZIP')) {
                   if (isRemoveSource) {
                     files = files.filter((file) => file.name != f.name);
                   }
-                  (await extractZipFile(f))
-                    ?.sort((a, b) => sortingFileNameFn(a.name, b.name))
-                    .forEach((file) => {
-                      files.push(file);
-                    });
+                  try {
+                    (await extractZipFile(f))
+                      ?.sort((a, b) => sortingFileNameFn(a.name, b.name))
+                      .forEach((file) => {
+                        files.push(file);
+                      });
+                  } catch {
+                    files = holds;
+                    isLoading = false;
+                    toast.error('Error : Failed to unzip ' + f.name + ' file');
+                  }
+                }
+                if (length == ii + 1) {
+                  isLoading = false;
                 }
               });
             }
@@ -145,6 +158,7 @@ function deleteFile(index) {
           variant="flat"
           color="success"
           class="w-full"
+          :loading="isLoading"
         >
           Unzip All
         </v-btn>
@@ -152,15 +166,72 @@ function deleteFile(index) {
         <v-btn
           @click="
             async () => {
-              files.push(await createZipFile(files, pdfFileName));
+              let hold;
+              isLoading = true;
+              hold = await createZipFile(files, pdfFileName);
+              if (isRemoveSource) {
+                files = [hold];
+              } else {
+                files.push(hold);
+              }
+              isLoading = false;
             }
           "
           prepend-icon="mdi-folder-zip"
           variant="flat"
           color="success"
           class="w-full"
+          :loading="isLoading"
         >
           Zip All
+        </v-btn>
+        <v-btn
+          @click="
+            async () => {
+              let length = files.length;
+              isLoading = true;
+              [...files].forEach(async (file, ii) => {
+                if (isRemoveSource && ii == 0) files = [];
+                files.push(await encryptFile(file));
+                if (length == ii + 1) {
+                  isLoading = false;
+                }
+              });
+            }
+          "
+          prepend-icon="mdi-lock"
+          variant="flat"
+          color="success"
+          class="w-full"
+          :loading="isLoading"
+        >
+          Encrypt
+        </v-btn>
+        <v-btn
+          @click="
+            async () => {
+              let length = files.length;
+              isLoading = true;
+              [...files].forEach(async (file, ii) => {
+                if (isRemoveSource && ii == 0) files = [];
+                try{
+                files.push(await decryptFile(file));
+                }catch {
+                  //toast.error('Error : Failed to decrypt ' + file.name +'file');
+                }
+                if (length == ii + 1) {
+                  isLoading = false;
+                }
+              });
+            }
+          "
+          prepend-icon="mdi-lock-open"
+          variant="flat"
+          color="danger"
+          class="w-full"
+          :loading="isLoading"
+        >
+          Decrypt
         </v-btn>
       </div>
 
@@ -179,21 +250,22 @@ function deleteFile(index) {
 
       <div v-if="preview_mode == 0" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:lg:grid-cols-6 w-full items-center gap-6">
         <span :elevation="2" class="h-48 w-48 overflow-hidden p-4" rounded v-for="(file, i) in files">
-          <div
-            class="flex h-36 overflow-hidden rounded hover:opacity-80 transition-opacity transition-2"
-            @click="
-              () => {
-                navigateTo(getFileUrl(file), {
-                  external: true,
-                  open: {
-                    target: '_blank',
-                  },
-                });
-              }
-            "
-          >
+          <div class="flex h-36 overflow-hidden rounded hover:opacity-80 transition-opacity transition-2">
             <div class="relative bg-[#505256] w-full h-full flex justify-center" v-if="file.type.startsWith('image')">
               <img :src="getFileUrl(file)" alt="image" class="object-scale-down w-auto h-full" />
+              <a
+                class="absolute top-0 right-0 w-full h-full"
+                @click="
+                  () => {
+                    navigateTo(getFileUrl(file), {
+                      external: true,
+                      open: {
+                        target: '_blank',
+                      },
+                    });
+                  }
+                "
+              ></a>
               <span class="absolute top-0 right-1">
                 <v-btn @click="() => deleteFile(i)" density="compact" size="x-small" variant="text" icon="mdi-close" color="danger" class="p-2"></v-btn>
               </span>
@@ -203,12 +275,25 @@ function deleteFile(index) {
                 <v-icon v-if="file?.type?.includes('pdf')">mdi-file-pdf-box</v-icon>
                 <v-icon v-else>mdi-file</v-icon>
               </v-btn>
+              <a
+                class="absolute top-0 right-0 w-full h-full"
+                @click="
+                  () => {
+                    navigateTo(getFileUrl(file), {
+                      external: true,
+                      open: {
+                        target: '_blank',
+                      },
+                    });
+                  }
+                "
+              ></a>
               <span class="absolute top-0 right-1">
                 <v-btn @click="() => deleteFile(i)" density="compact" size="x-small" variant="text" icon="mdi-close" color="danger" class="p-2"></v-btn>
               </span>
             </div>
           </div>
-          <p class="text-center">{{ file.name }}</p>
+          <p class="text-center truncate">{{ file.name }}</p>
         </span>
       </div>
       <div v-else>
@@ -217,8 +302,8 @@ function deleteFile(index) {
           color=""
           :headers="headers"
           :items="
-            [].concat(files).map((f) => {
-              return {name: f.name, type: f.type, size: convertFileSize(f.size, 'MB') + 'Mb', icon: f.type};
+            [].concat(files).map((f, i) => {
+              return {name: f.name, type: f.type, size: convertFileSize(f.size, 'MB') + 'Mb', icon: f.type, action: {index: i, file: f}};
             })
           "
           height="400"
@@ -229,7 +314,33 @@ function deleteFile(index) {
               {{ value.includes("image") ? "mdi-image" : "mdi-file" }}
             </v-icon>
           </template>
+          <template v-slot:item.action="{value}">
+            <v-btn
+              @click="
+                () => {
+                  navigateTo(getFileUrl(value?.file), {
+                    external: true,
+                    open: {
+                      target: '_blank',
+                    },
+                  });
+                }
+              "
+              class="mr-3"
+              size="x-small"
+              variant="flat"
+              prepend-icon="mdi-open-in-new"
+              color="primary"
+            >
+              Open
+            </v-btn>
+            <v-btn @click="() => deleteFile(value?.index)" size="x-small" variant="flat" prepend-icon="mdi-delete" color="danger">Delete</v-btn>
+          </template>
         </v-data-table-virtual>
+      </div>
+      <div>
+        <v-btn @click="() => deleteFile(value?.index)" size="small" class="mt-5" variant="flat" prepend-icon="mdi-export">Export To Other Section</v-btn>
+
       </div>
     </div>
   </v-sheet>

@@ -120,8 +120,8 @@ onNuxtReady((_) => {
 
           <div v-for="(_, title) in formFields" :class="'items-center h-full gap-1 overflow-hidden ' + (formFieldsTextArea[title] ? '' : 'flex')">
             <v-btn @click="(_) => (formFieldsTextArea[title] = !formFieldsTextArea[title])" :elevation="0" :color="isRequireAll && formFields[title]?.length == 0 ? 'danger' : 'primary'" class="'h-full p-2 px-3 bg-primary/50" hide-details :block="formFieldsTextArea[title]">{{ title + (isRequireAll ? "*" : "") }}</v-btn>
-            <v-textarea counter v-if="formFieldsTextArea[title]" v-model="formFields[title]" density="compact" hide-details clearable flat rounded class="bg-background-tertiary" variant="solo"></v-textarea>
-            <v-text-field counter v-else v-model="formFields[title]" type="text" density="compact" hide-details clearable flat rounded class="bg-background-tertiary" variant="solo"></v-text-field>
+            <v-textarea @click:clear="formFields[title]=''" counter v-if="formFieldsTextArea[title]" v-model="formFields[title]" density="compact" hide-details clearable flat rounded class="bg-background-tertiary" variant="solo"></v-textarea>
+            <v-text-field  @click:clear="formFields[title]=''" counter v-else v-model="formFields[title]" type="text" density="compact" hide-details clearable flat rounded class="bg-background-tertiary" variant="solo"></v-text-field>
           </div>
           <v-switch v-model="isRequireAll" color="primary" inset hide-details label="Required All"></v-switch>
 
