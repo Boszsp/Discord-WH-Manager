@@ -1,5 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-import vuetify, { transformAssetUrls } from "vite-plugin-vuetify";
+import vuetify, {transformAssetUrls} from "vite-plugin-vuetify";
 export default defineNuxtConfig({
   devtools: { 
     enabled: true ,
@@ -11,13 +11,13 @@ export default defineNuxtConfig({
     (_options, nuxt) => {
       nuxt.hooks.hook("vite:extendConfig", (config) => {
         // @ts-expect-error
-        config.plugins.push(vuetify({ autoImport: true }));
+        config.plugins.push(vuetify({autoImport: true}));
       });
     },
   ],
 
   tailwindcss: {
-    cssPath: ["~/assets/css/tailwind.css", { injectPosition: "first" }],
+    cssPath: ["~/assets/css/tailwind.css", {injectPosition: "first"}],
     configPath: "tailwind.config",
     exposeConfig: {
       level: 2,
@@ -27,8 +27,8 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
-    username:"",
-    password:"",
+    username: "",
+    password: "",
     backendPassword: "xxxxxx-xxxx-xxxx-xxx-xxxx-xxxxxx",
     public: {
       bypassList: ["/","/form"],
@@ -49,6 +49,7 @@ export default defineNuxtConfig({
         transformAssetUrls,
       },
     },
+    define: {global: "window"},
   },
   routeRules: {
   },

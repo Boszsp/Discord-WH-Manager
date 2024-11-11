@@ -61,6 +61,10 @@ async function refresh() {
                 v-if="config.public.staticMode"
                 @click="
                   async () => {
+                    await getHooks();
+                    resultValue = JSON.stringify(await getHooks().data.value.hooks);
+                    await destroyDB();
+                    createHooks(JSON.parse(resultValue));
                     await compressDB();
                     await refresh();
                   }
@@ -75,7 +79,7 @@ async function refresh() {
             </div>
           </span>
 
-          <DBInfoCard v-if="config.public.staticMode" />
+          <DBInfoCard v-if="config.public.staticMode" :DBInfo="DBInfo" />
 
           <h4 class="text-h6 font-bold lg:hidden">Export & Import Data</h4>
         </div>

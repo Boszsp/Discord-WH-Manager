@@ -28,7 +28,7 @@ const files = ref([]);
 const hookJson = ref({
   username: "",
   avatar_url: "",
-  content: "<p></p>",
+  content: "",
   embeds: [],
   thread_name: "",
 });
@@ -60,7 +60,7 @@ function sortedHooks() {
 
 async function submitHandler() {
   const url = hooks?.value?.hooks?.filter((i) => {
-    return i.name + "-" + i.id == hook_url.value;
+    return i.name + "-" + (config.public.staticMode ? i.id?.slice(0, 5) : i.id) == hook_url.value;
   });
   isSending.value = true;
   if (url && url[0] && url[0].link) {
