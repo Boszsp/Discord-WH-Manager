@@ -32,7 +32,7 @@ const navs = [
     title: "Tool",
     path: "/tool",
     icon: "mdi-tools",
-    disable: config.public.staticMode,
+    //disable: config.public.staticMode,
   },
   {
     title: "Setting",
