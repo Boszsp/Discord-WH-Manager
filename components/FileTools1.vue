@@ -2,7 +2,7 @@
 import {toast} from "vue-sonner";
 
 const pdfResult = ref(null);
-const files = ref([])
+const files = ref([]);
 const pdfFileName = ref("");
 const selectedPdf = ref("");
 const avgSplitPdfSize = ref(20);
@@ -214,9 +214,9 @@ function deleteFile(index) {
               isLoading = true;
               [...files].forEach(async (file, ii) => {
                 if (isRemoveSource && ii == 0) files = [];
-                try{
-                files.push(await decryptFile(file));
-                }catch {
+                try {
+                  files.push(await decryptFile(file));
+                } catch {
                   //toast.error('Error : Failed to decrypt ' + file.name +'file');
                 }
                 if (length == ii + 1) {
@@ -340,7 +340,6 @@ function deleteFile(index) {
       </div>
       <div>
         <v-btn @click="() => deleteFile(value?.index)" size="small" class="mt-5" variant="flat" prepend-icon="mdi-export">Export To Other Section</v-btn>
-
       </div>
     </div>
   </v-sheet>
